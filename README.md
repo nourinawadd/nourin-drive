@@ -26,4 +26,4 @@ Framer Motion for UI transitions (if using React)
 4. Deploy (Weeks 6-8)
 Frontend: Deploy to Vercel or Netlify.
 Backend: Use Railway.app or Render for hosting.
-Domain: Get a free domain from Freenom or buy one from Namecheap.
+Domain: Get a free domain from Freenom or buy one from Namecheap
