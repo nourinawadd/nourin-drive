@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RetroDesk OS · Nourin Awad</title>
+
+  <!-- Fonts are loaded inside global.css via @import -->
+
+  <!-- Styles — order matters: global → layout → apps -->
+  <link rel="stylesheet" href="src/styles/global.css" />
+  <link rel="stylesheet" href="src/styles/desktop.css" />
+  <link rel="stylesheet" href="src/styles/taskbar.css" />
+  <link rel="stylesheet" href="src/styles/window.css" />
+  <link rel="stylesheet" href="src/styles/apps/explorer.css" />
+  <link rel="stylesheet" href="src/styles/apps/browser.css" />
+  <link rel="stylesheet" href="src/styles/apps/notepad.css" />
+  <link rel="stylesheet" href="src/styles/apps/about.css" />
+  <link rel="stylesheet" href="src/styles/apps/terminal.css" />
+
+  <style>
+    /* Inline overrides / fallbacks that need to come last */
+
+    /* Sidebar item active state (shared by Explorer + others) */
+    .sidebar-item.active {
+      background: var(--c-selected-bg);
+      color:      var(--c-selected-fg);
+    }
+
+    /* Win-body display must be flex to let apps fill height */
+    .win-body { display: flex; flex-direction: column; }
+
+    /* Explorer: make the layout fill remaining height */
+    .win-body .explorer-layout { flex: 1; overflow: hidden; }
+
+    /* About: fill height */
+    .win-body .about-body { flex: 1; }
+
+    /* Ensure window-layer covers the whole desktop */
+    #window-layer {
+      position: absolute;
+      inset:    0;
+      pointer-events: none;
+    }
+    #window-layer .window { pointer-events: all; }
+  </style>
+</head>
+<body>
+
+  <!-- ① Boot screen — populated & animated by Boot.js -->
+  <div id="bootscreen"></div>
+
+  <!-- ② Desktop surface — icons injected by Desktop.js -->
+  <div id="desktop"></div>
+
+  <!-- ③ Window layer — windows appended here by WindowManager -->
+  <div id="window-layer"></div>
+
+  <!-- ④ Context menu — managed by Desktop.js -->
+  <div id="ctx-menu" class="context-menu"></div>
+
+  <!-- ⑤ Taskbar — rendered by TaskbarManager -->
+  <div id="taskbar"></div>
+
+  <!-- ⑥ App entry (ES module) -->
+  <script type="module" src="src/main.js"></script>
+
+</body>
+</html>

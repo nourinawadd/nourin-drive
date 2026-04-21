@@ -1,0 +1,158 @@
+/* ═══════════════════════════════════════════════════════════
+   apps/explorer.css — File Explorer app
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Layout ──────────────────────────────────────────────── */
+.explorer-toolbar {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+  padding:     3px 6px;
+  border-bottom: 1px solid var(--c-sh);
+  background:  var(--c-bg);
+  flex-shrink: 0;
+}
+
+.explorer-toolbar button {
+  padding:     1px 7px;
+  height:      22px;
+  font-size:   11px;
+  font-family: var(--font-ui);
+  background:  var(--c-bg);
+  border:      1px solid;
+  border-color: var(--border-colors-raised);
+  cursor:      pointer;
+}
+
+.explorer-toolbar button:active {
+  border-color: var(--border-colors-sunken);
+}
+
+.explorer-toolbar button:disabled {
+  color:  var(--c-text-dim);
+  cursor: default;
+}
+
+/* ── Address bar ─────────────────────────────────────────── */
+.explorer-address {
+  flex:        1;
+  display:     flex;
+  align-items: center;
+  gap:         5px;
+  font-size:   11px;
+  color:       var(--c-text-muted);
+}
+
+.explorer-address label {
+  white-space: nowrap;
+}
+
+.explorer-address input {
+  flex:        1;
+  height:      20px;
+  padding:     0 5px;
+  font-size:   11px;
+  font-family: var(--font-mono);
+  background:  var(--c-white);
+  border:      1px solid;
+  border-color: var(--border-colors-field);
+  outline:     none;
+}
+
+/* ── Body split: sidebar + main ──────────────────────────── */
+.explorer-layout {
+  display:  flex;
+  flex:     1;
+  overflow: hidden;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+.explorer-sidebar {
+  width:       148px;
+  border-right: 1px solid var(--c-sh);
+  background:  var(--c-bg);
+  overflow-y:  auto;
+  flex-shrink: 0;
+  padding:     4px 2px;
+}
+
+.sidebar-section {
+  font-size:    10px;
+  font-weight:  700;
+  font-family:  var(--font-ui);
+  color:        var(--c-text-muted);
+  padding:      5px 6px 3px;
+  border-bottom: 1px solid var(--c-sh);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-item {
+  display:     flex;
+  align-items: center;
+  gap:         5px;
+  padding:     3px 6px;
+  font-size:   11px;
+  font-family: var(--font-ui);
+  color:       var(--c-text);
+  cursor:      pointer;
+}
+
+.sidebar-item:hover {
+  background: var(--c-selected-bg);
+  color:      var(--c-selected-fg);
+}
+
+.sidebar-item .si-icon {
+  font-size:   14px;
+  flex-shrink: 0;
+}
+
+/* ── Main file area ──────────────────────────────────────── */
+.explorer-main {
+  flex:          1;
+  background:    var(--c-white);
+  overflow-y:    auto;
+  padding:       8px;
+  display:       flex;
+  flex-wrap:     wrap;
+  gap:           4px;
+  align-content: flex-start;
+}
+
+/* ── File items ──────────────────────────────────────────── */
+.file-item {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            3px;
+  width:          72px;
+  padding:        6px 4px;
+  cursor:         pointer;
+  border:         1px solid transparent;
+  text-align:     center;
+}
+
+.file-item:hover {
+  background:   #cce0f7;
+  border-color: #6fa8dc;
+}
+
+.file-item.selected {
+  background:   #bbd4f0;
+  border-color: #1a5fa8;
+}
+
+.file-item__icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.file-item__name {
+  font-size:  10px;
+  font-family: var(--font-ui);
+  color:      var(--c-text);
+  line-height: 1.2;
+  word-break: break-word;
+}
