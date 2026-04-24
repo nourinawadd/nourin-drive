@@ -1,4 +1,4 @@
-# ◈ RetroDesk Portfolio
+# RetroDesk Portfolio
 
 A personal portfolio styled as a **Win98 desktop OS**, built with the MERN stack + Next.js.
 Every section lives inside a draggable, resizable window. The desktop boots, you double-click icons, apps open.
