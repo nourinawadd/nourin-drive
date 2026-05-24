@@ -1,0 +1,18 @@
+/* Workbench 3.1 palette + sizes. Don't touch these from components; use the vars. */
+:root {
+  --wb-blue:    #0055aa;  /* desktop */
+  --wb-blue-2:  #2266bb;  /* dither hi */
+  --wb-gray:    #aaaaaa;  /* window face */
+  --wb-gray-2:  #888888;  /* window face shadow */
+  --wb-white:   #ffffff;  /* hi-light edges, text on dark */
+  --wb-black:   #000000;  /* lo-light edges, text on light */
+  --wb-orange:  #ff8800;  /* selection / focus accent */
+  --wb-menu-bg: #aaaaaa;
+  --wb-menu-fg: #000000;
+
+  --wb-title-h: 18px;
+  --wb-menu-h:  18px;
+  --wb-border:  2px;
+
+  --wb-font: var(--font-wb), "Lucida Console", "Andale Mono", monospace;
+}

@@ -1,0 +1,271 @@
+/* Workbench chrome — pixel borders, gadgets, dithered fills.
+   Everything in this file is presentational; layout lives in components. */
+
+/* ------- font -------------------------------------------------------- */
+/* Pixel font is loaded via next/font/google in layout.tsx and exposed as
+   the CSS variable --font-wb. tokens.css references it through --wb-font. */
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--wb-font);
+  font-size: 14px;
+  line-height: 1;
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: none;
+  color: var(--wb-black);
+}
+
+/* ------- pixel borders ---------------------------------------------- */
+/* Raised: white top+left, black bottom+right, on gray face */
+.wb-raised {
+  background: var(--wb-gray);
+  border-style: solid;
+  border-width: var(--wb-border);
+  border-color: var(--wb-white) var(--wb-black) var(--wb-black) var(--wb-white);
+}
+
+/* Sunken: inverse of raised */
+.wb-sunken {
+  background: var(--wb-gray);
+  border-style: solid;
+  border-width: var(--wb-border);
+  border-color: var(--wb-black) var(--wb-white) var(--wb-white) var(--wb-black);
+}
+
+/* Hard black hairline outside a raised face — used on window frames */
+.wb-frame {
+  background: var(--wb-gray);
+  border: 1px solid var(--wb-black);
+  box-shadow:
+    inset 1px 1px 0 var(--wb-white),
+    inset -1px -1px 0 var(--wb-black);
+  padding: 1px;
+}
+
+/* ------- dithered desktop pattern ----------------------------------- */
+/* 2x2 checker built from a tiny SVG. Two dark blues alternate per pixel. */
+.wb-desktop-bg {
+  background-color: var(--wb-blue);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='2' height='2'><rect width='1' height='1' x='0' y='0' fill='%230055aa'/><rect width='1' height='1' x='1' y='1' fill='%230055aa'/><rect width='1' height='1' x='1' y='0' fill='%23114488'/><rect width='1' height='1' x='0' y='1' fill='%23114488'/></svg>");
+  background-size: 2px 2px;
+  image-rendering: pixelated;
+}
+
+/* ------- top menubar ------------------------------------------------- */
+.wb-menubar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--wb-menu-h);
+  background: var(--wb-white);
+  color: var(--wb-black);
+  border-bottom: 1px solid var(--wb-black);
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  font-family: var(--wb-font);
+  font-size: 13px;
+  user-select: none;
+  z-index: 1000;
+}
+.wb-menubar .wb-menu-items { display: flex; gap: 18px; }
+.wb-menubar .wb-menu-item {
+  padding: 0 4px;
+  cursor: default;
+}
+.wb-menubar .wb-menu-item:hover {
+  background: var(--wb-black);
+  color: var(--wb-white);
+}
+.wb-menubar .wb-menu-spacer { flex: 1; }
+.wb-menubar .wb-mem {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+/* ------- window frame ------------------------------------------------ */
+.wb-window {
+  background: var(--wb-gray);
+  border: 1px solid var(--wb-black);
+  box-shadow:
+    inset 1px 1px 0 var(--wb-white),
+    inset -1px -1px 0 var(--wb-gray-2);
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+}
+
+.wb-titlebar {
+  height: var(--wb-title-h);
+  background: var(--wb-white);
+  color: var(--wb-black);
+  border-bottom: 1px solid var(--wb-black);
+  display: flex;
+  align-items: stretch;
+  font-size: 13px;
+  user-select: none;
+}
+.wb-titlebar.is-inactive {
+  background: var(--wb-gray);
+  color: var(--wb-black);
+}
+
+/* Title gadgets (close, depth) — square, raised, with pixel glyph */
+.wb-gadget {
+  width: 22px;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border-right: 1px solid var(--wb-black);
+  background: var(--wb-gray);
+  box-shadow:
+    inset 1px 1px 0 var(--wb-white),
+    inset -1px -1px 0 var(--wb-gray-2);
+  cursor: pointer;
+}
+.wb-gadget:active {
+  box-shadow:
+    inset 1px 1px 0 var(--wb-gray-2),
+    inset -1px -1px 0 var(--wb-white);
+}
+.wb-gadget.is-right {
+  border-right: none;
+  border-left: 1px solid var(--wb-black);
+}
+
+.wb-title-text {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* centered titles — Amiga style */
+  padding: 0 8px;
+  letter-spacing: 0.5px;
+}
+
+.wb-window-body {
+  flex: 1;
+  background: var(--wb-white);
+  padding: 8px;
+  overflow: auto;
+  color: var(--wb-black);
+}
+
+/* ------- drive icon (right column) ---------------------------------- */
+.wb-drive {
+  width: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+.wb-drive .wb-drive-icon {
+  width: 56px; height: 40px;
+  background: var(--wb-gray);
+  border: 1px solid var(--wb-black);
+  box-shadow:
+    inset 1px 1px 0 var(--wb-white),
+    inset -1px -1px 0 var(--wb-gray-2);
+  position: relative;
+}
+.wb-drive .wb-drive-icon::after {
+  /* eject slot */
+  content: "";
+  position: absolute;
+  left: 8px; right: 8px; bottom: 6px;
+  height: 4px;
+  background: var(--wb-black);
+}
+.wb-drive .wb-drive-label {
+  font-size: 12px;
+  color: var(--wb-white);
+  background: var(--wb-black);
+  padding: 1px 6px;
+  border: 1px solid var(--wb-white);
+}
+.wb-drive.is-selected .wb-drive-label {
+  background: var(--wb-orange);
+  color: var(--wb-black);
+}
+
+/* ------- dock (bottom) ---------------------------------------------- */
+.wb-dock {
+  position: fixed;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--wb-gray);
+  border: 1px solid var(--wb-black);
+  box-shadow:
+    inset 1px 1px 0 var(--wb-white),
+    inset -1px -1px 0 var(--wb-gray-2);
+  z-index: 500;
+}
+.wb-dock-item {
+  width: 40px; height: 40px;
+  background: var(--wb-white);
+  border: 1px solid var(--wb-black);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--wb-black);
+}
+.wb-dock-item:hover { background: var(--wb-orange); }
+
+/* ------- boot / kickstart screen ------------------------------------ */
+.wb-boot {
+  position: fixed; inset: 0;
+  background: var(--wb-black);
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+  cursor: pointer;
+}
+.wb-boot-card {
+  width: 360px;
+  background: var(--wb-white);
+  border: 2px solid var(--wb-black);
+  padding: 18px;
+  text-align: center;
+  color: var(--wb-black);
+  box-shadow: 6px 6px 0 var(--wb-black);
+}
+.wb-boot-card h1 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+.wb-boot-card p { margin: 4px 0; font-size: 13px; }
+.wb-boot-hint { margin-top: 14px; opacity: 0.6; font-size: 11px; }
+
+/* simple insert-disk pictogram drawn with borders */
+.wb-disk {
+  width: 80px; height: 80px;
+  margin: 8px auto 14px;
+  background: var(--wb-gray);
+  border: 2px solid var(--wb-black);
+  position: relative;
+  box-shadow:
+    inset 2px 2px 0 var(--wb-white),
+    inset -2px -2px 0 var(--wb-gray-2);
+}
+.wb-disk::before {
+  content: "";
+  position: absolute;
+  top: 6px; left: 18px; right: 18px;
+  height: 22px;
+  background: var(--wb-white);
+  border: 1px solid var(--wb-black);
+}
+.wb-disk::after {
+  content: "";
+  position: absolute;
+  bottom: 8px; left: 28px;
+  width: 24px; height: 4px;
+  background: var(--wb-black);
+}
