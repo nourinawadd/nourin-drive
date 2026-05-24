@@ -203,7 +203,7 @@ body {
   box-shadow:
     inset 1px 1px 0 var(--wb-white),
     inset -1px -1px 0 var(--wb-gray-2);
-  z-index: 500;
+  z-index: 1;
 }
 .wb-dock-item {
   width: 40px; height: 40px;
@@ -216,6 +216,14 @@ body {
   color: var(--wb-black);
 }
 .wb-dock-item:hover { background: var(--wb-orange); }
+
+/* ------- prism (json syntax highlight) ------------------------------ */
+.token.punctuation { color: #555; }
+.token.property    { color: #06a; }
+.token.string      { color: #093; }
+.token.number      { color: #a40; }
+.token.boolean     { color: #a04; }
+.token.null        { color: #888; font-style: italic; }
 
 /* ------- boot / kickstart screen ------------------------------------ */
 .wb-boot {

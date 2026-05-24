@@ -8,8 +8,10 @@ type State = {
   zCounter: number;
 };
 
+type OpenOpts = { payload?: unknown; title?: string };
+
 type Actions = {
-  openApp: (appId: AppId, payload?: unknown) => string;
+  openApp: (appId: AppId, opts?: OpenOpts) => string;
   closeWin: (id: string) => void;
   focus: (id: string) => void;
   updateBounds: (id: string, b: { x?: number; y?: number; width?: number; height?: number }) => void;
@@ -24,7 +26,7 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
   focusedId: null,
   zCounter: 1,
 
-  openApp: (appId, payload) => {
+  openApp: (appId, opts) => {
     const def = APP_REGISTRY[appId];
     if (def.singleton) {
       const existing = get().windows.find((w) => w.appId === appId);
@@ -39,13 +41,13 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
     const win: WindowInstance = {
       id: mkId(appId),
       appId,
-      title: def.title,
+      title: opts?.title ?? def.title,
       x: def.defaultX + offset,
       y: def.defaultY + offset,
       width: def.defaultWidth,
       height: def.defaultHeight,
       z,
-      payload,
+      payload: opts?.payload,
     };
     set({
       windows: [...get().windows, win],
