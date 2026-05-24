@@ -25,7 +25,7 @@ export function DriveColumn() {
         display: "flex",
         flexDirection: "column",
         gap: 14,
-        zIndex: 50,
+        zIndex: 1,
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) setSelected(null);
