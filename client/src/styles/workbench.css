@@ -94,6 +94,12 @@ body {
   flex-direction: column;
   position: absolute;
 }
+.wb-window.is-active {
+  box-shadow:
+    inset 1px 1px 0 var(--wb-white),
+    inset -1px -1px 0 var(--wb-gray-2),
+    0 0 0 1px var(--wb-orange);
+}
 
 .wb-titlebar {
   height: var(--wb-title-h);
@@ -206,6 +212,7 @@ body {
   z-index: 1;
 }
 .wb-dock-item {
+  position: relative;
   width: 40px; height: 40px;
   background: var(--wb-white);
   border: 1px solid var(--wb-black);
@@ -216,6 +223,23 @@ body {
   color: var(--wb-black);
 }
 .wb-dock-item:hover { background: var(--wb-orange); }
+.wb-dock-item[data-label]::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: var(--wb-black);
+  color: var(--wb-white);
+  font-size: 11px;
+  padding: 1px 6px;
+  border: 1px solid var(--wb-white);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.08s;
+}
+.wb-dock-item:hover[data-label]::after { opacity: 1; }
 
 /* ------- markdown prose (blog) -------------------------------------- */
 .wb-prose h1, .wb-prose h2, .wb-prose h3 {

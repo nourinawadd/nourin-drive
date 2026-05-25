@@ -20,6 +20,7 @@ export type WindowInstance = {
   width: number;
   height: number;
   z: number;
+  minimized: boolean;
   payload?: unknown;   // arbitrary per-instance data (e.g. notepad text)
 };
 

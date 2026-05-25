@@ -17,11 +17,14 @@ export function WindowFrame({ win, children }: Props) {
   const focus = useWindowStore((s) => s.focus);
   const close = useWindowStore((s) => s.closeWin);
   const sendToBack = useWindowStore((s) => s.sendToBack);
+  const minimize = useWindowStore((s) => s.minimize);
   const updateBounds = useWindowStore((s) => s.updateBounds);
   const focusedId = useWindowStore((s) => s.focusedId);
 
   const def = APP_REGISTRY[win.appId];
   const active = focusedId === win.id;
+
+  if (win.minimized) return null;
 
   return (
     <Rnd
@@ -47,7 +50,7 @@ export function WindowFrame({ win, children }: Props) {
       }}
     >
       <div
-        className="wb-window"
+        className={`wb-window${active ? " is-active" : ""}`}
         style={{ position: "relative", width: "100%", height: "100%" }}
         onMouseDown={() => focus(win.id)}
       >
@@ -66,6 +69,19 @@ export function WindowFrame({ win, children }: Props) {
             <CloseGlyph />
           </div>
           <div className="wb-title-text">{win.title}</div>
+          <div
+            className="wb-gadget is-right"
+            role="button"
+            aria-label="Minimize"
+            title="Minimize"
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              minimize(win.id);
+            }}
+          >
+            <MinimizeGlyph />
+          </div>
           <div
             className="wb-gadget is-right"
             role="button"
@@ -100,6 +116,14 @@ function DepthGlyph() {
     <svg width="12" height="10" viewBox="0 0 12 10" aria-hidden>
       <rect x="1" y="3" width="7" height="6" fill="white" stroke="black" strokeWidth="1" />
       <rect x="4" y="1" width="7" height="6" fill="white" stroke="black" strokeWidth="1" />
+    </svg>
+  );
+}
+
+function MinimizeGlyph() {
+  return (
+    <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden>
+      <rect x="1" y="6" width="8" height="2" fill="black" />
     </svg>
   );
 }

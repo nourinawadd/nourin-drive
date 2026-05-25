@@ -19,7 +19,7 @@ export function Dock() {
         <div
           key={it.id}
           className="wb-dock-item"
-          title={it.title}
+          data-label={it.title}
           style={{ fontSize: 10, letterSpacing: 1 }}
           onClick={() => openApp(it.appId)}
         >

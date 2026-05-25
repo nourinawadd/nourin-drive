@@ -1,9 +1,11 @@
 "use client";
 
 import { BootScreen } from "@/components/os/BootScreen";
+import { DesktopClippings } from "@/components/os/DesktopClippings";
 import { Dock } from "@/components/os/Dock";
 import { DriveColumn } from "@/components/os/DriveColumn";
 import { KonamiListener } from "@/components/os/KonamiListener";
+import { Taskbar } from "@/components/os/Taskbar";
 import { TopMenubar } from "@/components/os/TopMenubar";
 import { WindowLayer } from "@/components/os/WindowLayer";
 import { useWindowStore } from "@/context/windowStore";
@@ -18,7 +20,9 @@ export default function Home() {
     >
       <TopMenubar />
       <DriveColumn />
+      <DesktopClippings />
       <WindowLayer />
+      <Taskbar />
       <Dock />
 
       <BootScreen />

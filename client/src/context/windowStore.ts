@@ -16,6 +16,8 @@ type Actions = {
   focus: (id: string) => void;
   updateBounds: (id: string, b: { x?: number; y?: number; width?: number; height?: number }) => void;
   sendToBack: (id: string) => void;
+  minimize: (id: string) => void;
+  restore: (id: string) => void;
 };
 
 let nextId = 1;
@@ -31,7 +33,7 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
     if (def.singleton) {
       const existing = get().windows.find((w) => w.appId === appId);
       if (existing) {
-        get().focus(existing.id);
+        get().restore(existing.id);
         return existing.id;
       }
     }
@@ -47,6 +49,7 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
       width: def.defaultWidth,
       height: def.defaultHeight,
       z,
+      minimized: false,
       payload: opts?.payload,
     };
     set({
@@ -94,6 +97,27 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
       return {
         windows: s.windows.map((w) => (w.id === id ? { ...w, z: minZ - 1 } : w)),
         focusedId: s.windows.length > 1 ? s.windows.filter((w) => w.id !== id).slice(-1)[0]?.id ?? null : id,
+      };
+    }),
+
+  minimize: (id) =>
+    set((s) => {
+      const rest = s.windows.filter((w) => w.id !== id && !w.minimized);
+      return {
+        windows: s.windows.map((w) => (w.id === id ? { ...w, minimized: true } : w)),
+        focusedId: s.focusedId === id ? (rest.slice(-1)[0]?.id ?? null) : s.focusedId,
+      };
+    }),
+
+  restore: (id) =>
+    set((s) => {
+      const win = s.windows.find((w) => w.id === id);
+      if (!win) return s;
+      const z = s.zCounter + 1;
+      return {
+        windows: s.windows.map((w) => (w.id === id ? { ...w, minimized: false, z } : w)),
+        focusedId: id,
+        zCounter: z,
       };
     }),
 }));
