@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { VT323 } from "next/font/google";
+import { QueryProvider } from "@/context/QueryProvider";
 import "./globals.css";
 
 const wbFont = VT323({
@@ -21,7 +22,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={wbFont.variable}>
-      <body>{children}</body>
+      <body>
+        <QueryProvider>{children}</QueryProvider>
+      </body>
     </html>
   );
 }

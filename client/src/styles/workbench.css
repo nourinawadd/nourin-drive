@@ -217,6 +217,38 @@ body {
 }
 .wb-dock-item:hover { background: var(--wb-orange); }
 
+/* ------- markdown prose (blog) -------------------------------------- */
+.wb-prose h1, .wb-prose h2, .wb-prose h3 {
+  margin: 12px 0 6px;
+  font-weight: bold;
+}
+.wb-prose h1 { font-size: 18px; }
+.wb-prose h2 { font-size: 16px; }
+.wb-prose h3 { font-size: 14px; }
+.wb-prose p { margin: 6px 0; line-height: 1.3; }
+.wb-prose ul, .wb-prose ol { padding-left: 20px; margin: 6px 0; }
+.wb-prose li { margin: 2px 0; line-height: 1.3; }
+.wb-prose a { color: #0055aa; text-decoration: underline; }
+.wb-prose code {
+  background: var(--wb-gray);
+  padding: 0 3px;
+  border: 1px solid var(--wb-black);
+}
+.wb-prose pre {
+  background: var(--wb-black);
+  color: var(--wb-white);
+  padding: 6px 8px;
+  overflow: auto;
+  border: 1px solid var(--wb-black);
+}
+.wb-prose pre code { background: none; border: none; padding: 0; }
+.wb-prose blockquote {
+  border-left: 3px solid var(--wb-orange);
+  margin: 6px 0;
+  padding: 2px 8px;
+  background: var(--wb-gray);
+}
+
 /* ------- prism (json syntax highlight) ------------------------------ */
 .token.punctuation { color: #555; }
 .token.property    { color: #06a; }

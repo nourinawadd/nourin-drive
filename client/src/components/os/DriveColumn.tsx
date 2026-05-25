@@ -5,11 +5,13 @@ import { useWindowStore } from "@/context/windowStore";
 import type { AppId } from "@/types/window";
 
 const DRIVES: { id: string; label: string; appId: AppId }[] = [
-  { id: "work",     label: "Work:",     appId: "about" },
-  { id: "projects", label: "Projects:", appId: "explorer" },
-  { id: "games",    label: "Games:",    appId: "games" },
-  { id: "photos",   label: "Photos:",   appId: "gallery" },
-  { id: "trash",    label: "Trash:",    appId: "recycle" },
+  { id: "work",      label: "Work:",      appId: "about" },
+  { id: "projects",  label: "Projects:",  appId: "explorer" },
+  { id: "games",     label: "Games:",     appId: "games" },
+  { id: "photos",    label: "Photos:",    appId: "gallery" },
+  { id: "blog",      label: "Blog:",      appId: "blog" },
+  { id: "guestbook", label: "Guestbook:", appId: "guestbook" },
+  { id: "trash",     label: "Trash:",     appId: "recycle" },
 ];
 
 export function DriveColumn() {
