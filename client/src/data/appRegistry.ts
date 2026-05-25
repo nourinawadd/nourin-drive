@@ -5,8 +5,8 @@ import type { AppDef, AppId } from "@/types/window";
 export const APP_REGISTRY: Record<AppId, AppDef> = {
   about: {
     appId: "about", title: "About Me",
-    defaultWidth: 480, defaultHeight: 360,
-    defaultX: 140, defaultY: 80,
+    defaultWidth: 540, defaultHeight: 460,
+    defaultX: 140, defaultY: 60,
     singleton: true,
   },
   apis: {
