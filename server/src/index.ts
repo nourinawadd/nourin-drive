@@ -8,6 +8,8 @@ import rateLimit from "express-rate-limit";
 import { connectDB } from "./config/db.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { notFound } from "./middleware/notFound.js";
+import { guestbookRouter } from "./routes/guestbook.js";
+import { blogRouter } from "./routes/blog.js";
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 5000);
@@ -38,6 +40,9 @@ app.get("/api/health", (_req, res) => {
     env: process.env.NODE_ENV ?? "development",
   });
 });
+
+app.use("/api/guestbook", guestbookRouter);
+app.use("/api/blog", blogRouter);
 
 app.use(notFound);
 app.use(errorHandler);
