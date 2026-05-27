@@ -7,6 +7,7 @@ import {
   DockDrawerMag,
   DockNote,
   DockTerminal,
+  DockMusic,
   DockTrash,
 } from "@/components/os/icons";
 import type { ComponentType } from "react";
@@ -16,6 +17,7 @@ const ITEMS: { id: string; Icon: ComponentType; title: string; appId: AppId }[] 
   { id: "explorer", Icon: DockDrawerMag, title: "File Explorer",       appId: "explorer" },
   { id: "notepad",  Icon: DockNote,      title: "Notepad / Guestbook", appId: "notepad" },
   { id: "apis",     Icon: DockTerminal,  title: "API Studio",          appId: "apis" },
+  { id: "music",    Icon: DockMusic,     title: "Music Player",        appId: "music" },
   { id: "trash",    Icon: DockTrash,     title: "Recycle Bin",         appId: "recycle" },
 ];
 

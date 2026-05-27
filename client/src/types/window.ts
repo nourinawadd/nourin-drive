@@ -8,6 +8,7 @@ export type AppId =
   | "gallery"
   | "games"
   | "guestbook"
+  | "music"
   | "notepad"
   | "recycle";
 

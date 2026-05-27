@@ -57,6 +57,13 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     defaultX: 200, defaultY: 110,
     singleton: true,
   },
+  music: {
+    appId: "music", title: "Music Player",
+    defaultWidth: 480, defaultHeight: 460,
+    defaultX: 150, defaultY: 70,
+    minWidth: 260, minHeight: 116,
+    singleton: true,
+  },
   notepad: {
     appId: "notepad", title: "Notepad",
     defaultWidth: 420, defaultHeight: 300,
