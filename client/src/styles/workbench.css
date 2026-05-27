@@ -53,17 +53,6 @@ body {
   image-rendering: pixelated;
 }
 
-/* ------- custom pointer --------------------------------------------- */
-/* Hide the OS cursor everywhere on the desktop; CursorLayer draws the
-   chunky orange Workbench arrow in its place. */
-.wb-desktop-bg,
-.wb-desktop-bg * { cursor: none; }
-.pointer {
-  position: fixed;
-  pointer-events: none;
-  z-index: 10001;   /* above menubar (1000) and boot screen (9999) */
-}
-
 /* ------- top menubar ------------------------------------------------- */
 .wb-menubar {
   position: fixed; top: 0; left: 0; right: 0;
@@ -79,16 +68,49 @@ body {
   user-select: none;
   z-index: 1000;
 }
-.wb-menubar .wb-menu-items { display: flex; gap: 18px; }
+.wb-menubar .wb-menu-items { display: flex; gap: 18px; height: 100%; align-items: center; }
 .wb-menubar .wb-menu-item {
   padding: 0 4px;
-  cursor: default;
+  cursor: pointer;
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
-.wb-menubar .wb-menu-item:hover {
+.wb-menubar .wb-menu-item:hover,
+.wb-menubar .wb-menu-item.is-open {
   background: var(--wb-black);
   color: var(--wb-white);
 }
 .wb-menubar .wb-menu-spacer { flex: 1; }
+
+/* dropdown panels under each menu */
+.wb-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 180px;
+  background: var(--wb-white);
+  color: var(--wb-black);
+  border: 1px solid var(--wb-black);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.45);
+  padding: 2px 0;
+  z-index: 1001;
+}
+.wb-menu-action {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 3px 16px;
+  background: transparent;
+  border: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.wb-menu-action:hover { background: var(--wb-black); color: var(--wb-white); }
+.wb-menu-sep { height: 1px; background: var(--wb-gray-2); margin: 3px 0; }
 .wb-menubar .wb-mem {
   font-variant-numeric: tabular-nums;
   opacity: 0.85;
@@ -206,13 +228,13 @@ body {
 .wb-dock {
   position: fixed;
   left: 50%;
-  bottom: 8px;
+  bottom: 12px;
   transform: translateX(-50%);
   display: flex;
-  gap: 4px;
-  padding: 4px;
+  gap: 8px;
+  padding: 8px;
   background: var(--wb-gray);
-  border: 1px solid var(--wb-black);
+  border: 2px solid var(--wb-black);
   box-shadow:
     inset 1px 1px 0 var(--wb-white),
     inset -1px -1px 0 var(--wb-gray-2);
@@ -220,7 +242,7 @@ body {
 }
 .wb-dock-item {
   position: relative;
-  width: 40px; height: 40px;
+  width: 64px; height: 64px;
   background: var(--wb-white);
   border: 1px solid var(--wb-black);
   display: grid;
@@ -228,6 +250,9 @@ body {
   cursor: pointer;
   font-size: 18px;
   color: var(--wb-black);
+}
+.wb-dock-item svg {
+  width: 44px; height: 44px;
 }
 .wb-dock-item:hover { background: var(--wb-orange); }
 .wb-dock-item[data-label]::after {
@@ -239,8 +264,8 @@ body {
   white-space: nowrap;
   background: var(--wb-black);
   color: var(--wb-white);
-  font-size: 11px;
-  padding: 1px 6px;
+  font-size: 13px;
+  padding: 2px 8px;
   border: 1px solid var(--wb-white);
   opacity: 0;
   pointer-events: none;

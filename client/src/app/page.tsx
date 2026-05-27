@@ -1,7 +1,6 @@
 "use client";
 
 import { BootScreen } from "@/components/os/BootScreen";
-import { CursorLayer } from "@/components/os/CursorLayer";
 import { DesktopClippings } from "@/components/os/DesktopClippings";
 import { Dock } from "@/components/os/Dock";
 import { DriveColumn } from "@/components/os/DriveColumn";
@@ -28,7 +27,6 @@ export default function Home() {
 
       <BootScreen />
       <KonamiListener onTrigger={() => openApp("easter-egg")} />
-      <CursorLayer />
     </main>
   );
 }

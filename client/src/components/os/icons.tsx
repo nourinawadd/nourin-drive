@@ -280,6 +280,31 @@ export function IconFloppyQuill() {
   return svg(56, 40, shell(C.purple, ill));
 }
 
+export function IconFloppyMusic() {
+  const bars: El[] = [];
+  const heights = [6, 11, 8, 14, 9, 12];
+  for (let i = 0; i < heights.length; i++) {
+    const x = 10 + i * 4;
+    const h = heights[i];
+    const y = 27 - h;
+    bars.push(r(x, y, 3, h, C.teal));
+    bars.push(r(x, y, 3, 1, C.white));
+    bars.push(r(x, y, 1, h, C.white));
+    bars.push(r(x + 2, y, 1, h, C.tealD));
+  }
+  const ill = g(
+    ...bars,
+    r(9, 28, 38, 1, C.gray3),       // baseline
+    r(40, 12, 2, 11, C.black),      // note stem
+    r(40, 12, 4, 3, C.black),       // note flag
+    r(40, 12, 3, 2, C.orange),
+    r(34, 21, 6, 4, C.black),       // note head
+    r(35, 22, 4, 2, C.orange),
+    r(35, 22, 4, 1, C.yellow),
+  );
+  return svg(56, 40, shell(C.blue3, ill));
+}
+
 function wastebasket(): El[] {
   const ribs: El[] = [];
   for (const rx of [8, 12, 16, 20]) {
@@ -479,6 +504,21 @@ export function DockTerminal() {
   ]);
 }
 
+export function DockMusic() {
+  return svg(28, 28, [
+    r(10, 5, 12, 3, C.black),       // beam
+    r(10, 5, 12, 1, C.gray3),
+    r(10, 7, 2, 11, C.black),       // left stem
+    r(20, 7, 2, 11, C.black),       // right stem
+    r(6, 16, 7, 5, C.black),        // left head
+    r(7, 17, 5, 3, C.orange),
+    r(7, 17, 5, 1, C.yellow),
+    r(16, 16, 7, 5, C.black),       // right head
+    r(17, 17, 5, 3, C.orange),
+    r(17, 17, 5, 1, C.yellow),
+  ]);
+}
+
 function fileTile(body: string, bodyShadow: string, emblem: El): El {
   return svg(16, 16, [
     r(3, 15, 11, 1, C.black), r(13, 2, 1, 13, C.black),
@@ -604,37 +644,4 @@ export function DepthGlyph() {
     r(5, 6, 7, 6, C.black),
     r(6, 7, 5, 4, C.white),
   ]);
-}
-
-export function Pointer({ x, y }: { x: number; y: number }) {
-  const blackRects = (
-    [
-      [2, 2], [2, 4], [2, 6], [2, 8], [2, 10], [2, 12],
-      [2, 14], [2, 16], [2, 18], [2, 20],
-      [4, 4], [4, 20], [6, 6], [6, 16], [6, 18],
-      [8, 8], [8, 14], [8, 20],
-      [10, 10], [10, 14], [10, 22],
-      [12, 12], [12, 16], [12, 22],
-      [14, 14], [14, 18], [14, 24],
-      [16, 16], [16, 24],
-    ] as [number, number][]
-  ).map(([a, b]) => r(a, b, 2, 2, C.black));
-  const orangeR = (
-    [
-      [4, 6, 2, 14], [6, 8, 2, 8], [8, 10, 2, 4], [10, 12, 2, 2],
-      [8, 16, 2, 4], [10, 16, 2, 6], [12, 18, 2, 4], [14, 20, 2, 4],
-    ] as [number, number, number, number][]
-  ).map(([a, b, c, d]) => r(a, b, c, d, C.orange));
-  const whiteR = (
-    [[4, 6], [4, 8], [6, 10]] as [number, number][]
-  ).map(([a, b]) => r(a, b, 2, 2, C.white));
-  return createElement(
-    "svg",
-    {
-      className: "pointer",
-      style: { left: x, top: y },
-      width: 22, height: 28, viewBox: "0 0 22 28", shapeRendering: "crispEdges", "aria-hidden": true,
-    },
-    [...blackRects, ...orangeR, ...whiteR],
-  );
 }
