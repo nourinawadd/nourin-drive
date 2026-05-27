@@ -11,6 +11,7 @@ import {
   IconFloppyPhoto,
   IconFloppyNotepad,
   IconFloppyQuill,
+  IconFloppyMusic,
   IconTrashcan,
 } from "@/components/os/icons";
 
@@ -21,6 +22,7 @@ const DRIVES: { id: string; label: string; appId: AppId; Icon: ComponentType }[]
   { id: "photos",    label: "Photos:",    appId: "gallery",   Icon: IconFloppyPhoto },
   { id: "blog",      label: "Blog:",      appId: "blog",      Icon: IconFloppyNotepad },
   { id: "guestbook", label: "Guestbook:", appId: "guestbook", Icon: IconFloppyQuill },
+  { id: "music",     label: "Music:",     appId: "music",     Icon: IconFloppyMusic },
   { id: "trash",     label: "Trash:",     appId: "recycle",   Icon: IconTrashcan },
 ];
 
@@ -52,6 +54,13 @@ export function DriveColumn() {
 
   // Snap the column to the real right edge once we know the viewport width.
   useEffect(() => setPos(rightColumn(window.innerWidth)), []);
+
+  // "Clean Up" from the Icons menu re-snaps every icon to the right column.
+  useEffect(() => {
+    const onCleanup = () => setPos(rightColumn(window.innerWidth));
+    window.addEventListener("wb:cleanup-icons", onCleanup);
+    return () => window.removeEventListener("wb:cleanup-icons", onCleanup);
+  }, []);
 
   function startDrag(e: ReactMouseEvent, id: string) {
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
