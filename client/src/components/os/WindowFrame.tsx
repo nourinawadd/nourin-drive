@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useWindowStore } from "@/context/windowStore";
 import { APP_REGISTRY } from "@/data/appRegistry";
 import type { WindowInstance } from "@/types/window";
+import { CloseGlyph, MinGlyph, DepthGlyph } from "@/components/os/icons";
 
 const MENUBAR_H = 18;
 
@@ -80,7 +81,7 @@ export function WindowFrame({ win, children }: Props) {
               minimize(win.id);
             }}
           >
-            <MinimizeGlyph />
+            <MinGlyph />
           </div>
           <div
             className="wb-gadget is-right"
@@ -102,28 +103,3 @@ export function WindowFrame({ win, children }: Props) {
   );
 }
 
-function CloseGlyph() {
-  return (
-    <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden>
-      <rect x="2" y="2" width="6" height="6" fill="none" stroke="black" strokeWidth="1" />
-      <rect x="4" y="4" width="2" height="2" fill="black" />
-    </svg>
-  );
-}
-
-function DepthGlyph() {
-  return (
-    <svg width="12" height="10" viewBox="0 0 12 10" aria-hidden>
-      <rect x="1" y="3" width="7" height="6" fill="white" stroke="black" strokeWidth="1" />
-      <rect x="4" y="1" width="7" height="6" fill="white" stroke="black" strokeWidth="1" />
-    </svg>
-  );
-}
-
-function MinimizeGlyph() {
-  return (
-    <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden>
-      <rect x="1" y="6" width="8" height="2" fill="black" />
-    </svg>
-  );
-}

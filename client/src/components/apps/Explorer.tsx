@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CATEGORIES, PROJECTS, type Project, type ProjectCategory } from "@/data/projects";
 import { useWindowStore } from "@/context/windowStore";
+import { MiniFolder, FileIcon } from "@/components/os/icons";
 
 export function Explorer() {
   const [active, setActive] = useState<ProjectCategory>("websites");
@@ -49,7 +50,7 @@ export function Explorer() {
               background: active === c.id ? "var(--wb-orange)" : "transparent",
             }}
           >
-            <FolderGlyph />
+            <MiniFolder highlight={active === c.id} />
             {c.label}
           </button>
         ))}
@@ -77,7 +78,7 @@ export function Explorer() {
               }}
             >
               <span style={{ flex: 2, display: "flex", alignItems: "center", gap: 6 }}>
-                <FileGlyph kind={p.category} />
+                <FileIcon category={p.category} />
                 {p.name}
               </span>
               <span style={{ flex: 3, opacity: 0.8, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -95,27 +96,6 @@ export function Explorer() {
         </div>
       </section>
     </div>
-  );
-}
-
-function FolderGlyph() {
-  return (
-    <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden>
-      <path d="M0 1 H5 L6 2 H14 V10 H0 Z" fill="var(--wb-orange)" stroke="black" strokeWidth="1" />
-    </svg>
-  );
-}
-
-function FileGlyph({ kind }: { kind: ProjectCategory }) {
-  const color: Record<ProjectCategory, string> = {
-    websites: "#37a", apis: "#2a7", games: "#c33",
-    designs: "#a3a", photos: "#e80", blog: "#888",
-  };
-  return (
-    <svg width="10" height="12" viewBox="0 0 10 12" aria-hidden>
-      <path d="M0 0 H7 L10 3 V12 H0 Z" fill={color[kind]} stroke="black" strokeWidth="1" />
-      <path d="M7 0 V3 H10" fill="none" stroke="black" strokeWidth="1" />
-    </svg>
   );
 }
 
