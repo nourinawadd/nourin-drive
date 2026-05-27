@@ -53,6 +53,17 @@ body {
   image-rendering: pixelated;
 }
 
+/* ------- custom pointer --------------------------------------------- */
+/* Hide the OS cursor everywhere on the desktop; CursorLayer draws the
+   chunky orange Workbench arrow in its place. */
+.wb-desktop-bg,
+.wb-desktop-bg * { cursor: none; }
+.pointer {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10001;   /* above menubar (1000) and boot screen (9999) */
+}
+
 /* ------- top menubar ------------------------------------------------- */
 .wb-menubar {
   position: fixed; top: 0; left: 0; right: 0;
@@ -156,35 +167,31 @@ body {
   color: var(--wb-black);
 }
 
-/* ------- drive icon (right column) ---------------------------------- */
+/* ------- drive icons (free-floating on the desktop) ----------------- */
+/* Each volume is absolutely positioned (left/top set inline by the
+   component) so dragging one never disturbs the others. */
 .wb-drive {
-  width: 88px;
+  position: fixed;
+  z-index: 1;
+  width: 104px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   cursor: pointer;
   user-select: none;
 }
 .wb-drive .wb-drive-icon {
-  width: 56px; height: 40px;
-  background: var(--wb-gray);
-  border: 1px solid var(--wb-black);
-  box-shadow:
-    inset 1px 1px 0 var(--wb-white),
-    inset -1px -1px 0 var(--wb-gray-2);
-  position: relative;
+  width: 84px; height: 60px;   /* 1.5× the 56×40 source, stays crisp */
+  display: grid;
+  place-items: center;
 }
-.wb-drive .wb-drive-icon::after {
-  /* eject slot */
-  content: "";
-  position: absolute;
-  left: 8px; right: 8px; bottom: 6px;
-  height: 4px;
-  background: var(--wb-black);
+.wb-drive .wb-drive-icon svg {
+  width: 100%; height: 100%;
+  display: block;
 }
 .wb-drive .wb-drive-label {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--wb-white);
   background: var(--wb-black);
   padding: 1px 6px;
