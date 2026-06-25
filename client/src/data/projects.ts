@@ -1,5 +1,11 @@
-// Single source of truth for content shown in Explorer / Gallery / Games.
-// Replace placeholder URLs with real ones as projects ship.
+// Types + category list for content shown in Explorer / Games.
+//
+// You don't edit the PROJECTS list by hand. Add a project with `npm run add`
+// (or drop a file in content/projects/*.md) and it's generated automatically
+// (see scripts/gen-projects.mjs, which runs on `npm run dev` / `npm run build`,
+// or run `npm run projects` to refresh without restarting).
+
+import { GENERATED_PROJECTS } from "./projects.generated";
 
 export type ProjectCategory =
   | "websites"
@@ -28,32 +34,4 @@ export const CATEGORIES: { id: ProjectCategory; label: string }[] = [
   { id: "blog",     label: "Blog" },
 ];
 
-export const PROJECTS: Project[] = [
-  // websites
-  { id: "w1", category: "websites", name: "Portfolio (this site)", url: "https://nourin.is-a.dev", blurb: "the desktop you're looking at", date: "2026-05" },
-  { id: "w2", category: "websites", name: "Project Alpha",         url: "https://example.com",     blurb: "placeholder — swap me",  date: "2025-12" },
-  { id: "w3", category: "websites", name: "Project Beta",          url: "https://example.com",     blurb: "placeholder — swap me",  date: "2025-09" },
-
-  // apis
-  { id: "a1", category: "apis", name: "Guestbook API", blurb: "express + mongo, in section 6", date: "2026-05" },
-  { id: "a2", category: "apis", name: "Blog API",      blurb: "express + mongo, in section 6", date: "2026-05" },
-
-  // games (open in new tab)
-  { id: "g1", category: "games", name: "Game One",  url: "https://example.com", blurb: "placeholder", date: "2025-08" },
-  { id: "g2", category: "games", name: "Game Two",  url: "https://example.com", blurb: "placeholder", date: "2025-06" },
-
-  // designs (placeholder gradients; replace thumb with /designs/x.png later)
-  { id: "d1", category: "designs", name: "Poster Series",   blurb: "screenprint, 2024" },
-  { id: "d2", category: "designs", name: "Album Sleeve",    blurb: "vinyl, 2024" },
-  { id: "d3", category: "designs", name: "Magazine Spread", blurb: "editorial, 2023" },
-  { id: "d4", category: "designs", name: "Brand Mark",      blurb: "identity, 2023" },
-  { id: "d5", category: "designs", name: "Zine",            blurb: "self-published, 2022" },
-  { id: "d6", category: "designs", name: "Sticker Pack",    blurb: "for fun, 2022" },
-
-  // photos
-  { id: "p1", category: "photos", name: "@diarydump.jpg", url: "https://instagram.com/diarydump.jpg", blurb: "instagram feed" },
-
-  // blog
-  { id: "b1", category: "blog", name: "First post",   blurb: "in section 6" },
-  { id: "b2", category: "blog", name: "Second post",  blurb: "in section 6" },
-];
+export const PROJECTS: Project[] = GENERATED_PROJECTS;
