@@ -1,10 +1,21 @@
-// Edit this file to update the About Me window. No component changes needed.
+// Edit this file to update the top of the About Me window — profile, links,
+// bio, and skills. No component changes needed.
 //
-// Exception: the "Software Projects" and "Game Projects" sections come from
-// content/projects/*.md (add them with `npm run add`) — see CV_PROJECTS /
-// CV_GAMES below. Everything else here is hand-edited.
+// Exception: every list section below (education, experience, projects, games,
+// extracurriculars, certifications, languages) is generated from content files
+// via `npm run add` — see the CV_* imports. Edit those by adding/editing
+// content/projects/*.md (projects/games) or content/cv/*.md (everything else),
+// not by hand here.
 
-import { CV_PROJECTS, CV_GAMES } from "./cv.generated";
+import {
+  CV_PROJECTS,
+  CV_GAMES,
+  CV_EXPERIENCE,
+  CV_EDUCATION,
+  CV_EXTRACURRICULARS,
+  CV_CERTIFICATIONS,
+  CV_LANGUAGES,
+} from "./cv.generated";
 
 export type AboutLink = { label: string; url: string };
 export type Entry = {
@@ -60,92 +71,11 @@ export const ABOUT: About = {
     { label: "Game Development", items: ["Godot (GDScript, C#)", "Unity", "Gameplay systems", "AI behavior", "Physics", "Level & narrative design", "Object pooling"] },
     { label: "Graphic Design", items: ["Illustration", "Branding", "Typography", "Color theory", "Photo manipulation", "Adobe Suite", "Figma"] },
   ],
-  education: [
-    {
-      title: "Mansoura University",
-      subtitle: "B.Eng. — Communications and Computer Engineering",
-      meta: "Mansoura, Egypt · Sep 2022 – Present",
-      bullets: [
-        "GPA: 3.95 / 4.0",
-        "Coursework: Data Structures, Operating Systems, Distributed Systems, Artificial Intelligence, Calculus",
-      ],
-    },
-    {
-      title: "Mansoura College International Schools",
-      subtitle: "IGCSE — 99%",
-      meta: "Mansoura, Egypt · Sep 2020 – Sep 2022",
-    },
-  ],
-  experience: [
-    {
-      title: "National Telecommunications Institute (NTI)",
-      subtitle: "MEAN Stack Intern",
-      meta: "Mansoura, Egypt · Jun – Jul 2025",
-      bullets: [
-        "Built RESTful APIs with JWT auth and MongoDB CRUD via Mongoose.",
-        "Developed Angular SPAs with routing, reactive forms, observables, and state management.",
-        "Applied UI/UX practices, API security, testing, and performance optimization.",
-      ],
-    },
-    {
-      title: "Information Technology Institute (ITI)",
-      subtitle: ".NET Full Stack Intern",
-      meta: "Mansoura, Egypt · Jul – Aug 2025",
-      bullets: [
-        "Designed relational schemas in SQL Server with optimized stored procedures and multi-table joins.",
-        "Built OOP and ASP.NET MVC apps in C# with Razor views, controllers, and routing.",
-        "Implemented Entity Framework (LINQ, migrations, CRUD) for database integration.",
-      ],
-    },
-    {
-      title: "Nile University",
-      subtitle: "Blockchain Alternatives Research Intern",
-      meta: "Cairo, Egypt · Aug – Sep 2025",
-      bullets: [
-        "Researched blockchain scalability and alternatives: Lightning Network, sharding, DAGs, sidechains, layer-two protocols.",
-      ],
-    },
-  ],
+  education: CV_EDUCATION,
+  experience: CV_EXPERIENCE,
   projects: CV_PROJECTS,
   games: CV_GAMES,
-  extracurriculars: [
-    {
-      title: "IEEE Mansoura Student Branch — Victoris 3.0",
-      subtitle: "Technical Director",
-      meta: "Jun – Sep 2024",
-      bullets: [
-        "Led technical planning and execution for a national event with 880+ participants and 200+ teams across 4 tracks (IoT, CTF, Software, Micromouse).",
-        "Managed online/offline phases, coordinated with teams and mentors, ensured smooth technical operations.",
-      ],
-    },
-    {
-      title: "IEEE Mansoura Computer Society Chapter",
-      subtitle: "Backend Committee Member",
-      meta: "Dec 2024 – Present",
-      bullets: [
-        "Built backend components of a MERN-stack application: RESTful APIs, database management, and server-side logic.",
-      ],
-    },
-    {
-      title: "CATReloaded",
-      subtitle: "Game Developer",
-      meta: "Dec 2024 – Present",
-      bullets: [
-        "Applied Unity fundamentals (2D/3D, mechanics, physics, UI) and game design principles.",
-        "Collaborated in 48-hour game jams, designing assets and building prototypes in Unity/Godot.",
-      ],
-    },
-  ],
-  certifications: [
-    "Backend Development and APIs — freeCodeCamp",
-    "Relational Database — freeCodeCamp",
-    "Foundational C# with Microsoft — freeCodeCamp",
-    "Project Management Foundations — LinkedIn",
-    "Time Management Fundamentals — LinkedIn",
-    "Python Programming — MaharaTech",
-  ],
-  languages: [
-    "English — Full Professional Proficiency",
-    "Arabic — Native",
-  ],
+  extracurriculars: CV_EXTRACURRICULARS,
+  certifications: CV_CERTIFICATIONS,
+  languages: CV_LANGUAGES,
 };

@@ -7,6 +7,7 @@ import { Browser } from "@/components/apps/Browser";
 import { EasterEgg } from "@/components/apps/EasterEgg";
 import { Explorer } from "@/components/apps/Explorer";
 import { Gallery } from "@/components/apps/Gallery";
+import { GamePlayer } from "@/components/apps/GamePlayer";
 import { Games } from "@/components/apps/Games";
 import { Guestbook } from "@/components/apps/Guestbook";
 import { Music } from "@/components/apps/Music";
@@ -24,6 +25,7 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "easter-egg":  return <EasterEgg />;
     case "explorer":    return <Explorer />;
     case "gallery":     return <Gallery payload={win.payload} />;
+    case "game":        return <GamePlayer payload={win.payload} />;
     case "games":       return <Games />;
     case "guestbook":   return <Guestbook />;
     case "music":       return <Music winId={win.id} />;

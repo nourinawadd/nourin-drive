@@ -6,6 +6,7 @@ export type AppId =
   | "easter-egg"
   | "explorer"
   | "gallery"
+  | "game"
   | "games"
   | "guestbook"
   | "music"

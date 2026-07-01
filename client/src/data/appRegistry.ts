@@ -45,6 +45,13 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     defaultX: 130, defaultY: 70,
     singleton: true,
   },
+  game: {
+    appId: "game", title: "Game",
+    defaultWidth: 800, defaultHeight: 600,
+    defaultX: 100, defaultY: 40,
+    minWidth: 320, minHeight: 240,
+    singleton: false,
+  },
   games: {
     appId: "games", title: "Games",
     defaultWidth: 520, defaultHeight: 380,

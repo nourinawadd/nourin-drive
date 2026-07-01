@@ -4,6 +4,7 @@
 import type { Project } from "./projects";
 
 export const GENERATED_PROJECTS: Project[] = [
+  { id: "anchor", name: "Anchor", category: "websites", blurb: "A focus app that blocks distracting apps and uses a physical NFC tap to prove you actually showed up — with streaks, goals, and AI insights.", url: "https://anchor-iesq.onrender.com/", date: "2026-06" },
   { id: "portfolio-this-site", name: "Portfolio (this site)", category: "websites", blurb: "The Amiga-Workbench desktop you're looking at right now.", url: "https://nourin.is-a.dev", date: "2026-05" },
   { id: "tether-note", name: "Tether Note", category: "websites", blurb: "Time-delayed note delivery — send messages to your future self at custom intervals.", url: "https://tethernote.vercel.app/", date: "2025-11" },
   { id: "ssh-portfolio", name: "SSH Portfolio", category: "websites", blurb: "Fully interactive TUI portfolio served over SSH (Go + the Charmbracelet stack).", url: "https://nourin.is-a.dev", date: "2025-10" },

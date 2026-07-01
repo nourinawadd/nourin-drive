@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CATEGORIES, PROJECTS, type Project, type ProjectCategory } from "@/data/projects";
+import { LOCAL_GAMES } from "@/data/games.generated";
 import { PHOTOS } from "@/data/gallery";
 import { useWindowStore } from "@/context/windowStore";
 import { MiniFolder, FileIcon } from "@/components/os/icons";
@@ -44,7 +45,12 @@ export function Explorer() {
       case "websites":
         if (p.url) openApp("browser", { payload: { initialUrl: p.url } });
         break;
-      case "games":
+      case "games": {
+        const build = LOCAL_GAMES[p.id];
+        if (build) openApp("game", { payload: { src: build.src, name: p.name }, title: p.name });
+        else if (p.url) window.open(p.url, "_blank", "noopener,noreferrer");
+        break;
+      }
       case "photos":
         if (p.url) window.open(p.url, "_blank", "noopener,noreferrer");
         break;

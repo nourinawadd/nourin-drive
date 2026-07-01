@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "gen": "node scripts/gen-tracks.mjs && node scripts/gen-gallery.mjs && node scripts/gen-projects.mjs",
+    "gen": "node scripts/gen-tracks.mjs && node scripts/gen-gallery.mjs && node scripts/gen-projects.mjs && node scripts/gen-games.mjs",
     "predev": "npm run gen",
     "dev": "next dev -p 3000",
     "prebuild": "npm run gen",
@@ -12,6 +12,7 @@
     "tracks": "node scripts/gen-tracks.mjs",
     "gallery": "node scripts/gen-gallery.mjs",
     "projects": "node scripts/gen-projects.mjs",
+    "games": "node scripts/gen-games.mjs",
     "add": "node scripts/add-project.mjs",
     "lint": "next lint"
   },
