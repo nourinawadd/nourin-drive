@@ -1,13 +1,15 @@
-// Scans client/content/projects/*.md (one file per structured project) and
-// (re)writes two data files:
+// Scans two content folders and (re)writes two data files:
+//   client/content/projects/*.md → one file per structured project
+//   client/content/cv/*.md       → one file per other CV entry
+// into:
 //   src/data/projects.generated.ts  → website sections (Explorer volumes, Games)
-//   src/data/cv.generated.ts        → About/CV window (Software + Game Projects)
+//   src/data/cv.generated.ts        → About/CV window (every section but skills/bio)
 //
 // Runs automatically before `npm run dev` / `npm run build` (via the client
 // `gen` script) and is called by the `npm run add` wizard, so you never edit the
 // generated files by hand — add/edit a content file and it propagates.
 //
-// File format (frontmatter + body):
+// content/projects/*.md (frontmatter + body):
 //   ---
 //   type: website | api | game | software | blog
 //   name: My Project
@@ -22,12 +24,25 @@
 //   - CV bullet one
 //   - CV bullet two
 //
+// content/cv/*.md (CV-only sections):
+//   experience | education | extracurricular  → an Entry block. The body's first
+//     line is the subtitle (role / degree); `meta` is the free-text "place ·
+//     dates" line; `- ` lines are bullets; `url` is optional.
+//   certification → renders as "name — issuer".  language → "name — level".
+//   `order: N` pins position within a section (lower first); otherwise `date`
+//   (newest first) then name decide.
+//
 // type → where it appears:
-//   website  → Explorer "Websites"  + CV "Software Projects"
-//   api      → Explorer "APIs"       + CV "Software Projects"
-//   game     → Games app             + CV "Game Projects"
-//   software → (no section, CV only) + CV "Software Projects"
-//   blog     → Explorer "Blog"
+//   website        → Explorer "Websites"  + CV "Software Projects"
+//   api            → Explorer "APIs"       + CV "Software Projects"
+//   game           → Games app             + CV "Game Projects"
+//   software       → (no section, CV only) + CV "Software Projects"
+//   blog           → Explorer "Blog"
+//   experience     → CV "Experience"
+//   education      → CV "Education"
+//   extracurricular→ CV "Extracurriculars"
+//   certification  → CV "Certifications"
+//   language       → CV "Languages"
 
 import { readdirSync, writeFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join, dirname, parse } from "node:path";
@@ -35,11 +50,15 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const CONTENT_DIR = join(here, "..", "content", "projects");
+const CV_CONTENT_DIR = join(here, "..", "content", "cv");
 const PROJECTS_OUT = join(here, "..", "src", "data", "projects.generated.ts");
 const CV_OUT = join(here, "..", "src", "data", "cv.generated.ts");
 
 const TYPE_TO_CATEGORY = { website: "websites", api: "apis", game: "games", blog: "blog" };
 const CV_SOFTWARE_TYPES = new Set(["website", "api", "software"]);
+// content/cv/*.md types → which About section they feed.
+const CV_ENTRY_TYPES = { experience: "experience", education: "education", extracurricular: "extracurriculars" };
+const CV_STRING_TYPES = { certification: "certifications", language: "languages" };
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 function dateLabel(date) {
@@ -87,42 +106,67 @@ function parseFile(raw) {
   return { fm, blurb: blurbLines.join(" ") || undefined, bullets };
 }
 
-export function generate() {
-  if (!existsSync(CONTENT_DIR)) mkdirSync(CONTENT_DIR, { recursive: true });
+// Normalise one parsed file into a flat item the writers below understand.
+function buildItem(file, raw) {
+  const { fm, blurb, bullets } = parseFile(raw);
+  const order = fm.order != null && fm.order !== "" ? Number(fm.order) : undefined;
+  return {
+    id: parse(file).name,
+    type: fm.type ? String(fm.type) : undefined,
+    name: fm.name ? String(fm.name) : undefined,
+    date: fm.date ? String(fm.date) : undefined,
+    order: Number.isFinite(order) ? order : undefined,
+    url: fm.url ? String(fm.url) : undefined,
+    repo: fm.repo ? String(fm.repo) : undefined,
+    stack: fm.stack ? String(fm.stack) : undefined,
+    meta: fm.meta ? String(fm.meta) : undefined,
+    issuer: fm.issuer ? String(fm.issuer) : undefined, // certifications
+    level: fm.level ? String(fm.level) : undefined,    // languages
+    cv: fm.cv !== false, // default true
+    blurb,
+    bullets,
+  };
+}
 
-  const files = readdirSync(CONTENT_DIR).filter(
-    (f) => f.toLowerCase().endsWith(".md") && !f.startsWith("."),
-  );
-
+// Read every *.md in a content dir (skips dotfiles) into items, warning on any
+// that are missing the required type/name.
+function readItems(dir) {
+  if (!existsSync(dir)) return [];
   const items = [];
-  for (const file of files) {
-    const { fm, blurb, bullets } = parseFile(readFileSync(join(CONTENT_DIR, file), "utf8"));
-    if (!fm.type || !fm.name) {
+  for (const file of readdirSync(dir).filter((f) => f.toLowerCase().endsWith(".md") && !f.startsWith("."))) {
+    const it = buildItem(file, readFileSync(join(dir, file), "utf8"));
+    if (!it.type || !it.name) {
       console.warn(`[gen-projects] skipping ${file} (missing type or name)`);
       continue;
     }
-    items.push({
-      id: parse(file).name,
-      type: String(fm.type),
-      name: String(fm.name),
-      date: fm.date ? String(fm.date) : undefined,
-      url: fm.url ? String(fm.url) : undefined,
-      repo: fm.repo ? String(fm.repo) : undefined,
-      stack: fm.stack ? String(fm.stack) : undefined,
-      meta: fm.meta ? String(fm.meta) : undefined,
-      cv: fm.cv !== false, // default true
-      blurb,
-      bullets,
-    });
+    items.push(it);
   }
+  return items;
+}
 
-  // Newest first; undated items sink to the bottom.
-  items.sort((a, b) => {
-    if (a.date && b.date) return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
-    if (a.date) return -1;
-    if (b.date) return 1;
-    return a.name.localeCompare(b.name);
-  });
+// Ordering: an explicit `order` wins (lower first), then newest `date` first,
+// then name. Items with neither sink below ordered/dated ones.
+function byOrderThenDate(a, b) {
+  if (a.order != null && b.order != null) return a.order - b.order;
+  if (a.order != null) return -1;
+  if (b.order != null) return 1;
+  if (a.date && b.date) return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
+  if (a.date) return -1;
+  if (b.date) return 1;
+  return a.name.localeCompare(b.name);
+}
+
+export function generate() {
+  if (!existsSync(CONTENT_DIR)) mkdirSync(CONTENT_DIR, { recursive: true });
+
+  // content/projects/*.md → website sections + Software/Game projects on the CV.
+  const items = readItems(CONTENT_DIR);
+  items.sort(byOrderThenDate);
+
+  // content/cv/*.md → the hand-written-looking CV sections (experience,
+  // education, extracurriculars, certifications, languages).
+  const cvItems = readItems(CV_CONTENT_DIR);
+  cvItems.sort(byOrderThenDate);
 
   // --- projects.generated.ts (website sections) ---
   const sectionItems = items.filter((it) => TYPE_TO_CATEGORY[it.type]);
@@ -176,26 +220,42 @@ ${projectRows}
     .map(cvEntry)
     .join("\n");
 
+  // content/cv entries — for these the body's first line is the subtitle
+  // (role / degree) and `meta` carries the free-text location · dates line.
+  const entryArray = (section) =>
+    cvItems
+      .filter((it) => CV_ENTRY_TYPES[it.type] === section)
+      .map(cvEntry)
+      .join("\n");
+  // Certifications / languages render as plain strings ("Name — detail").
+  const stringArray = (section, detailKey) =>
+    cvItems
+      .filter((it) => CV_STRING_TYPES[it.type] === section)
+      .map((it) => JSON.stringify(it[detailKey] ? `${it.name} — ${it[detailKey]}` : it.name))
+      .map((s) => `  ${s},`)
+      .join("\n");
+
+  const block = (name, type, rows) => `export const ${name}: ${type} = [\n${rows}\n];\n`;
+
   writeFileSync(
     CV_OUT,
     `// AUTO-GENERATED by scripts/gen-projects.mjs — do not edit by hand.
-// Feeds the About/CV window (Software Projects + Game Projects). Edit the source
-// in content/projects/*.md (or run \`npm run add\`) instead.
+// Feeds the About/CV window. Edit the source in content/projects/*.md (Software /
+// Game projects) and content/cv/*.md (everything else), or run \`npm run add\`.
 import type { Entry } from "./about";
 
-export const CV_PROJECTS: Entry[] = [
-${cvProjects}
-];
-
-export const CV_GAMES: Entry[] = [
-${cvGames}
-];
-`,
+${block("CV_PROJECTS", "Entry[]", cvProjects)}
+${block("CV_GAMES", "Entry[]", cvGames)}
+${block("CV_EXPERIENCE", "Entry[]", entryArray("experience"))}
+${block("CV_EDUCATION", "Entry[]", entryArray("education"))}
+${block("CV_EXTRACURRICULARS", "Entry[]", entryArray("extracurriculars"))}
+${block("CV_CERTIFICATIONS", "string[]", stringArray("certifications", "issuer"))}
+${block("CV_LANGUAGES", "string[]", stringArray("languages", "level"))}`,
     "utf8",
   );
 
   console.log(
-    `[gen-projects] ${items.length} project(s) → ${sectionItems.length} section row(s), CV updated.`,
+    `[gen-projects] ${items.length} project(s) → ${sectionItems.length} section row(s), ${cvItems.length} CV entry/entries, CV updated.`,
   );
   return items.length;
 }
