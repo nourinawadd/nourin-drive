@@ -8,11 +8,13 @@
 //   "01 - Artist - Title.mp3"   → same, leading track number sets the order
 //   "Title.mp3"                 → artist "Unknown Artist", title "Title"
 // A cover image with the same base name (.jpg/.jpeg/.png/.webp/.gif) next to
-// the audio file is picked up automatically as the track art.
+// the audio file is picked up automatically as the track art. If no sidecar
+// image exists, the script will also read embedded cover art from the audio file.
 
 import { readdirSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname, parse } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseFile } from "music-metadata";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const MUSIC_DIR = join(here, "..", "public", "music");
@@ -26,13 +28,36 @@ if (!existsSync(MUSIC_DIR)) mkdirSync(MUSIC_DIR, { recursive: true });
 const entries = readdirSync(MUSIC_DIR);
 const images = new Set(entries.map((f) => f.toLowerCase()));
 
-function findArt(base) {
+async function readMetadata(file) {
+  try {
+    const metadata = await parseFile(join(MUSIC_DIR, file), { skipCovers: false });
+    const title = metadata.common.title ? String(metadata.common.title).trim() : undefined;
+    const artist = metadata.common.artist
+      ? Array.isArray(metadata.common.artist)
+        ? String(metadata.common.artist[0]).trim()
+        : String(metadata.common.artist).trim()
+      : undefined;
+    const picture = metadata.common.picture?.[0];
+    const art = picture?.data?.length
+      ? `data:${picture.format || "image/jpeg"};base64,${Buffer.from(picture.data).toString("base64")}`
+      : undefined;
+    return { title, artist, art };
+  } catch (error) {
+    console.warn(`[gen-tracks] could not read embedded metadata for ${file}: ${error.message}`);
+    return {};
+  }
+}
+
+function findArt(file, metadataArt) {
+  const base = parse(file).name;
+
   for (const ext of IMAGE_EXT) {
     const candidate = `${base}${ext}`;
     const match = entries.find((f) => f.toLowerCase() === candidate.toLowerCase());
     if (match) return `/music/${encodeURIComponent(match)}`;
   }
-  return undefined;
+
+  return metadataArt;
 }
 
 function parseName(filename) {
@@ -66,14 +91,19 @@ const audioFiles = entries
   .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
 
 const seen = new Set();
-const tracks = audioFiles.map((file, i) => {
+const tracks = [];
+for (const [i, file] of audioFiles.entries()) {
+  const metadata = await readMetadata(file);
+  const { artist: embeddedArtist, title: embeddedTitle, art: embeddedArt } = metadata;
   const { artist, title, order } = parseName(file);
-  let id = slug(`${artist}-${title}`);
+  const finalArtist = embeddedArtist || artist || "Unknown Artist";
+  const finalTitle = embeddedTitle || title;
+  let id = slug(`${finalArtist}-${finalTitle}`);
   if (seen.has(id)) id = `${id}-${i}`;
   seen.add(id);
-  const art = findArt(parse(file).name);
-  return { id, title, artist, src: `/music/${encodeURIComponent(file)}`, art, order };
-});
+  const art = findArt(file, embeddedArt);
+  tracks.push({ id, title: finalTitle, artist: finalArtist, src: `/music/${encodeURIComponent(file)}`, art, order });
+}
 
 // Order by leading track number when present, otherwise keep the sorted order.
 tracks.sort((a, b) => {
