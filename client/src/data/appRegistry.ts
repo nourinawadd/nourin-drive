@@ -41,8 +41,9 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
   },
   gallery: {
     appId: "gallery", title: "Graphic Design",
-    defaultWidth: 600, defaultHeight: 440,
+    defaultWidth: 640, defaultHeight: 500,
     defaultX: 130, defaultY: 70,
+    minWidth: 380, minHeight: 320,
     singleton: true,
   },
   game: {

@@ -28,7 +28,7 @@ export function Gallery({ payload }: { payload?: unknown }) {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  });
+  }, [lightbox, shown]);
 
   function step(id: string | null, delta: number): string | null {
     if (!id) return id;
@@ -53,7 +53,7 @@ export function Gallery({ payload }: { payload?: unknown }) {
   }
 
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column", gap: 6 }}>
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", gap: 6, position: "relative" }}>
       {/* category tabs */}
       <div style={tabs}>
         {categories.map((c) => (
@@ -80,7 +80,7 @@ export function Gallery({ payload }: { payload?: unknown }) {
         <div style={overlay} onClick={() => setLightbox(null)}>
           <div style={lightboxPanel} onClick={(e) => e.stopPropagation()}>
             <img src={focused.src} alt={focused.title} style={lightboxImg} />
-            <div style={{ marginTop: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ marginTop: 8, flexShrink: 0, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <strong>{focused.title}</strong>
                 <div style={{ fontSize: 12, opacity: 0.7 }}>
@@ -126,6 +126,8 @@ const grid: React.CSSProperties = {
   padding: 4,
   overflow: "auto",
   flex: 1,
+  minHeight: 0,        // let the grid scroll internally instead of growing the body
+  alignContent: "start", // keep rows their natural height at the top (no vertical stretch)
 };
 const tile: React.CSSProperties = {
   display: "flex",
@@ -161,8 +163,9 @@ const overlay: React.CSSProperties = {
   zIndex: 5,
 };
 const lightboxPanel: React.CSSProperties = {
-  width: "min(460px, 92%)",
-  maxHeight: "90%",
+  width: "min(460px, 100%)",
+  maxHeight: "100%",     // never taller than the window body (overlay is body-sized now)
+  minHeight: 0,
   background: "var(--wb-white)",
   border: "2px solid var(--wb-black)",
   padding: 8,
@@ -172,8 +175,9 @@ const lightboxPanel: React.CSSProperties = {
 };
 const lightboxImg: React.CSSProperties = {
   width: "100%",
-  maxHeight: "70vh",
-  objectFit: "contain",
+  flex: "1 1 auto",      // fill the space left by the caption row, shrink to fit
+  minHeight: 0,          // required so object-fit can scale down inside the flex column
+  objectFit: "contain",  // show the whole image, whatever its size/aspect ratio
   border: "1px solid var(--wb-black)",
   background: "var(--wb-black)",
 };
