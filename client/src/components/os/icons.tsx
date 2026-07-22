@@ -106,6 +106,30 @@ export function IconFloppySystem() {
   return svg(56, 40, shell(C.steel, ill));
 }
 
+export function IconFloppyUser() {
+  const ill = g(
+    // ── head ──
+    r(25, 12, 6, 6, C.blue),
+    r(26, 11, 4, 1, C.blue),          // rounded crown
+    r(26, 18, 4, 1, C.blue),          // rounded chin
+    r(25, 12, 6, 1, C.blue3),         // highlight
+    r(26, 10, 4, 1, C.black),         // top outline
+    r(24, 11, 1, 8, C.black),         // left outline
+    r(31, 11, 1, 8, C.black),         // right outline
+    r(26, 19, 4, 1, C.black),         // chin outline
+    // ── shoulders / bust ──
+    r(20, 22, 16, 7, C.blue),
+    r(22, 21, 12, 1, C.blue),         // rounded shoulder top
+    r(20, 22, 16, 1, C.blue3),        // highlight
+    r(22, 20, 12, 1, C.black),        // top outline
+    r(20, 21, 2, 1, C.black),
+    r(34, 21, 2, 1, C.black),
+    r(19, 22, 1, 7, C.black),         // left outline
+    r(36, 22, 1, 7, C.black),         // right outline
+  );
+  return svg(56, 40, shell(C.steel, ill));
+}
+
 export function IconDrawer() {
   return svg(56, 40, [
     r(4, 38, 50, 1, C.black), r(53, 3, 1, 36, C.black),

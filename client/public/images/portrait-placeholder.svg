@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 152" width="128" height="152" shape-rendering="crispEdges" role="img" aria-label="Portrait placeholder">
+  <!-- frame -->
+  <rect x="0" y="0" width="128" height="152" fill="#000000"/>
+  <rect x="2" y="2" width="124" height="148" fill="#aaaaaa"/>
+  <!-- inset bevel -->
+  <rect x="2" y="2" width="124" height="2" fill="#ffffff"/>
+  <rect x="2" y="2" width="2" height="148" fill="#ffffff"/>
+  <rect x="2" y="148" width="124" height="2" fill="#555555"/>
+  <rect x="124" y="2" width="2" height="148" fill="#555555"/>
+  <!-- backdrop panel -->
+  <rect x="10" y="10" width="108" height="106" fill="#888888"/>
+  <rect x="10" y="10" width="108" height="2" fill="#555555"/>
+  <rect x="10" y="10" width="2" height="106" fill="#555555"/>
+  <!-- bust silhouette -->
+  <rect x="50" y="30" width="28" height="30" fill="#3b67a4"/>
+  <rect x="46" y="36" width="4" height="18" fill="#3b67a4"/>
+  <rect x="78" y="36" width="4" height="18" fill="#3b67a4"/>
+  <rect x="54" y="26" width="20" height="4" fill="#3b67a4"/>
+  <rect x="58" y="58" width="12" height="8" fill="#3b67a4"/>
+  <rect x="30" y="86" width="68" height="30" fill="#3b67a4"/>
+  <rect x="40" y="76" width="48" height="10" fill="#3b67a4"/>
+  <rect x="48" y="66" width="32" height="10" fill="#3b67a4"/>
+  <!-- highlights -->
+  <rect x="50" y="30" width="28" height="3" fill="#2266bb"/>
+  <rect x="30" y="86" width="68" height="3" fill="#2266bb"/>
+  <!-- label band -->
+  <rect x="10" y="120" width="108" height="22" fill="#000000"/>
+  <text x="64" y="135" fill="#ffffff" font-family="'Lucida Console','Andale Mono',monospace" font-size="12" letter-spacing="3" text-anchor="middle">PORTRAIT</text>
+</svg>

@@ -12,6 +12,7 @@ import { Games } from "@/components/apps/Games";
 import { Guestbook } from "@/components/apps/Guestbook";
 import { Music } from "@/components/apps/Music";
 import { Notepad } from "@/components/apps/Notepad";
+import { Profile } from "@/components/apps/Profile";
 import { RecycleBin } from "@/components/apps/RecycleBin";
 import type { WindowInstance } from "@/types/window";
 
@@ -30,6 +31,7 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "guestbook":   return <Guestbook />;
     case "music":       return <Music winId={win.id} />;
     case "notepad":     return <Notepad payload={win.payload} />;
+    case "profile":     return <Profile />;
     case "recycle":     return <RecycleBin />;
     default:            return null;
   }

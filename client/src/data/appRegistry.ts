@@ -78,6 +78,13 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     defaultX: 180, defaultY: 120,
     singleton: false,
   },
+  profile: {
+    appId: "profile", title: "User Profile",
+    defaultWidth: 720, defaultHeight: 560,
+    defaultX: 96, defaultY: 46,
+    minWidth: 480, minHeight: 400,
+    singleton: true,
+  },
   recycle: {
     appId: "recycle", title: "Recycle Bin",
     defaultWidth: 460, defaultHeight: 320,

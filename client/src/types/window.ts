@@ -11,6 +11,7 @@ export type AppId =
   | "guestbook"
   | "music"
   | "notepad"
+  | "profile"
   | "recycle";
 
 export type WindowInstance = {

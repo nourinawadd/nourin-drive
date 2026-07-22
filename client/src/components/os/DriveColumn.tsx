@@ -5,7 +5,7 @@ import type { ComponentType, MouseEvent as ReactMouseEvent } from "react";
 import { useWindowStore } from "@/context/windowStore";
 import type { AppId } from "@/types/window";
 import {
-  IconFloppySystem,
+  IconFloppyUser,
   IconDrawer,
   IconFloppyJoystick,
   IconFloppyPhoto,
@@ -16,7 +16,7 @@ import {
 } from "@/components/os/icons";
 
 const DRIVES: { id: string; label: string; appId: AppId; Icon: ComponentType }[] = [
-  { id: "work",      label: "Work:",      appId: "about",     Icon: IconFloppySystem },
+  { id: "work",      label: "User:",      appId: "profile",   Icon: IconFloppyUser },
   { id: "projects",  label: "Projects:",  appId: "explorer",  Icon: IconDrawer },
   { id: "games",     label: "Games:",     appId: "games",     Icon: IconFloppyJoystick },
   { id: "photos",    label: "Photos:",    appId: "gallery",   Icon: IconFloppyPhoto },
