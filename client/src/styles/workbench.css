@@ -149,28 +149,37 @@ body {
   color: var(--wb-black);
 }
 
-/* Title gadgets (close, depth) — square, raised, with pixel glyph */
-.wb-gadget {
+/* Window controls — minimize / maximize / close. Windows behaviour, but the
+   look is native Workbench: square, raised grey gadgets with a pixel glyph. */
+.wb-winbtns {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  flex-shrink: 0;
+}
+.wb-winbtn {
   width: 22px;
   height: 100%;
+  padding: 0;
   display: grid;
   place-items: center;
-  border-right: 1px solid var(--wb-black);
+  color: var(--wb-black);
   background: var(--wb-gray);
+  border: none;
+  border-left: 1px solid var(--wb-black);   /* separator between gadgets */
+  border-radius: 0;
+  cursor: pointer;
   box-shadow:
     inset 1px 1px 0 var(--wb-white),
     inset -1px -1px 0 var(--wb-gray-2);
-  cursor: pointer;
 }
-.wb-gadget:active {
+.wb-winbtn svg { display: block; }
+.wb-winbtn:active {
   box-shadow:
     inset 1px 1px 0 var(--wb-gray-2),
     inset -1px -1px 0 var(--wb-white);
 }
-.wb-gadget.is-right {
-  border-right: none;
-  border-left: 1px solid var(--wb-black);
-}
+.wb-winbtn:focus-visible { outline: 1px solid var(--wb-orange); outline-offset: -2px; }
 
 .wb-title-text {
   flex: 1;

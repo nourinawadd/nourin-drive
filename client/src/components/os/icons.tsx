@@ -651,21 +651,41 @@ export function MiniFolder({ highlight }: { highlight?: boolean }) {
   return svg(14, 11, kids);
 }
 
-export function CloseGlyph() {
+// ── WINDOW-CONTROL GLYPHS (Amiga Workbench gadget style) ────────────────
+// Hard-edge pixel art in the same idiom as the rest of the icon set — black
+// ink on the raised grey gadget face. Behaviour is Windows (minimise /
+// maximise / close) but the look stays native Workbench.
+export function WinMinGlyph() {
+  // Minimise: a low bar.
+  return svg(14, 14, [r(3, 9, 8, 2, C.black)]);
+}
+export function WinMaxGlyph() {
+  // Maximise: the Amiga "zoom" gadget — a big window frame with a solid
+  // corner block.
+  return svg(14, 14, [
+    r(2, 2, 10, 1, C.black), r(2, 11, 10, 1, C.black),
+    r(2, 2, 1, 10, C.black), r(11, 2, 1, 10, C.black),
+    r(3, 3, 4, 4, C.black),
+  ]);
+}
+export function WinRestoreGlyph() {
+  // Restore: two overlapping windows — the front pane (grey fill) sits over
+  // the back frame so they read as stacked.
+  return svg(14, 14, [
+    // back frame (upper-right)
+    r(5, 2, 6, 1, C.black), r(5, 7, 6, 1, C.black),
+    r(5, 2, 1, 6, C.black), r(10, 2, 1, 6, C.black),
+    // front pane (lower-left): grey fill hides the overlap, then its outline
+    r(2, 5, 6, 6, C.gray),
+    r(2, 5, 6, 1, C.black), r(2, 10, 6, 1, C.black),
+    r(2, 5, 1, 6, C.black), r(7, 5, 1, 6, C.black),
+  ]);
+}
+export function WinCloseGlyph() {
+  // Close: the classic Workbench close gadget — square with an inset hole.
   return svg(14, 14, [
     r(2, 2, 10, 10, C.black),
     r(3, 3, 8, 8, C.white),
     r(5, 5, 4, 4, C.black),
-  ]);
-}
-export function MinGlyph() {
-  return svg(14, 14, [r(3, 9, 8, 2, C.black)]);
-}
-export function DepthGlyph() {
-  return svg(14, 14, [
-    r(3, 3, 7, 6, C.black),
-    r(4, 4, 5, 4, C.white),
-    r(5, 6, 7, 6, C.black),
-    r(6, 7, 5, 4, C.white),
   ]);
 }

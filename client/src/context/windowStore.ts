@@ -26,6 +26,7 @@ type Actions = {
   sendToBack: (id: string) => void;
   minimize: (id: string) => void;
   restore: (id: string) => void;
+  toggleMaximize: (id: string) => void;
 };
 
 let nextId = 1;
@@ -80,6 +81,7 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
       height: def.defaultHeight,
       z,
       minimized: false,
+      maximized: false,
       payload: opts?.payload,
     };
     set({
@@ -157,6 +159,23 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
       const z = s.zCounter + 1;
       return {
         windows: s.windows.map((w) => (w.id === id ? { ...w, minimized: false, z } : w)),
+        focusedId: id,
+        zCounter: z,
+      };
+    }),
+
+  // Windows-style maximize/restore. We only flip the flag: the frame keeps its
+  // stored x/y/w/h as the restore bounds and paints the maximized rect itself,
+  // so toggling back needs no saved geometry. Also focuses + brings to front.
+  toggleMaximize: (id) =>
+    set((s) => {
+      const win = s.windows.find((w) => w.id === id);
+      if (!win) return s;
+      const z = s.zCounter + 1;
+      return {
+        windows: s.windows.map((w) =>
+          w.id === id ? { ...w, maximized: !w.maximized, minimized: false, z } : w,
+        ),
         focusedId: id,
         zCounter: z,
       };
