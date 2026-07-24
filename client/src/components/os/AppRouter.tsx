@@ -30,7 +30,7 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "games":       return <Games />;
     case "guestbook":   return <Guestbook />;
     case "music":       return <Music winId={win.id} />;
-    case "notepad":     return <Notepad payload={win.payload} />;
+    case "notepad":     return <Notepad winId={win.id} payload={win.payload} />;
     case "profile":     return <Profile />;
     case "recycle":     return <RecycleBin />;
     default:            return null;
