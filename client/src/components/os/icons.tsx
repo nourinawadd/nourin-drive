@@ -329,6 +329,27 @@ export function IconFloppyMusic() {
   return svg(56, 40, shell(C.blue3, ill));
 }
 
+export function IconFloppyStickies() {
+  const ill = g(
+    r(17, 12, 22, 17, C.yellow),        // note paper
+    r(17, 12, 22, 1, C.white),          // top highlight
+    r(17, 12, 1, 17, C.white),          // left highlight
+    r(38, 12, 1, 17, C.orangeD),        // right shade
+    r(17, 28, 22, 1, C.orangeD),        // bottom shade
+    dither(18, 13, 20, 2, C.yellow, C.white),
+    // handwriting lines
+    r(20, 17, 16, 1, C.gray3),
+    r(20, 20, 16, 1, C.gray3),
+    r(20, 23, 16, 1, C.gray3),
+    r(20, 26, 10, 1, C.gray3),
+    // pin at the top — "stuck on"
+    r(26, 10, 4, 3, C.red),
+    r(26, 10, 4, 1, C.orange),
+    r(27, 10, 1, 3, C.redD),
+  );
+  return svg(56, 40, shell(C.orange, ill));
+}
+
 function wastebasket(): El[] {
   const ribs: El[] = [];
   for (const rx of [8, 12, 16, 20]) {

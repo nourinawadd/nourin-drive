@@ -1,7 +1,7 @@
 "use client";
 
 import { BootScreen } from "@/components/os/BootScreen";
-import { DesktopClippings } from "@/components/os/DesktopClippings";
+import { DesktopStickies } from "@/components/os/DesktopStickies";
 import { Dock } from "@/components/os/Dock";
 import { DriveColumn } from "@/components/os/DriveColumn";
 import { KonamiListener } from "@/components/os/KonamiListener";
@@ -20,7 +20,7 @@ export default function Home() {
     >
       <TopMenubar />
       <DriveColumn />
-      <DesktopClippings />
+      <DesktopStickies />
       <WindowLayer />
       <Taskbar />
       <Dock />

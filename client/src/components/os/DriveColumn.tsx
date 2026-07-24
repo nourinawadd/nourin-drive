@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ComponentType, MouseEvent as ReactMouseEvent } from "react";
 import { useWindowStore } from "@/context/windowStore";
+import { useStickyStore } from "@/context/stickyStore";
 import type { AppId } from "@/types/window";
 import {
   IconFloppyUser,
@@ -12,10 +13,13 @@ import {
   IconFloppyNotepad,
   IconFloppyQuill,
   IconFloppyMusic,
+  IconFloppyStickies,
   IconTrashcan,
 } from "@/components/os/icons";
 
-const DRIVES: { id: string; label: string; appId: AppId; Icon: ComponentType }[] = [
+// `appId` opens an app window; a drive without one (Notes) runs a custom
+// action on open instead — handled in the double-click below.
+const DRIVES: { id: string; label: string; appId?: AppId; Icon: ComponentType }[] = [
   { id: "work",      label: "User:",      appId: "profile",   Icon: IconFloppyUser },
   { id: "projects",  label: "Projects:",  appId: "explorer",  Icon: IconDrawer },
   { id: "games",     label: "Games:",     appId: "games",     Icon: IconFloppyJoystick },
@@ -23,6 +27,7 @@ const DRIVES: { id: string; label: string; appId: AppId; Icon: ComponentType }[]
   { id: "blog",      label: "Blog:",      appId: "blog",      Icon: IconFloppyNotepad },
   { id: "guestbook", label: "Guestbook:", appId: "guestbook", Icon: IconFloppyQuill },
   { id: "music",     label: "Music:",     appId: "music",     Icon: IconFloppyMusic },
+  { id: "stickies",  label: "Notes:",     Icon: IconFloppyStickies },
   { id: "trash",     label: "Trash:",     appId: "recycle",   Icon: IconTrashcan },
 ];
 
@@ -48,6 +53,7 @@ function rightColumn(viewportW: number): Record<string, Pos> {
 // the rest stay exactly where they are.
 export function DriveColumn() {
   const openApp = useWindowStore((s) => s.openApp);
+  const addSticky = useStickyStore((s) => s.add);
   const [selected, setSelected] = useState<string | null>(null);
   const [pos, setPos] = useState<Record<string, Pos>>(() => rightColumn(FALLBACK_W));
   const drag = useRef<{ id: string; dx: number; dy: number } | null>(null);
@@ -89,7 +95,7 @@ export function DriveColumn() {
           style={{ left: pos[d.id].x, top: pos[d.id].y }}
           onMouseDown={(e) => startDrag(e, d.id)}
           onClick={() => setSelected(d.id)}
-          onDoubleClick={() => openApp(d.appId)}
+          onDoubleClick={() => (d.appId ? openApp(d.appId) : addSticky())}
         >
           <div className="wb-drive-icon">
             <d.Icon />
