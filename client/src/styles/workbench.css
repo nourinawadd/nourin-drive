@@ -244,10 +244,12 @@ body {
   padding: 8px;
   background: var(--wb-gray);
   border: 2px solid var(--wb-black);
+  /* Hard pixel drop-shadow so it reads as floating over the window below. */
   box-shadow:
     inset 1px 1px 0 var(--wb-white),
-    inset -1px -1px 0 var(--wb-gray-2);
-  z-index: 1;
+    inset -1px -1px 0 var(--wb-gray-2),
+    4px 4px 0 rgba(0, 0, 0, 0.28);
+  z-index: 900;   /* floats above windows, stays below the menu bar (1000) */
 }
 .wb-dock-item {
   position: relative;

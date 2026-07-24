@@ -31,7 +31,7 @@ const wrap: React.CSSProperties = {
   gap: 8,
   flexWrap: "wrap",
   maxWidth: "55vw",
-  zIndex: 2,
+  zIndex: 900, // floats above windows (incl. a maximized one), below the menu bar
 };
 const chip: React.CSSProperties = {
   display: "flex",
@@ -45,7 +45,8 @@ const chip: React.CSSProperties = {
   color: "var(--wb-black)",
   background: "var(--wb-gray)",
   border: "2px solid var(--wb-black)",
-  boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-2)",
+  boxShadow:
+    "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-2), 4px 4px 0 rgba(0, 0, 0, 0.28)",
   cursor: "pointer",
 };
 const dot: React.CSSProperties = {
