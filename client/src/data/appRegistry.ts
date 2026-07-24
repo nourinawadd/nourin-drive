@@ -25,7 +25,7 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     appId: "browser", title: "Browser",
     defaultWidth: 720, defaultHeight: 460,
     defaultX: 100, defaultY: 60,
-    singleton: false,
+    singleton: true,
   },
   "easter-egg": {
     appId: "easter-egg", title: "???",

@@ -1,8 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-const HOME = "https://en.wikipedia.org/wiki/Amiga";
+import {
+  BROWSER_HOME,
+  newBrowserTab,
+  useWindowStore,
+  type BrowserPayload,
+  type BrowserTab,
+} from "@/context/windowStore";
 
 // Some sites refuse to embed (X-Frame-Options / frame-ancestors CSP).
 // We can't detect those reliably from JS, so we race the iframe's onLoad
@@ -28,6 +33,10 @@ const BOOKMARKS: Bookmark[] = [
   { label: "MF Website",      url: "https://motherfuckingwebsite.com",          group: "dev" },
 ];
 
+// Stable fallback so a browser window somehow opened without a normalized
+// payload still renders one home tab (openApp normally seeds tabs itself).
+const FALLBACK_TAB: BrowserTab = { id: "tab-0", url: BROWSER_HOME };
+
 function normalize(input: string): string {
   const trimmed = input.trim();
   if (!trimmed) return "";
@@ -35,37 +44,109 @@ function normalize(input: string): string {
   return `https://${trimmed}`;
 }
 
-type BrowserPayload = { initialUrl?: string };
+// Short label for a tab: the hostname, minus a leading www.
+function tabLabel(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url || "new tab";
+  }
+}
 
-export function Browser({ payload }: { payload?: unknown }) {
-  const start = (payload as BrowserPayload | undefined)?.initialUrl ?? HOME;
-  const [url, setUrl] = useState(start);     // committed URL (drives iframe)
-  const [input, setInput] = useState(start); // address-bar contents
-  const [status, setStatus] = useState<"loading" | "ok" | "blocked">("loading");
-  const timerRef = useRef<number | null>(null);
+export function Browser({ winId, payload }: { winId: string; payload?: unknown }) {
+  const patchPayload = useWindowStore((s) => s.patchPayload);
+  const closeWin = useWindowStore((s) => s.closeWin);
 
+  // Tabs live in the window's payload (in the store) so external opens can
+  // append a tab reactively. Guard against a window created without a payload.
+  const p = payload as BrowserPayload | undefined;
+  const tabs: BrowserTab[] = p?.tabs?.length ? p.tabs : [FALLBACK_TAB];
+  const activeId = p?.activeId ?? tabs[0].id;
+  const active = tabs.find((t) => t.id === activeId) ?? tabs[0];
+  const activeUrl = active.url;
+
+  const [input, setInput] = useState(activeUrl); // address-bar contents
+
+  // Keep the address bar in sync with the active tab's committed URL when you
+  // switch tabs or a navigation commits. Typing only changes local `input`
+  // (activeUrl unchanged), so it never clobbers mid-edit text.
+  useEffect(() => {
+    setInput(activeUrl);
+  }, [activeId, activeUrl]);
+
+  function setTabs(nextTabs: BrowserTab[], nextActive: string) {
+    patchPayload(winId, { tabs: nextTabs, activeId: nextActive });
+  }
+
+  // Navigate the active tab (address bar / bookmarks).
   function go(target: string) {
     const next = normalize(target);
     if (!next) return;
-    setUrl(next);
     setInput(next);
-    setStatus("loading");
+    setTabs(
+      tabs.map((t) => (t.id === active.id ? { ...t, url: next } : t)),
+      active.id,
+    );
   }
 
-  useEffect(() => {
-    if (status !== "loading") return;
-    const t = window.setTimeout(() => setStatus("blocked"), LOAD_TIMEOUT_MS);
-    timerRef.current = t;
-    return () => {
-      if (timerRef.current) window.clearTimeout(timerRef.current);
-    };
-  }, [url, status]);
+  function addTab() {
+    const tab = newBrowserTab(BROWSER_HOME);
+    setTabs([...tabs, tab], tab.id);
+  }
+
+  function selectTab(id: string) {
+    if (id !== activeId) patchPayload(winId, { activeId: id });
+  }
+
+  function closeTab(id: string) {
+    // Closing the last tab closes the whole browser window.
+    if (tabs.length <= 1) {
+      closeWin(winId);
+      return;
+    }
+    const idx = tabs.findIndex((t) => t.id === id);
+    const nextTabs = tabs.filter((t) => t.id !== id);
+    const nextActive =
+      id === activeId
+        ? (nextTabs[idx] ?? nextTabs[idx - 1] ?? nextTabs[0]).id
+        : activeId;
+    setTabs(nextTabs, nextActive);
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: 4 }}>
+      {/* tab strip */}
+      <div style={tabStrip}>
+        {tabs.map((t) => {
+          const on = t.id === activeId;
+          return (
+            <div
+              key={t.id}
+              onClick={() => selectTab(t.id)}
+              title={t.url}
+              style={{
+                ...tabChip,
+                background: on ? "var(--wb-orange)" : "var(--wb-white)",
+                fontWeight: on ? "bold" : "normal",
+              }}
+            >
+              <span style={tabText}>{tabLabel(t.url)}</span>
+              <button
+                onClick={(e) => { e.stopPropagation(); closeTab(t.id); }}
+                title="Close tab"
+                style={tabClose}
+              >
+                ✕
+              </button>
+            </div>
+          );
+        })}
+        <button onClick={addTab} title="New tab" style={newTabBtn}>+</button>
+      </div>
+
       {/* address bar */}
       <div style={{ display: "flex", gap: 4, alignItems: "stretch" }}>
-        <ChromeButton onClick={() => go(url)} title="Reload">⟳</ChromeButton>
+        <ChromeButton onClick={() => go(activeUrl)} title="Reload">⟳</ChromeButton>
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -93,31 +174,55 @@ export function Browser({ payload }: { payload?: unknown }) {
         ))}
       </div>
 
-      {/* viewport */}
+      {/* viewport — every tab stays mounted so switching keeps its page state */}
       <div style={viewportWrap}>
-        <iframe
-          key={url}
-          src={url}
-          title="Browser"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-          referrerPolicy="no-referrer"
-          onLoad={() => {
-            if (timerRef.current) {
-              window.clearTimeout(timerRef.current);
-              timerRef.current = null;
-            }
-            setStatus("ok");
-          }}
-          style={{
-            width: "100%",
-            height: "100%",
-            border: "1px solid var(--wb-black)",
-            background: "var(--wb-white)",
-          }}
-        />
-        {status === "blocked" && <BlockedPanel url={url} />}
-        {status === "loading" && <LoadingPanel />}
+        {tabs.map((t) => (
+          <TabFrame key={t.id} url={t.url} active={t.id === activeId} />
+        ))}
       </div>
+    </div>
+  );
+}
+
+// One iframe per tab. Kept mounted (hidden when inactive) so a tab preserves its
+// loaded page when you switch away and back. Owns its own load/blocked state.
+function TabFrame({ url, active }: { url: string; active: boolean }) {
+  const [status, setStatus] = useState<"loading" | "ok" | "blocked">("loading");
+  const timerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    setStatus("loading");
+    const t = window.setTimeout(() => setStatus("blocked"), LOAD_TIMEOUT_MS);
+    timerRef.current = t;
+    return () => {
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+    };
+  }, [url]);
+
+  return (
+    <div style={{ ...frameLayer, display: active ? "block" : "none" }}>
+      <iframe
+        key={url}
+        src={url}
+        title="Browser"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        referrerPolicy="no-referrer"
+        onLoad={() => {
+          if (timerRef.current) {
+            window.clearTimeout(timerRef.current);
+            timerRef.current = null;
+          }
+          setStatus("ok");
+        }}
+        style={{
+          width: "100%",
+          height: "100%",
+          border: "1px solid var(--wb-black)",
+          background: "var(--wb-white)",
+        }}
+      />
+      {active && status === "blocked" && <BlockedPanel url={url} />}
+      {active && status === "loading" && <LoadingPanel />}
     </div>
   );
 }
@@ -159,6 +264,58 @@ function LoadingPanel() {
     </div>
   );
 }
+
+const tabStrip: React.CSSProperties = {
+  display: "flex",
+  gap: 3,
+  alignItems: "stretch",
+  flexWrap: "wrap",
+  paddingBottom: 3,
+  borderBottom: "1px solid var(--wb-black)",
+};
+
+const tabChip: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 4,
+  maxWidth: 160,
+  padding: "1px 4px 1px 8px",
+  border: "1px solid var(--wb-black)",
+  borderBottom: "none",
+  cursor: "pointer",
+  fontFamily: "var(--wb-font)",
+  fontSize: 12,
+  color: "var(--wb-black)",
+};
+
+const tabText: React.CSSProperties = {
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+};
+
+const tabClose: React.CSSProperties = {
+  fontFamily: "var(--wb-font)",
+  fontSize: 11,
+  lineHeight: 1,
+  padding: "1px 3px",
+  background: "transparent",
+  border: "none",
+  cursor: "pointer",
+  color: "var(--wb-black)",
+};
+
+const newTabBtn: React.CSSProperties = {
+  fontFamily: "var(--wb-font)",
+  fontSize: 15,
+  lineHeight: 1,
+  padding: "0 8px",
+  background: "var(--wb-gray)",
+  border: "1px solid var(--wb-black)",
+  boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-2)",
+  cursor: "pointer",
+  color: "var(--wb-black)",
+};
 
 const addressStyle: React.CSSProperties = {
   flex: 1,
@@ -202,6 +359,11 @@ const viewportWrap: React.CSSProperties = {
   flex: 1,
   position: "relative",
   minHeight: 0,
+};
+
+const frameLayer: React.CSSProperties = {
+  position: "absolute",
+  inset: 0,
 };
 
 const overlay: React.CSSProperties = {

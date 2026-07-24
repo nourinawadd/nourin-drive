@@ -22,7 +22,7 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "about":       return <About />;
     case "apis":        return <APIStudio />;
     case "blog":        return <Blog />;
-    case "browser":     return <Browser payload={win.payload} />;
+    case "browser":     return <Browser winId={win.id} payload={win.payload} />;
     case "easter-egg":  return <EasterEgg />;
     case "explorer":    return <Explorer />;
     case "gallery":     return <Gallery payload={win.payload} />;

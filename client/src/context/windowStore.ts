@@ -2,6 +2,13 @@ import { create } from "zustand";
 import { APP_REGISTRY } from "@/data/appRegistry";
 import type { AppId, WindowInstance } from "@/types/window";
 
+// Default page for a fresh browser tab. Lives here (not in Browser.tsx) so the
+// store can seed tabs without importing the component — avoids a circular import.
+export const BROWSER_HOME = "https://en.wikipedia.org/wiki/Amiga";
+
+export type BrowserTab = { id: string; url: string };
+export type BrowserPayload = { tabs: BrowserTab[]; activeId: string };
+
 type State = {
   windows: WindowInstance[];
   focusedId: string | null;
@@ -15,6 +22,7 @@ type Actions = {
   closeWin: (id: string) => void;
   focus: (id: string) => void;
   updateBounds: (id: string, b: { x?: number; y?: number; width?: number; height?: number }) => void;
+  patchPayload: (id: string, patch: Record<string, unknown>) => void;
   sendToBack: (id: string) => void;
   minimize: (id: string) => void;
   restore: (id: string) => void;
@@ -23,6 +31,13 @@ type Actions = {
 let nextId = 1;
 const mkId = (appId: AppId) => `${appId}-${nextId++}`;
 
+let nextTabId = 1;
+const mkTabId = () => `tab-${nextTabId++}`;
+
+// Factory for a browser tab. Shared by openApp (seeding) and the Browser
+// component (new-tab button) so tab ids come from one counter.
+export const newBrowserTab = (url: string): BrowserTab => ({ id: mkTabId(), url });
+
 export const useWindowStore = create<State & Actions>((set, get) => ({
   windows: [],
   focusedId: null,
@@ -30,7 +45,22 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
 
   openApp: (appId, opts) => {
     const def = APP_REGISTRY[appId];
-    if (def.singleton) {
+
+    // The browser is tabbed: reuse the single window and add a tab rather than
+    // spawning a new window per site. Any incoming `initialUrl` becomes a tab.
+    if (appId === "browser") {
+      const initialUrl = (opts?.payload as { initialUrl?: string } | undefined)?.initialUrl;
+      const tab = newBrowserTab(initialUrl ?? BROWSER_HOME);
+      const existing = get().windows.find((w) => w.appId === "browser");
+      if (existing) {
+        const prev = existing.payload as BrowserPayload | undefined;
+        const tabs = [...(prev?.tabs ?? []), tab];
+        get().patchPayload(existing.id, { tabs, activeId: tab.id });
+        get().restore(existing.id);
+        return existing.id;
+      }
+      opts = { ...opts, payload: { tabs: [tab], activeId: tab.id } satisfies BrowserPayload };
+    } else if (def.singleton) {
       const existing = get().windows.find((w) => w.appId === appId);
       if (existing) {
         get().restore(existing.id);
@@ -88,6 +118,17 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
   updateBounds: (id, b) =>
     set((s) => ({
       windows: s.windows.map((w) => (w.id === id ? { ...w, ...b } : w)),
+    })),
+
+  // Shallow-merge into a window's payload. Reactive, so apps (e.g. the browser's
+  // tab list) can hold per-instance state in the store.
+  patchPayload: (id, patch) =>
+    set((s) => ({
+      windows: s.windows.map((w) =>
+        w.id === id
+          ? { ...w, payload: { ...(w.payload as Record<string, unknown> | undefined), ...patch } }
+          : w,
+      ),
     })),
 
   // Amiga depth gadget: send-to-back. Sets z below every other window.
