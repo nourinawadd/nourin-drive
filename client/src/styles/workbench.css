@@ -204,7 +204,7 @@ body {
 .wb-drive {
   position: fixed;
   z-index: 1;
-  width: 104px;
+  width: 120px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -212,13 +212,17 @@ body {
   cursor: pointer;
   user-select: none;
 }
+/* NEVER give the icon svg a width/height here. Pixel art is only crisp at
+   integer scale, and the svg already emits its own exact size (source grid ×
+   an integer factor — see svg() in components/os/icons.tsx). Sizing it from
+   CSS reintroduces fractional scaling: seams, doubled 1px outlines, and
+   moiré in the dithered areas. This box just reserves space and centres. */
 .wb-drive .wb-drive-icon {
-  width: 84px; height: 60px;   /* 1.5× the 56×40 source, stays crisp */
+  width: 112px; height: 80px;   /* 56×40 @2× — exactly the icon, no scaling */
   display: grid;
   place-items: center;
 }
 .wb-drive .wb-drive-icon svg {
-  width: 100%; height: 100%;
   display: block;
 }
 .wb-drive .wb-drive-label {
@@ -237,11 +241,11 @@ body {
 .wb-dock {
   position: fixed;
   left: 50%;
-  bottom: 12px;
+  bottom: 20px;
   transform: translateX(-50%);
   display: flex;
   gap: 8px;
-  padding: 8px;
+  padding: 10px;
   background: var(--wb-gray);
   border: 2px solid var(--wb-black);
   /* Hard pixel drop-shadow so it reads as floating over the window below. */
@@ -251,9 +255,20 @@ body {
     4px 4px 0 rgba(0, 0, 0, 0.28);
   z-index: 900;   /* floats above windows, stays below the menu bar (1000) */
 }
+/* `left: 50%` lands on a half pixel whenever the viewport width is odd, and
+   that offset is inherited by every rect in the icons — each one rounds to
+   device pixels independently under shape-rendering: crispEdges, opening 1px
+   seams. They're invisible against the white tile and light up when :hover
+   turns it orange. Snapping the centre to a whole pixel removes the cause. */
+@supports (left: round(down, 50%, 1px)) {
+  .wb-dock {
+    left: round(down, 50%, 1px);
+    transform: translateX(round(down, -50%, 1px));
+  }
+}
 .wb-dock-item {
   position: relative;
-  width: 64px; height: 64px;
+  width: 72px; height: 72px;   /* 56×56 icon + 8px breathing room each side */
   background: var(--wb-white);
   border: 1px solid var(--wb-black);
   display: grid;
@@ -262,8 +277,10 @@ body {
   font-size: 18px;
   color: var(--wb-black);
 }
+/* Size comes from the svg itself. Do not set width/height here — see the
+   note on .wb-drive-icon. New art is 22×22 @2× = 44×44 in this 64px tile. */
 .wb-dock-item svg {
-  width: 44px; height: 44px;
+  display: block;
 }
 .wb-dock-item:hover { background: var(--wb-orange); }
 .wb-dock-item[data-label]::after {

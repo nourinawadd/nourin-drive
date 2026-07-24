@@ -14,7 +14,8 @@
     "projects": "node scripts/gen-projects.mjs",
     "games": "node scripts/gen-games.mjs",
     "add": "node scripts/add-project.mjs",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:icons": "node scripts/lint-icons.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.5.1",

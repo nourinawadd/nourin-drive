@@ -1,0 +1,60 @@
+{
+  "_readme": [
+    "Pixel-art icons as character grids — one character per pixel.",
+    "`var` is what the React renderer paints with; `hex` is what the linter",
+    "and its terminal preview use. Keep both in sync — this file is the only",
+    "place the icon palette is defined.",
+    "Authoring guide: docs/icon-design-brief.md.  Validate: npm run lint:icons"
+  ],
+
+  "palette": {
+    ".": { "var": null,            "hex": null,      "role": "transparent" },
+    "K": { "var": "--wb-black",    "hex": "#000000", "role": "outline / lo-light bevel" },
+    "W": { "var": "--wb-white",    "hex": "#ffffff", "role": "hi-light bevel / paper" },
+    "L": { "var": "--wb-gray-0",   "hex": "#cfcfcf", "role": "light grey lit face" },
+    "G": { "var": "--wb-gray",     "hex": "#aaaaaa", "role": "mid grey body face" },
+    "D": { "var": "--wb-gray-2",   "hex": "#888888", "role": "grey shadow face" },
+    "S": { "var": "--wb-gray-3",   "hex": "#555555", "role": "core shadow / soft linework" },
+    "B": { "var": "--wb-blue",     "hex": "#0055aa", "role": "workbench blue" },
+    "N": { "var": "--wb-blue-2",   "hex": "#114488", "role": "blue dither lo" },
+    "H": { "var": "--wb-blue-3",   "hex": "#2266bb", "role": "blue dither hi" },
+    "E": { "var": "--wb-steel",    "hex": "#3b67a4", "role": "steel / label band" },
+    "O": { "var": "--wb-orange",   "hex": "#ff8800", "role": "selection / focus accent" },
+    "o": { "var": "--wb-orange-d", "hex": "#cc6611", "role": "orange shadow" },
+    "R": { "var": "--wb-red",      "hex": "#cc3333", "role": "red" },
+    "r": { "var": "--wb-red-d",    "hex": "#882222", "role": "red shadow" },
+    "T": { "var": "--wb-teal",     "hex": "#22aa77", "role": "teal" },
+    "t": { "var": "--wb-teal-d",   "hex": "#117755", "role": "teal shadow" },
+    "A": { "var": "--wb-tan",      "hex": "#c9a06a", "role": "tan / wood / paper" },
+    "a": { "var": "--wb-tan-d",    "hex": "#8e6e45", "role": "tan shadow" },
+    "P": { "var": "--wb-purple",   "hex": "#8866cc", "role": "purple" },
+    "p": { "var": "--wb-purple-d", "hex": "#553388", "role": "purple shadow" },
+    "Y": { "var": "--wb-yellow",   "hex": "#ffcc55", "role": "lit edge on warm tones" }
+  },
+
+  "grids": {
+    "GLYPH_CLOSE": {
+      "w": 14,
+      "h": 14,
+      "scale": 1,
+      "symmetric": true,
+      "note": "Format reference — a known-good grid to lint against and to show Claude as an example. Not yet wired into WindowFrame.",
+      "rows": [
+        "..............",
+        "..............",
+        "..............",
+        "...KK....KK...",
+        "....KK..KK....",
+        ".....KKKK.....",
+        "......KK......",
+        ".....KKKK.....",
+        "....KK..KK....",
+        "...KK....KK...",
+        "..............",
+        "..............",
+        "..............",
+        ".............."
+      ]
+    }
+  }
+}

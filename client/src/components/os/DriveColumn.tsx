@@ -36,16 +36,32 @@ type Pos = { x: number; y: number };
 // Starting layout — a column down the RIGHT edge. x depends on viewport
 // width, so render with an SSR-safe fallback and snap to the real edge in an
 // effect (unconditional render — never gated, so icons can't disappear).
-const ICON_W = 104;
+const ICON_W = 120;          // matches .wb-drive width
+const COL_GAP = 8;
 const RIGHT_MARGIN = 16;
-const COL_TOP = 40;
-const COL_STEP = 110;
+const COL_TOP = 32;          // clears the 18px menu bar
+const COL_STEP = 118;        // 80px icon + 6px gap + label, plus breathing room
+const BOTTOM_RESERVE = 130;  // keeps the last icon clear of the dock
 const FALLBACK_W = 1280;
+const FALLBACK_H = 800;
 
-function rightColumn(viewportW: number): Record<string, Pos> {
-  const x = Math.max(RIGHT_MARGIN, viewportW - ICON_W - RIGHT_MARGIN);
+// Lay the volumes out down the RIGHT edge, wrapping into a second column (and
+// a third, etc.) once a column would run past the bottom of the screen. All
+// nine drives stacked in one column overflowed any normal viewport, hiding the
+// last few behind the dock.
+function rightColumn(viewportW: number, viewportH: number): Record<string, Pos> {
+  const usable = Math.max(COL_STEP, viewportH - COL_TOP - BOTTOM_RESERVE);
+  const perCol = Math.max(1, Math.floor(usable / COL_STEP));
   return Object.fromEntries(
-    DRIVES.map((d, i) => [d.id, { x, y: COL_TOP + i * COL_STEP }]),
+    DRIVES.map((d, i) => {
+      const col = Math.floor(i / perCol);
+      const row = i % perCol;
+      const x = Math.max(
+        RIGHT_MARGIN,
+        viewportW - RIGHT_MARGIN - (col + 1) * ICON_W - col * COL_GAP,
+      );
+      return [d.id, { x, y: COL_TOP + row * COL_STEP }];
+    }),
   );
 }
 
@@ -55,15 +71,17 @@ export function DriveColumn() {
   const openApp = useWindowStore((s) => s.openApp);
   const addSticky = useStickyStore((s) => s.add);
   const [selected, setSelected] = useState<string | null>(null);
-  const [pos, setPos] = useState<Record<string, Pos>>(() => rightColumn(FALLBACK_W));
+  const [pos, setPos] = useState<Record<string, Pos>>(() =>
+    rightColumn(FALLBACK_W, FALLBACK_H),
+  );
   const drag = useRef<{ id: string; dx: number; dy: number } | null>(null);
 
   // Snap the column to the real right edge once we know the viewport width.
-  useEffect(() => setPos(rightColumn(window.innerWidth)), []);
+  useEffect(() => setPos(rightColumn(window.innerWidth, window.innerHeight)), []);
 
   // "Clean Up" from the Icons menu re-snaps every icon to the right column.
   useEffect(() => {
-    const onCleanup = () => setPos(rightColumn(window.innerWidth));
+    const onCleanup = () => setPos(rightColumn(window.innerWidth, window.innerHeight));
     window.addEventListener("wb:cleanup-icons", onCleanup);
     return () => window.removeEventListener("wb:cleanup-icons", onCleanup);
   }, []);

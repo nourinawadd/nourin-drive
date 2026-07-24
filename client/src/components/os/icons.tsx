@@ -30,13 +30,30 @@ function r(x: number, y: number, w: number, h: number, fill: string): El {
 function g(...kids: (El | El[])[]): El {
   return createElement("g", { key: _k++ }, kids.flat());
 }
-function svg(w: number, h: number, kids: (El | El[])[]): El {
+// Pixel art only stays crisp at INTEGER scale. The viewBox keeps the source
+// grid, `scale` fixes the rendered size — never size these from CSS, or the
+// rects round to device pixels independently and you get seams, doubled
+// outlines and moiré across dither().
+function svg(w: number, h: number, kids: (El | El[])[], scale = 1): El {
   return createElement(
     "svg",
-    { width: w, height: h, viewBox: `0 0 ${w} ${h}`, shapeRendering: "crispEdges", "aria-hidden": true },
+    {
+      width: w * scale,
+      height: h * scale,
+      viewBox: `0 0 ${w} ${h}`,
+      shapeRendering: "crispEdges",
+      "aria-hidden": true,
+    },
     kids,
   );
 }
+// Drive units: 56×40 source at 2× → 112×80.
+// Dock tiles:  28×28 source at 2× → 56×56, inside a 72px tile.
+// 2× is the only integer step that reads at the intended size — 1× is too
+// small, and anything between is fractional, which is what caused the seams.
+// New grid art targets these same source sizes (docs/icon-design-brief.md).
+const driveSvg = (kids: (El | El[])[]): El => svg(56, 40, kids, 2);
+const dockSvg = (kids: (El | El[])[]): El => svg(28, 28, kids, 2);
 function dither(x: number, y: number, w: number, h: number, a: string, b: string, off = 0): El {
   const cells: El[] = [];
   for (let yy = 0; yy < h; yy += 2) {
@@ -103,7 +120,7 @@ export function IconFloppySystem() {
     r(24, 24, 16, 1, C.gray3), r(24, 27, 20, 1, C.gray3),
     r(8, 24, 12, 1, C.gray3), r(8, 27, 10, 1, C.gray3),
   );
-  return svg(56, 40, shell(C.steel, ill));
+  return driveSvg(shell(C.steel, ill));
 }
 
 export function IconFloppyUser() {
@@ -127,11 +144,11 @@ export function IconFloppyUser() {
     r(19, 22, 1, 7, C.black),         // left outline
     r(36, 22, 1, 7, C.black),         // right outline
   );
-  return svg(56, 40, shell(C.steel, ill));
+  return driveSvg(shell(C.steel, ill));
 }
 
 export function IconDrawer() {
-  return svg(56, 40, [
+  return driveSvg([
     r(4, 38, 50, 1, C.black), r(53, 3, 1, 36, C.black),
     r(3, 2, 50, 37, C.black),
     r(4, 3, 48, 35, C.gray0),
@@ -201,7 +218,7 @@ export function IconFloppyJoystick() {
     r(37, 24, 2, 1, C.black), r(38, 23, 1, 3, C.black),
     r(10, 24, 2, 1, C.black), r(10, 23, 1, 3, C.black),
   );
-  return svg(56, 40, shell(C.red, ill));
+  return driveSvg(shell(C.red, ill));
 }
 
 export function IconFloppyPhoto() {
@@ -239,7 +256,7 @@ export function IconFloppyPhoto() {
     r(13, 26, 2, 1, C.black), r(20, 26, 3, 1, C.black),
     r(28, 26, 2, 1, C.black), r(35, 26, 3, 1, C.black),
   );
-  return svg(56, 40, shell(C.teal, ill));
+  return driveSvg(shell(C.teal, ill));
 }
 
 export function IconFloppyNotepad() {
@@ -266,7 +283,7 @@ export function IconFloppyNotepad() {
     r(38, 24, 2, 2, C.tanD),
     r(40, 24, 1, 1, C.gray3),
   );
-  return svg(56, 40, shell(C.gray3, ill));
+  return driveSvg(shell(C.gray3, ill));
 }
 
 export function IconFloppyQuill() {
@@ -301,7 +318,7 @@ export function IconFloppyQuill() {
     r(32, 25, 1, 1, C.tanD),
     r(28, 28, 2, 1, C.black),
   );
-  return svg(56, 40, shell(C.purple, ill));
+  return driveSvg(shell(C.purple, ill));
 }
 
 export function IconFloppyMusic() {
@@ -326,7 +343,7 @@ export function IconFloppyMusic() {
     r(35, 22, 4, 2, C.orange),
     r(35, 22, 4, 1, C.yellow),
   );
-  return svg(56, 40, shell(C.blue3, ill));
+  return driveSvg(shell(C.blue3, ill));
 }
 
 export function IconFloppyStickies() {
@@ -347,7 +364,7 @@ export function IconFloppyStickies() {
     r(26, 10, 4, 1, C.orange),
     r(27, 10, 1, 3, C.redD),
   );
-  return svg(56, 40, shell(C.orange, ill));
+  return driveSvg(shell(C.orange, ill));
 }
 
 function wastebasket(): El[] {
@@ -389,7 +406,7 @@ function wastebasket(): El[] {
 }
 
 export function IconTrashcan() {
-  return svg(56, 40, [
+  return driveSvg([
     createElement("g", { key: "t", transform: "translate(14, 6)" }, wastebasket()),
     r(16, 36, 24, 1, C.gray3),
     dither(16, 37, 24, 1, C.gray3, C.gray),
@@ -397,11 +414,11 @@ export function IconTrashcan() {
 }
 
 export function DockTrash() {
-  return svg(28, 28, wastebasket());
+  return dockSvg(wastebasket());
 }
 
 export function DockGlobe() {
-  return svg(28, 28, [
+  return dockSvg([
     r(4, 13, 1, 3, C.gray3), r(23, 13, 1, 3, C.gray3),
     r(5, 11, 2, 1, C.gray3), r(21, 11, 2, 1, C.gray3),
     r(6, 17, 3, 1, C.gray3), r(19, 17, 3, 1, C.gray3),
@@ -441,7 +458,7 @@ export function DockGlobe() {
 }
 
 export function DockDrawerMag() {
-  return svg(28, 28, [
+  return dockSvg([
     r(3, 6, 22, 18, C.black),
     r(4, 7, 20, 16, C.gray0),
     r(4, 7, 20, 1, C.white), r(4, 7, 1, 16, C.white),
@@ -476,7 +493,7 @@ export function DockDrawerMag() {
 }
 
 export function DockNote() {
-  return svg(28, 28, [
+  return dockSvg([
     r(7, 23, 15, 1, C.black), r(21, 4, 1, 20, C.black),
     r(6, 3, 15, 20, C.white),
     r(6, 3, 15, 1, C.gray0), r(6, 3, 1, 20, C.gray0),
@@ -518,7 +535,7 @@ export function DockNote() {
 }
 
 export function DockTerminal() {
-  return svg(28, 28, [
+  return dockSvg([
     r(9, 22, 10, 3, C.gray),
     r(9, 22, 10, 1, C.white),
     r(9, 24, 10, 1, C.gray3),
@@ -550,7 +567,7 @@ export function DockTerminal() {
 }
 
 export function DockMusic() {
-  return svg(28, 28, [
+  return dockSvg([
     r(10, 5, 12, 3, C.black),       // beam
     r(10, 5, 12, 1, C.gray3),
     r(10, 7, 2, 11, C.black),       // left stem
