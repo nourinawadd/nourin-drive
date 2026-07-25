@@ -6,6 +6,7 @@
 
 import { createElement, type ReactElement } from "react";
 import type { ProjectCategory } from "@/data/projects";
+import { PixelIcon } from "@/components/os/pixelGrid";
 
 type El = ReactElement;
 
@@ -721,9 +722,8 @@ export function WinRestoreGlyph() {
 }
 export function WinCloseGlyph() {
   // Close: the classic Workbench close gadget — square with an inset hole.
-  return svg(14, 14, [
-    r(2, 2, 10, 10, C.black),
-    r(3, 3, 8, 8, C.white),
-    r(5, 5, 4, 4, C.black),
-  ]);
+  // First icon migrated to the character-grid format; the grid reproduces the
+  // old rects pixel for pixel. Consumers import by name, so WindowFrame did
+  // not change. Remaining icons move over one at a time the same way.
+  return <PixelIcon name="GLYPH_CLOSE" />;
 }

@@ -87,8 +87,22 @@ Rules for the grid:
 - Draw the full silhouette outline in `K` before filling faces.
 - Light source is **top-left**: `W` or `L` on top/left edges, `S` or `K` on
   bottom/right edges. Be consistent across the whole icon set.
-- Dithering is a strict 2×2 ordered checker on **even pixel coordinates only**
-  (`(x + y) % 2`), never a random scatter.
+- Dithering is a checkerboard of **2×2 pixel blocks**, never single pixels and
+  never a random scatter. A block starting at an even `x` and even `y` takes
+  colour A when `((x / 2) + (y / 2)) % 2 === 0`, otherwise colour B — so a
+  dithered row reads `AABBAABBAABB`, and the row below it is the *same* phase
+  (the pattern only flips every second row). Written out:
+
+  ```
+  AABBAABBAABB      <- y even
+  AABBAABBAABB      <- y odd, same as above
+  BBAABBAABBAA      <- y+2
+  BBAABBAABBAA
+  ```
+
+  This is what `dither()` in `client/src/components/os/icons.tsx` emits, and it
+  is what the existing icons use. A 1px `ABABAB` checker is **wrong** — it is a
+  finer texture that reads as flat grey at 1× and shimmers when scaled.
 
 ## Target sizes — must be exact
 
@@ -105,7 +119,7 @@ seams and doubled outlines in this project, and it is now designed out.
 
 ## The icon set
 
-**Drive / volume icons (48 × 36)** — each is a drive-unit shell with a coloured
+**Drive / volume icons (56 × 40)** — each is a drive-unit shell with a coloured
 label band across the top and a distinct illustration on the face:
 
 1. `SYSTEM` — boot volume
@@ -158,6 +172,16 @@ label band across the top and a distinct illustration on the face:
    - horizontal symmetry check when `symmetric` is true (report the first
      mismatched row)
    - orphan-pixel count (a solid pixel with no solid neighbour on any side)
+   - **corner-only strokes** — group each colour into 8-connected blobs, then
+     re-split each blob using 4-connectivity. A blob that breaks into two or
+     more pieces is a diagonal line: it looks like a stroke at 8× and like
+     loose dots at 1×. Skip blobs whose pieces are all 2×2 tiles — that is
+     dither, and it is meant to be separate.
+   - **open outlines** — take the largest 4-connected patch of the field
+     colour (`W` on the drive units) as background, group everything else
+     into 8-connected objects, ignore any object that reaches the transparent
+     edge (that is the chassis), and require every remaining object pixel
+     touching the background to be `K`.
    - list of every distinct palette character used
 5. If a check fails, fix it and re-render before moving on.
 
