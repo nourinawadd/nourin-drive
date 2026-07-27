@@ -80,7 +80,7 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
   },
   profile: {
     appId: "profile", title: "User Profile",
-    defaultWidth: 720, defaultHeight: 560,
+    defaultWidth: 940, defaultHeight: 560,
     defaultX: 96, defaultY: 46,
     minWidth: 480, minHeight: 400,
     singleton: true,

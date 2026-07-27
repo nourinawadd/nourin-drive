@@ -225,11 +225,20 @@ function Dashboard({ setTab }: { setTab: (t: TabId) => void }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       {/* row 1: user profile + stats */}
       <div style={row}>
+        {/* minWidth clears the 168px portrait frame (160 + padding + border)
+            so it never gets clipped when the window is narrow. */}
         <Panel title="USER PROFILE" style={{ flex: 1, minWidth: 260 }}>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <div style={portraitFrame}>
               <img
                 src={imgOk ? "/images/portrait.png" : "/images/portrait-placeholder.svg"}
+                // One pre-dithered file per DPR so the dither always lands 1:1
+                // on device pixels and the browser never resamples it.
+                srcSet={
+                  imgOk
+                    ? "/images/portrait.png 1x, /images/portrait@2x.png 2x"
+                    : undefined
+                }
                 alt={`Portrait of ${ABOUT.name}`}
                 onError={() => setImgOk(false)}
                 style={portraitImg}
@@ -481,8 +490,10 @@ const panelTitle: CSSProperties = {
 const panelBody: CSSProperties = { padding: 8, minWidth: 0 };
 
 const portraitFrame: CSSProperties = {
-  width: 128,
-  height: 150,
+  // Should match the generated asset size (see scripts/portrait.js) so the
+  // browser serves it 1:1 and does no resampling.
+  width: 160,
+  height: 188,
   flexShrink: 0,
   padding: 3,
   border: `1px solid ${LINE_HI}`,
@@ -493,8 +504,10 @@ const portraitImg: CSSProperties = {
   height: "100%",
   objectFit: "cover",
   display: "block",
-  filter: "grayscale(1) contrast(1.05)",
-  imageRendering: "pixelated",
+  // Explicit "auto": image-rendering inherits, and body sets pixelated
+  // (workbench.css). The asset is continuous-tone grayscale sized to the frame,
+  // so on fractional DPRs we want smooth resampling rather than aliasing.
+  imageRendering: "auto",
 };
 const kv: CSSProperties = { marginTop: 3, fontSize: 11 };
 const kKey: CSSProperties = { color: DIM };
