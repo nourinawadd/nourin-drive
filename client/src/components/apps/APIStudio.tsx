@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Prism from "prismjs";
 import "prismjs/components/prism-json";
-import { PRESETS, type Header, type Method, type Preset } from "@/components/apps/api/presets";
+import { PRESETS, PRESET_GROUPS, type Header, type Method, type Preset } from "@/components/apps/api/presets";
 
 const METHODS: Method[] = ["GET", "POST", "PUT", "PATCH", "DELETE"];
 
@@ -81,20 +81,27 @@ export function APIStudio() {
       {/* sidebar */}
       <aside style={sidebar}>
         <div style={sidebarHeader}>Saved</div>
-        {PRESETS.map((p) => (
-          <button
-            key={p.id}
-            onClick={() => loadPreset(p)}
-            style={{
-              ...presetRow,
-              background: selected === p.id ? "var(--wb-orange)" : "transparent",
-            }}
-          >
-            <span style={methodBadge(p.method)}>{p.method}</span>
-            <span style={{ flex: 1, textAlign: "left", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {p.name}
-            </span>
-          </button>
+        {PRESET_GROUPS.map((group) => (
+          <div key={group}>
+            <div style={groupHeader}>{group}</div>
+            {PRESETS.filter((p) => p.group === group).map((p) => (
+              <button
+                key={p.id}
+                onClick={() => loadPreset(p)}
+                title={p.url}
+                style={{
+                  ...presetRow,
+                  width: "100%",
+                  background: selected === p.id ? "var(--wb-orange)" : "transparent",
+                }}
+              >
+                <span style={methodBadge(p.method)}>{p.method}</span>
+                <span style={{ flex: 1, textAlign: "left", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {p.name}
+                </span>
+              </button>
+            ))}
+          </div>
         ))}
       </aside>
 
@@ -255,6 +262,17 @@ const sidebarHeader: React.CSSProperties = {
   padding: "2px 6px",
   background: "var(--wb-black)",
   color: "var(--wb-white)",
+};
+const groupHeader: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: "bold",
+  padding: "1px 6px",
+  background: "var(--wb-gray)",
+  color: "var(--wb-black)",
+  borderTop: "1px solid var(--wb-black)",
+  borderBottom: "1px solid var(--wb-black)",
+  position: "sticky",
+  top: 0,
 };
 const presetRow: React.CSSProperties = {
   display: "flex",
