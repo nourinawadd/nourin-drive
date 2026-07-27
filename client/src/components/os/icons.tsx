@@ -582,7 +582,7 @@ export function DockMusic() {
   ]);
 }
 
-function fileTile(body: string, bodyShadow: string, emblem: El): El {
+function fileTile(body: string, bodyShadow: string, emblem: El, scale = 1): El {
   return svg(16, 16, [
     r(3, 15, 11, 1, C.black), r(13, 2, 1, 13, C.black),
     r(2, 1, 11, 14, C.black),
@@ -597,19 +597,19 @@ function fileTile(body: string, bodyShadow: string, emblem: El): El {
     r(11, 3, 1, 1, bodyShadow),
     r(9, 4, 3, 1, C.black),
     emblem,
-  ]);
+  ], scale);
 }
 
-function FileGlobe() {
+function FileGlobe(scale = 1) {
   return fileTile(C.blue3, C.blue2, g(
     r(5, 7, 5, 5, C.teal),
     r(5, 7, 5, 1, C.white), r(5, 7, 1, 5, C.white),
     r(9, 7, 1, 5, C.black), r(5, 11, 5, 1, C.black),
     r(5, 9, 5, 1, C.white), r(7, 7, 1, 5, C.white),
     r(6, 8, 1, 1, C.tealD), r(8, 10, 1, 1, C.tealD),
-  ));
+  ), scale);
 }
-function FileBraces() {
+function FileBraces(scale = 1) {
   return fileTile(C.teal, C.tealD, g(
     r(5, 6, 1, 1, C.white), r(4, 7, 1, 3, C.white),
     r(5, 10, 1, 1, C.white), r(3, 8, 1, 1, C.white),
@@ -617,18 +617,18 @@ function FileBraces() {
     r(9, 10, 1, 1, C.white), r(11, 8, 1, 1, C.white),
     r(6, 8, 1, 1, C.white), r(7, 8, 1, 1, C.white),
     r(8, 8, 1, 1, C.white),
-  ));
+  ), scale);
 }
-function FileJoystick() {
+function FileJoystick(scale = 1) {
   return fileTile(C.red, C.redD, g(
     r(7, 5, 2, 2, C.yellow), r(7, 5, 2, 1, C.white),
     r(7, 7, 2, 2, C.gray3),
     r(4, 9, 8, 3, C.gray0),
     r(4, 9, 8, 1, C.white), r(4, 11, 8, 1, C.gray3),
     r(6, 10, 1, 1, C.red),
-  ));
+  ), scale);
 }
-function FileBrush() {
+function FileBrush(scale = 1) {
   return fileTile(C.purple, C.purpleD, g(
     r(5, 9, 1, 3, C.tan), r(6, 8, 1, 3, C.tan),
     r(7, 7, 1, 3, C.tan), r(5, 9, 3, 1, C.yellow),
@@ -637,9 +637,9 @@ function FileBrush() {
     r(9, 4, 3, 3, C.orange), r(9, 4, 3, 1, C.yellow),
     r(9, 6, 3, 1, C.orangeD),
     r(4, 12, 6, 1, C.orange),
-  ));
+  ), scale);
 }
-function FilePicture() {
+function FilePicture(scale = 1) {
   return fileTile(C.orange, C.orangeD, g(
     r(5, 6, 6, 5, C.teal),
     r(5, 6, 6, 1, C.white), r(5, 6, 1, 5, C.white),
@@ -648,29 +648,64 @@ function FilePicture() {
     r(6, 9, 1, 1, C.gray3),
     r(7, 8, 1, 2, C.gray3),
     r(8, 9, 1, 1, C.gray3),
-  ));
+  ), scale);
 }
-function FileText() {
+function FileText(scale = 1) {
   return fileTile(C.gray0, C.gray2, g(
     r(5, 6, 6, 1, C.black),
     r(5, 8, 6, 1, C.black),
     r(5, 10, 4, 1, C.black),
     r(5, 12, 5, 1, C.gray3),
-  ));
+  ), scale);
 }
 
 // Maps a project category to its dog-eared file icon (convenience wrapper
-// for the Explorer list).
-export function FileIcon({ category }: { category: ProjectCategory }) {
+// for the Explorer list). `scale` must stay an integer — see svg() above.
+export function FileIcon({ category, scale = 1 }: { category: ProjectCategory; scale?: number }) {
   switch (category) {
-    case "websites": return FileGlobe();
-    case "apis":     return FileBraces();
-    case "games":    return FileJoystick();
-    case "designs":  return FileBrush();
-    case "photos":   return FilePicture();
-    case "blog":     return FileText();
-    default:         return FileText();
+    case "websites": return FileGlobe(scale);
+    case "apis":     return FileBraces(scale);
+    case "games":    return FileJoystick(scale);
+    case "designs":  return FileBrush(scale);
+    case "photos":   return FilePicture(scale);
+    case "blog":     return FileText(scale);
+    default:         return FileText(scale);
   }
+}
+
+// Folder for the Explorer tree and icon view. The open state tilts the front
+// face forward so an expanded branch reads differently at a glance.
+export function FolderIcon({ open = false, scale = 1 }: { open?: boolean; scale?: number }) {
+  const back: El[] = [
+    r(1, 2, 5, 1, C.black),
+    r(1, 3, 4, 1, C.yellow),
+    r(0, 4, 16, 1, C.black),
+    r(0, 4, 1, 9, C.black),
+    r(15, 4, 1, 9, C.black),
+    r(0, 13, 16, 1, C.black),
+  ];
+  if (open) {
+    return svg(16, 16, [
+      ...back,
+      r(1, 5, 14, 3, C.orangeD),
+      r(1, 5, 14, 1, C.orange),
+      // Front flap, offset right to suggest it is swung open.
+      r(2, 8, 14, 5, C.orange),
+      r(2, 8, 14, 1, C.yellow),
+      r(2, 8, 1, 5, C.yellow),
+      dither(3, 9, 12, 3, C.orange, C.yellow),
+      r(2, 12, 14, 1, C.orangeD),
+    ], scale);
+  }
+  return svg(16, 16, [
+    ...back,
+    r(1, 5, 14, 8, C.orange),
+    r(1, 5, 14, 1, C.yellow),
+    r(1, 5, 1, 8, C.yellow),
+    dither(2, 6, 12, 6, C.orange, C.yellow),
+    r(14, 5, 1, 8, C.orangeD),
+    r(1, 12, 14, 1, C.orangeD),
+  ], scale);
 }
 
 export function MiniFolder({ highlight }: { highlight?: boolean }) {

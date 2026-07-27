@@ -13,6 +13,7 @@ import { Guestbook } from "@/components/apps/Guestbook";
 import { Music } from "@/components/apps/Music";
 import { Notepad } from "@/components/apps/Notepad";
 import { Profile } from "@/components/apps/Profile";
+import { Properties } from "@/components/apps/Properties";
 import { RecycleBin } from "@/components/apps/RecycleBin";
 import type { WindowInstance } from "@/types/window";
 
@@ -24,7 +25,7 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "blog":        return <Blog />;
     case "browser":     return <Browser winId={win.id} payload={win.payload} />;
     case "easter-egg":  return <EasterEgg />;
-    case "explorer":    return <Explorer />;
+    case "explorer":    return <Explorer winId={win.id} payload={win.payload} />;
     case "gallery":     return <Gallery payload={win.payload} />;
     case "game":        return <GamePlayer payload={win.payload} />;
     case "games":       return <Games />;
@@ -32,6 +33,7 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "music":       return <Music winId={win.id} />;
     case "notepad":     return <Notepad winId={win.id} payload={win.payload} />;
     case "profile":     return <Profile />;
+    case "properties":  return <Properties winId={win.id} payload={win.payload} />;
     case "recycle":     return <RecycleBin />;
     default:            return null;
   }

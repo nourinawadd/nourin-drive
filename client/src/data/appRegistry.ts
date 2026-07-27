@@ -2,93 +2,115 @@ import type { AppDef, AppId } from "@/types/window";
 
 // Defaults per app. Window manager uses singleton flag to decide whether
 // opening an app twice spawns a new window or focuses the existing one.
+//
+// Windows open at a uniform size — small defaults looked cramped on a large
+// display. Change WINDOW_W/H to resize every app at once; per-app minWidth /
+// minHeight still constrain how far the user can shrink them.
+const WINDOW_W = 940;
+const WINDOW_H = 560;
+// Uniform spawn point too. Every window is the same size now, so a per-app
+// origin would only push the wider ones off the right edge — openApp already
+// cascades stacked opens by 20px each.
+const WINDOW_X = 96;
+const WINDOW_Y = 46;
+
 export const APP_REGISTRY: Record<AppId, AppDef> = {
   about: {
     appId: "about", title: "About Me",
-    defaultWidth: 540, defaultHeight: 460,
-    defaultX: 140, defaultY: 60,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     singleton: true,
   },
   apis: {
     appId: "apis", title: "API Studio",
-    defaultWidth: 620, defaultHeight: 420,
-    defaultX: 120, defaultY: 70,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     singleton: true,
   },
   blog: {
     appId: "blog", title: "Blog",
-    defaultWidth: 560, defaultHeight: 420,
-    defaultX: 160, defaultY: 90,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     singleton: true,
   },
   browser: {
     appId: "browser", title: "Browser",
-    defaultWidth: 720, defaultHeight: 460,
-    defaultX: 100, defaultY: 60,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     singleton: true,
   },
   "easter-egg": {
     appId: "easter-egg", title: "???",
-    defaultWidth: 320, defaultHeight: 200,
-    defaultX: 240, defaultY: 140,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     singleton: true,
   },
   explorer: {
     appId: "explorer", title: "File Explorer",
-    defaultWidth: 540, defaultHeight: 380,
-    defaultX: 110, defaultY: 80,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
+    minWidth: 520, minHeight: 320,
     singleton: true,
   },
   gallery: {
     appId: "gallery", title: "Graphic Design",
-    defaultWidth: 640, defaultHeight: 500,
-    defaultX: 130, defaultY: 70,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     minWidth: 380, minHeight: 320,
     singleton: true,
   },
   game: {
     appId: "game", title: "Game",
-    defaultWidth: 800, defaultHeight: 600,
-    defaultX: 100, defaultY: 40,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     minWidth: 320, minHeight: 240,
     singleton: false,
   },
   games: {
     appId: "games", title: "Games",
-    defaultWidth: 520, defaultHeight: 380,
-    defaultX: 150, defaultY: 100,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     singleton: true,
   },
   guestbook: {
     appId: "guestbook", title: "Guestbook",
-    defaultWidth: 460, defaultHeight: 360,
-    defaultX: 200, defaultY: 110,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     singleton: true,
   },
   music: {
     appId: "music", title: "Music Player",
-    defaultWidth: 480, defaultHeight: 460,
-    defaultX: 150, defaultY: 70,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     minWidth: 260, minHeight: 116,
     singleton: true,
   },
   notepad: {
     appId: "notepad", title: "Notepad",
-    defaultWidth: 420, defaultHeight: 300,
-    defaultX: 180, defaultY: 120,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     singleton: false,
   },
   profile: {
     appId: "profile", title: "User Profile",
-    defaultWidth: 940, defaultHeight: 560,
-    defaultX: 96, defaultY: 46,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     minWidth: 480, minHeight: 400,
     singleton: true,
   },
+  properties: {
+    appId: "properties", title: "Properties",
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
+    minWidth: 260, minHeight: 260,
+    // Not a singleton: Windows lets you open properties for several items at
+    // once, and each window carries its own item in its payload.
+    singleton: false,
+  },
   recycle: {
     appId: "recycle", title: "Recycle Bin",
-    defaultWidth: 460, defaultHeight: 320,
-    defaultX: 170, defaultY: 90,
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
     singleton: true,
   },
 };
