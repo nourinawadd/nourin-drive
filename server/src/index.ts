@@ -10,6 +10,7 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { notFound } from "./middleware/notFound.js";
 import { guestbookRouter } from "./routes/guestbook.js";
 import { blogRouter } from "./routes/blog.js";
+import { funRouter } from "./routes/fun.js";
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 5000);
@@ -43,6 +44,7 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api/guestbook", guestbookRouter);
 app.use("/api/blog", blogRouter);
+app.use("/api/fun", funRouter);
 
 app.use(notFound);
 app.use(errorHandler);
