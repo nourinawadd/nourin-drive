@@ -148,6 +148,29 @@ export function IconFloppyUser() {
   return driveSvg(shell(C.steel, ill));
 }
 
+export function IconFloppyBook() {
+  // Same open book as the dock tile, scaled up to fill the drive unit's face.
+  const ill = g(
+    r(14, 12, 28, 17, C.black),      // outline
+    r(15, 13, 12, 15, C.white),      // left page
+    r(15, 13, 12, 1, C.gray0),
+    r(29, 13, 12, 15, C.white),      // right page
+    r(29, 13, 12, 1, C.gray0),
+    r(27, 13, 2, 15, C.tan),         // spine
+    r(27, 13, 1, 15, C.yellow),
+    r(28, 13, 1, 15, C.tanD),
+    r(17, 16, 8, 1, C.gray3),        // ── left page text ──
+    r(17, 19, 8, 1, C.gray3),
+    r(17, 22, 5, 1, C.gray3),
+    r(17, 25, 8, 1, C.gray3),
+    r(31, 16, 8, 1, C.gray3),        // ── right page text ──
+    r(31, 19, 5, 1, C.gray3),
+    r(31, 22, 8, 1, C.gray3),
+    r(31, 25, 6, 1, C.gray3),
+  );
+  return driveSvg(shell(C.tan, ill));
+}
+
 export function IconDrawer() {
   return driveSvg([
     r(4, 38, 50, 1, C.black), r(53, 3, 1, 36, C.black),
@@ -567,6 +590,31 @@ export function DockTerminal() {
   ]);
 }
 
+export function DockBook() {
+  // Open book, face on: two page blocks either side of a tan spine.
+  return dockSvg([
+    r(4, 23, 21, 1, C.gray3),        // ground shadow
+    r(3, 6, 22, 17, C.black),        // outline; pages paint over the middle
+    r(4, 7, 9, 15, C.white),         // left page
+    r(4, 7, 9, 1, C.gray0),
+    r(15, 7, 9, 15, C.white),        // right page
+    r(15, 7, 9, 1, C.gray0),
+    r(13, 7, 2, 15, C.tan),          // spine
+    r(13, 7, 1, 15, C.yellow),
+    r(14, 7, 1, 15, C.tanD),
+    r(6, 10, 6, 1, C.gray3),         // ── left page text ──
+    r(6, 12, 6, 1, C.gray3),
+    r(6, 14, 4, 1, C.gray3),
+    r(6, 16, 6, 1, C.gray3),
+    r(6, 18, 3, 1, C.gray3),
+    r(16, 10, 6, 1, C.gray3),        // ── right page text ──
+    r(16, 12, 4, 1, C.gray3),
+    r(16, 14, 6, 1, C.gray3),
+    r(16, 16, 5, 1, C.gray3),
+    r(16, 18, 3, 1, C.gray3),
+  ]);
+}
+
 export function DockMusic() {
   return dockSvg([
     r(10, 5, 12, 3, C.black),       // beam
@@ -658,10 +706,32 @@ function FileText(scale = 1) {
     r(5, 12, 5, 1, C.gray3),
   ), scale);
 }
+// Library prose — paper stock rather than office grey, with a ragged right
+// edge so it reads as verse next to the squared-off FileText.
+function FileDoc(scale = 1) {
+  return fileTile(C.tan, C.tanD, g(
+    r(5, 6, 6, 1, C.black),
+    r(5, 8, 4, 1, C.black),
+    r(5, 10, 6, 1, C.black),
+    r(5, 12, 3, 1, C.gray3),
+  ), scale);
+}
+function FilePdf(scale = 1) {
+  return fileTile(C.red, C.redD, g(
+    r(5, 6, 6, 1, C.white),
+    r(5, 8, 6, 1, C.white),
+    r(5, 10, 4, 1, C.white),
+    r(5, 12, 5, 1, C.yellow),
+  ), scale);
+}
+
+// What FileIcon can draw. Library documents aren't project categories, so the
+// two extra members sit alongside rather than inside ProjectCategory.
+export type IconCategory = ProjectCategory | "document" | "pdf";
 
 // Maps a project category to its dog-eared file icon (convenience wrapper
 // for the Explorer list). `scale` must stay an integer — see svg() above.
-export function FileIcon({ category, scale = 1 }: { category: ProjectCategory; scale?: number }) {
+export function FileIcon({ category, scale = 1 }: { category: IconCategory; scale?: number }) {
   switch (category) {
     case "websites": return FileGlobe(scale);
     case "apis":     return FileBraces(scale);
@@ -669,6 +739,8 @@ export function FileIcon({ category, scale = 1 }: { category: ProjectCategory; s
     case "designs":  return FileBrush(scale);
     case "photos":   return FilePicture(scale);
     case "blog":     return FileText(scale);
+    case "document": return FileDoc(scale);
+    case "pdf":      return FilePdf(scale);
     default:         return FileText(scale);
   }
 }
@@ -755,6 +827,57 @@ export function WinRestoreGlyph() {
     r(2, 5, 1, 6, C.black), r(7, 5, 1, 6, C.black),
   ]);
 }
+// ── EREADER RAIL GLYPHS ─────────────────────────────────────────────────
+// The left nav rail in the Ereader. Black ink on whatever the rail tile is
+// filled with, so the active (orange) state needs no second set of art.
+// 16×16 source at 2× = 32×32, matching the rail tile in Ereader.tsx.
+const railSvg = (kids: (El | El[])[]): El => svg(16, 16, kids, 2);
+
+export function RailHome() {
+  return railSvg([
+    r(7, 2, 2, 1, C.black),          // roof, one row wider each step down
+    r(6, 3, 4, 1, C.black),
+    r(5, 4, 6, 1, C.black),
+    r(4, 5, 8, 1, C.black),
+    r(3, 6, 10, 1, C.black),
+    r(4, 7, 8, 7, C.black),          // wall block, hollowed out below
+    r(5, 7, 6, 6, C.white),
+    r(7, 9, 2, 4, C.orange),         // door
+    r(7, 9, 2, 1, C.yellow),
+  ]);
+}
+
+export function RailBook() {
+  return railSvg([
+    r(2, 3, 12, 11, C.black),
+    r(3, 4, 10, 9, C.white),
+    r(3, 4, 10, 1, C.gray0),
+    r(7, 4, 2, 9, C.tan),            // spine
+    r(4, 6, 3, 1, C.gray3), r(9, 6, 3, 1, C.gray3),
+    r(4, 8, 3, 1, C.gray3), r(9, 8, 3, 1, C.gray3),
+    r(4, 10, 3, 1, C.gray3), r(9, 10, 3, 1, C.gray3),
+  ]);
+}
+
+export function RailShelves() {
+  // 2×2 tiles — the "categories" glyph from the reference layout.
+  return railSvg([
+    r(2, 2, 5, 5, C.black), r(3, 3, 3, 3, C.orange),
+    r(9, 2, 5, 5, C.black), r(10, 3, 3, 3, C.white),
+    r(2, 9, 5, 5, C.black), r(3, 10, 3, 3, C.white),
+    r(9, 9, 5, 5, C.black), r(10, 10, 3, 3, C.white),
+  ]);
+}
+
+export function RailInfo() {
+  return railSvg([
+    r(3, 2, 10, 12, C.black),
+    r(4, 3, 8, 10, C.white),
+    r(7, 5, 2, 2, C.black),          // tittle
+    r(7, 8, 2, 4, C.black),          // stem
+  ]);
+}
+
 export function WinCloseGlyph() {
   // Close: the classic Workbench close gadget — square with an inset hole.
   // First icon migrated to the character-grid format; the grid reproduces the

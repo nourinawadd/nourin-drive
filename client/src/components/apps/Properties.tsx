@@ -1,8 +1,7 @@
 "use client";
 
 import { useWindowStore } from "@/context/windowStore";
-import { FileIcon, FolderIcon } from "@/components/os/icons";
-import type { ProjectCategory } from "@/data/projects";
+import { FileIcon, FolderIcon, type IconCategory } from "@/components/os/icons";
 
 // Everything the dialog needs, captured when it is opened. Kept flat and
 // serialisable because it rides along in the window payload.
@@ -13,7 +12,7 @@ export type PropertiesPayload = {
   location: string;
   date?: string;
   blurb?: string;
-  iconCat?: ProjectCategory;
+  iconCat?: IconCategory;
   /** Folders only: "3 Files, 2 Folders". */
   contains?: string;
 };
