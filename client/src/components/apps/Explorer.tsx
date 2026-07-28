@@ -6,6 +6,7 @@ import {
   type FileAction, type FsFolder, type FsNode,
 } from "@/data/fileTree";
 import { LOCAL_GAMES } from "@/data/games.generated";
+import { docById } from "@/data/library";
 import { useWindowStore } from "@/context/windowStore";
 import { FileIcon, FolderIcon } from "@/components/os/icons";
 import { ContextMenu, type MenuItem } from "@/components/os/ContextMenu";
@@ -82,6 +83,14 @@ export function Explorer({ winId, payload }: { winId: string; payload: unknown }
       case "gallery":
         openApp("gallery", { payload: { focusId: action.photoId } });
         break;
+      case "ereader": {
+        const doc = docById(action.docId);
+        openApp("ereader", {
+          payload: { docId: action.docId, view: "read" },
+          title: doc ? doc.title : "Ereader",
+        });
+        break;
+      }
       case "app":
         openApp(action.appId);
         break;

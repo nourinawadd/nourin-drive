@@ -11,6 +11,8 @@
 
 import { CATEGORIES, PROJECTS, type Project, type ProjectCategory } from "./projects";
 import { PHOTOS } from "./gallery";
+import { LIBRARY, formatLabel, type LibraryDoc } from "./library";
+import type { IconCategory } from "@/components/os/icons";
 
 export type FsFile = {
   kind: "file";
@@ -22,7 +24,7 @@ export type FsFile = {
   path: string;          // "My Portfolio\\Games\\2025"
   date?: string;
   blurb?: string;
-  iconCat: ProjectCategory;
+  iconCat: IconCategory;
   /** What double-click / Open does. Resolved by the Explorer, not here. */
   action: FileAction;
 };
@@ -44,6 +46,7 @@ export type FileAction =
   | { type: "browser"; url: string }
   | { type: "game"; projectId: string; name: string; url?: string }
   | { type: "gallery"; photoId: string }
+  | { type: "ereader"; docId: string }
   | { type: "app"; appId: "blog" | "apis" }
   | { type: "external"; url: string }
   | { type: "none" };
@@ -133,6 +136,30 @@ function photoFile(
   };
 }
 
+/**
+ * Library documents keep their real filename and extension — unlike the
+ * synthetic ones above, these are actual files sitting in public/library/, and
+ * pretending otherwise would break the download the Ereader offers.
+ */
+function libraryFile(doc: LibraryDoc, path: string): FsFile {
+  const dot = doc.fileName.lastIndexOf(".");
+  const base = dot > 0 ? doc.fileName.slice(0, dot) : doc.fileName;
+  const ext = dot > 0 ? doc.fileName.slice(dot + 1).toLowerCase() : doc.format;
+  return {
+    kind: "file",
+    id: `lib:${doc.id}`,
+    name: doc.fileName,
+    base,
+    ext,
+    typeLabel: formatLabel(doc.format),
+    path,
+    date: doc.date,
+    blurb: doc.blurb ?? (doc.author ? `by ${doc.author}` : undefined),
+    iconCat: doc.format === "pdf" ? "pdf" : "document",
+    action: { type: "ereader", docId: doc.id },
+  };
+}
+
 const byNameAsc = (a: FsNode, b: FsNode) => a.name.localeCompare(b.name);
 // Newest first, undated last — matches how the old flat list was ordered.
 const byDateDesc = (a: FsFile, b: FsFile) => (b.date ?? "").localeCompare(a.date ?? "");
@@ -215,12 +242,30 @@ function build(): FsFolder {
     };
   });
 
+  // Reading library — one folder per shelf, derived the same way the photo
+  // volumes are. These are real files on disk, and double-clicking one opens
+  // the Ereader.
+  const shelves = Array.from(new Set(LIBRARY.map((d) => d.shelf)));
+  const libraryFolders = shelves.map((shelf): FsFolder => {
+    const path = joinPath(rootPath, shelf);
+    return {
+      kind: "folder",
+      id: `lib:${shelf}`,
+      name: shelf,
+      path,
+      children: LIBRARY
+        .filter((d) => d.shelf === shelf)
+        .map((d) => libraryFile(d, path))
+        .sort(byNameAsc),
+    };
+  });
+
   return {
     kind: "folder",
     id: "root",
     name: ROOT_NAME,
     path: rootPath,
-    children: [...projectFolders, ...photoFolders],
+    children: [...projectFolders, ...photoFolders, ...libraryFolders],
   };
 }
 
