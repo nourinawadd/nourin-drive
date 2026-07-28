@@ -17,12 +17,21 @@ export type TextPaneProps = {
   onPageCount: (count: number) => void;
   /** Short-form only: how far down the piece we are, 0–100. */
   onProgress: (percent: number) => void;
+  /** Running head on the recto, as a printed book would carry it. */
+  title: string;
+  /** Running head on the verso. Absent for your own work. */
+  author?: string;
 };
 
-const BASE_FONT_PX = 17;
+// Monospace sets larger than a serif at the same size, so the page runs a
+// little smaller than the 17px a proportional face wanted.
+const BASE_FONT_PX = 15;
+
+/** Folios are zero-padded, like the reference. */
+const folio = (n: number) => String(n).padStart(2, "0");
 
 export function TextPane({
-  body, markdown, shortForm, zoom, columns, page, onPageCount, onProgress,
+  body, markdown, shortForm, zoom, columns, page, onPageCount, onProgress, title, author,
 }: TextPaneProps) {
   const scroller = useRef<HTMLDivElement>(null);
   const [pageCount, setPageCount] = useState(1);
@@ -94,36 +103,67 @@ export function TextPane({
   }, [page, pageCount, shortForm, zoom, columns]);
 
   if (shortForm) {
+    // Same page furniture as a spread, minus the folio — there are no pages to
+    // number here. A poem still wants to look like it's printed on something.
     return (
       <div
-        ref={scroller}
-        onScroll={reportScrollProgress}
-        className="wb-paper"
-        style={{ ...surface, overflowY: "auto", fontSize }}
+        className="wb-paper wb-paper-sheet"
+        style={{ ...surface, overflow: "hidden", fontSize }}
       >
-        <div style={{ maxWidth: "34em", margin: "0 auto", padding: "2.6em 1.5em 3.5em" }}>
-          {content}
+        <div className="wb-paper-run" style={{ padding: "1.5em 2.6em 1.1em" }}>
+          <span>{author ? `${author} · ${title}` : title}</span>
+        </div>
+        <div
+          ref={scroller}
+          onScroll={reportScrollProgress}
+          style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: "0 2.6em 2.6em" }}
+        >
+          <div style={{ maxWidth: "34em", margin: "0 auto" }}>{content}</div>
         </div>
       </div>
     );
   }
 
+  // Each screen shows `columns` numbered pages, so the folios run from the
+  // scroll position rather than tracking anything of their own.
+  const firstFolio = page * columns + 1;
+
   return (
-    <div className="wb-paper" style={{ ...surface, overflow: "hidden", fontSize }}>
-      <div ref={scroller} className="wb-paper-cols" style={{ padding: "2.2em 2.4em" }}>
+    <div
+      className="wb-paper wb-paper-sheet"
+      style={{ ...surface, overflow: "hidden", fontSize }}
+    >
+      <div className="wb-paper-run" style={{ padding: "1.5em 2.6em 1.1em" }}>
+        {/* Verso carries the author, recto the title — the convention a printed
+            book uses. Your own work has no author, so the verso sits empty. */}
+        {columns === 2 ? (
+          <>
+            <span>{author ?? ""}</span>
+            <span>{title}</span>
+          </>
+        ) : (
+          <span>{title}</span>
+        )}
+      </div>
+
+      <div ref={scroller} className="wb-paper-cols" style={{ padding: "0 2.6em" }}>
         <div
           style={{
             columnCount: columns,
-            columnGap: "3em",
+            columnGap: "4.5em",
             columnFill: "auto",
-            // Gutter rule between the two pages of a spread — the closest thing
-            // to a book's inner margin without faking a page fold.
-            columnRule: columns === 2 ? "1px solid var(--wb-paper-edge)" : undefined,
           }}
         >
           {content}
         </div>
       </div>
+
+      <div className="wb-paper-run" style={{ padding: "1.1em 2.6em 1.5em" }}>
+        <span>{folio(firstFolio)}</span>
+        {columns === 2 && <span>{folio(firstFolio + 1)}</span>}
+      </div>
+
+      {columns === 2 && <div className="wb-paper-spine" />}
     </div>
   );
 }

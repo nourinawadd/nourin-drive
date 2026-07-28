@@ -32,11 +32,12 @@
 
   /* Ereader page stock. The one place the Workbench palette steps aside:
      long-form reading in a pixel font on #ffffff is punishing, so the page
-     itself gets warm paper and a serif face. Chrome around it stays grey. */
-  --wb-paper:      #f4ecd8;
-  --wb-paper-ink:  #2b2318;
-  --wb-paper-edge: #d8cbb0;
-  --wb-paper-dim:  #6b5d47;
-  --wb-serif: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino,
-              "Times New Roman", serif;
+     itself gets warm paper and a proper monospace. Chrome around it stays grey. */
+  --wb-paper:      #f8efd9;
+  --wb-paper-ink:  #23201a;
+  --wb-paper-edge: #cfc2a4;  /* hairlines, section rules */
+  --wb-paper-dim:  #8a8069;  /* running heads, page numbers */
+  --wb-paper-rule: #4a4436;  /* the spine between two pages of a spread */
+  --wb-paper-font: var(--font-paper), "IBM Plex Mono", Consolas,
+                   "DejaVu Sans Mono", "Courier New", monospace;
 }

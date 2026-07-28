@@ -114,7 +114,7 @@ function PlaceholderFace({ doc, width, height }: { doc: LibraryDoc; width: numbe
         gap: 4,
         padding: `${Math.round(height * 0.1)}px ${Math.round(width * 0.12)}px`,
         borderLeft: `${Math.max(3, Math.round(width * 0.05))}px solid ${spineColor(doc.shelf)}`,
-        fontFamily: "var(--wb-serif)",
+        fontFamily: "var(--wb-paper-font)",
         color: "var(--wb-paper-ink)",
         textAlign: "center",
         overflow: "hidden",

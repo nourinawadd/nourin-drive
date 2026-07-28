@@ -228,6 +228,8 @@ export function ReaderView({
             page={page}
             onPageCount={setPageCount}
             onProgress={setScrollPercent}
+            title={title}
+            author={author}
           />
         )}
 
@@ -241,12 +243,15 @@ export function ReaderView({
         )}
       </div>
 
-      {/* ── status bar ── */}
+      {/* ── status bar ──
+          `page` counts PDF pages but text SCREENS, and a screen holds `columns`
+          numbered pages. Convert here so the readout matches the folio printed
+          on the page — otherwise the corner says 3 while the page says 05. */}
       <StatusBar
         paged={paged}
-        page={page}
-        pageCount={pageCount}
-        spanned={isPdf ? columns : 1}
+        first={isPdf ? page + 1 : page * columns + 1}
+        total={isPdf ? pageCount : pageCount * columns}
+        spanned={columns}
         percent={shortForm ? scrollPercent : undefined}
         shelf={isLibrary ? (item.doc as LibraryDoc).shelf : "Recycle Bin"}
       />
@@ -279,28 +284,30 @@ function EdgeButton({
 }
 
 function StatusBar({
-  paged, page, pageCount, spanned, percent: scrollPercent, shelf,
+  paged, first, total, spanned, percent: scrollPercent, shelf,
 }: {
   paged: boolean;
-  page: number;
-  pageCount: number;
-  /** How many numbered pages the current view covers — 2 only for a PDF spread. */
+  /** 1-based number of the leftmost page on screen. */
+  first: number;
+  total: number;
+  /** How many numbered pages the current view covers. */
   spanned: 1 | 2;
   /** Short-form only: scroll progress, since there are no pages to count. */
   percent?: number;
   shelf: string;
 }) {
+  const last = Math.min(first + spanned - 1, total);
   const percent = paged
-    ? Math.round((Math.min(page + spanned, pageCount) / Math.max(1, pageCount)) * 100)
+    ? Math.round((last / Math.max(1, total)) * 100)
     : Math.min(100, Math.max(0, scrollPercent ?? 0));
 
   return (
     <div style={statusBar}>
       <span style={{ minWidth: 132 }}>
         {paged
-          ? spanned === 2
-            ? `Pages ${page + 1}–${Math.min(page + 2, pageCount)} of ${pageCount}`
-            : `Page ${page + 1} of ${pageCount}`
+          ? last > first
+            ? `Pages ${first}–${last} of ${total}`
+            : `Page ${first} of ${total}`
           : "Continuous"}
       </span>
       <div style={progressTrack}>

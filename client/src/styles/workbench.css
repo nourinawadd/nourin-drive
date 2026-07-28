@@ -341,27 +341,33 @@ body {
 .wb-paper {
   background: var(--wb-paper);
   color: var(--wb-paper-ink);
-  font-family: var(--wb-serif);
-  line-height: 1.6;
+  font-family: var(--wb-paper-font);
+  line-height: 1.7;
+  letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   image-rendering: auto;
-  hyphens: auto;
+  /* No auto-hyphenation. Justified monospace sets with wide word gaps and
+     that IS the look — hyphenating to close them fights the fixed grid. */
+  hyphens: none;
 }
 .wb-paper h1, .wb-paper h2, .wb-paper h3, .wb-paper h4 {
   font-weight: 600;
-  line-height: 1.25;
-  margin: 1.4em 0 0.5em;
+  line-height: 1.4;
+  margin: 1.6em 0 0.9em;
+  text-align: left;
   break-after: avoid;
   page-break-after: avoid;
 }
-.wb-paper h1 { font-size: 1.55em; }
-.wb-paper h2 { font-size: 1.3em; }
-.wb-paper h3 { font-size: 1.12em; }
-.wb-paper h4 { font-size: 1em; letter-spacing: 0.04em; text-transform: uppercase; }
+/* Headings stay close to body size — at a fixed pitch, weight does the work a
+   size jump does in a proportional face, and big mono headings look shouted. */
+.wb-paper h1 { font-size: 1.15em; }
+.wb-paper h2 { font-size: 1.08em; }
+.wb-paper h3 { font-size: 1em; }
+.wb-paper h4 { font-size: 1em; letter-spacing: 0.08em; text-transform: uppercase; }
 .wb-paper > :first-child { margin-top: 0; }
-.wb-paper p { margin: 0 0 0.9em; text-align: justify; }
-.wb-paper ul, .wb-paper ol { margin: 0 0 0.9em; padding-left: 1.4em; }
+.wb-paper p { margin: 0 0 1.1em; text-align: justify; }
+.wb-paper ul, .wb-paper ol { margin: 0 0 1.1em; padding-left: 1.4em; }
 .wb-paper li { margin: 0.2em 0; }
 .wb-paper a { color: #7a4a12; text-decoration: underline; }
 .wb-paper hr {
@@ -397,7 +403,8 @@ body {
   margin: 0;
   white-space: pre-wrap;
   overflow-wrap: break-word;
-  font-family: var(--wb-serif);
+  font-family: var(--wb-paper-font);
+  font-size: 1em;
   text-align: left;
 }
 
@@ -407,7 +414,8 @@ body {
    hidden because pages are turned with the buttons and arrow keys; letting
    the user drag would strand them mid-spread. */
 .wb-paper-cols {
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -415,6 +423,43 @@ body {
 }
 .wb-paper-cols::-webkit-scrollbar { display: none; }
 .wb-paper-cols > * { height: 100%; }
+
+/* Page furniture — running heads, folios and the spine. Drawn as fixed chrome
+   around the text rather than inside it: put a running head in the flow and it
+   scrolls away with the columns, which is exactly what it must not do. */
+.wb-paper-sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.wb-paper-run {
+  display: flex;
+  flex-shrink: 0;
+}
+.wb-paper-run > * {
+  flex: 1;
+  min-width: 0;
+  padding: 0 1.5em;
+  text-align: center;
+  font-size: 0.78em;
+  letter-spacing: 0.12em;
+  color: var(--wb-paper-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The fold. Sits in the middle of the column gap, which lands on the container
+   centre because the horizontal padding either side is symmetric. */
+.wb-paper-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: var(--wb-paper-rule);
+  opacity: 0.55;
+  pointer-events: none;
+}
 
 /* ------- prism (json syntax highlight) ------------------------------ */
 .token.punctuation { color: #555; }
