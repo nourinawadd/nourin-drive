@@ -13,7 +13,8 @@
     "build": "npm --workspace client run build && npm --workspace server run build",
     "start:client": "npm --workspace client run start",
     "start:server": "npm --workspace server run start",
-    "add": "npm --workspace client run add"
+    "add": "npm --workspace client run add",
+    "add:doc": "npm --workspace client run add:doc"
   },
   "devDependencies": {
     "concurrently": "^9.0.1"

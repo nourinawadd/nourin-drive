@@ -8,67 +8,18 @@
 // Graphic design / photography / songs stay drop-and-go — the wizard just points
 // you at the right folder for those.
 
-import { createInterface } from "node:readline/promises";
-import { stdin as input, stdout as output } from "node:process";
 import { writeFileSync, existsSync, mkdirSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { generate } from "./gen-projects.mjs";
+import { addDoc } from "./add-doc.mjs";
+import { createPrompt, slugify } from "./prompt.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const CONTENT_DIR = join(here, "..", "content", "projects");
 const CV_CONTENT_DIR = join(here, "..", "content", "cv");
 
-// Buffered line reader. Works whether stdin is an interactive TTY (lines arrive
-// one Enter at a time) or a pipe/file (all lines arrive at once) — readline's
-// own question() drops piped lines, so we queue them ourselves.
-const rl = createInterface({ input, output });
-const queue = [];
-let waiting = null;
-let closed = false;
-rl.on("line", (line) => {
-  if (waiting) { const r = waiting; waiting = null; r(line); }
-  else queue.push(line);
-});
-rl.on("close", () => {
-  closed = true;
-  if (waiting) { const r = waiting; waiting = null; r(null); }
-});
-const nextLine = () => {
-  if (queue.length) return Promise.resolve(queue.shift());
-  if (closed) return Promise.resolve(null);
-  return new Promise((res) => { waiting = res; });
-};
-
-const ask = async (q, def) => {
-  output.write(def ? `${q} (${def}): ` : `${q}: `);
-  const line = await nextLine();
-  const a = (line ?? "").trim();
-  return a || def || "";
-};
-const askYesNo = async (q, def = true) => {
-  output.write(`${q} (${def ? "Y/n" : "y/N"}): `);
-  const a = ((await nextLine()) ?? "").trim().toLowerCase();
-  if (!a) return def;
-  return a.startsWith("y");
-};
-const slugify = (s) =>
-  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "entry";
-
-// Read "- " lines until a blank line / EOF.
-async function askBullets(heading) {
-  console.log(heading);
-  const bullets = [];
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    output.write("  - ");
-    const line = await nextLine();
-    const b = (line ?? "").trim();
-    if (!b) break;
-    bullets.push(b);
-  }
-  return bullets;
-}
+const { rl, ask, askYesNo, askBullets } = createPrompt();
 
 // Write content to <dir>/<slug>.md, appending -2, -3… if the slug collides.
 function writeContentFile(dir, name, content) {
@@ -97,6 +48,8 @@ const MENU = [
   { type: "api", label: "API             → APIs section + CV (Software Projects)" },
   { type: "software", label: "Software        → CV only (robotics, libraries, tools)" },
   { type: "blog", label: "Blog            → Blog section teaser" },
+  { group: "Reading library" },
+  { type: "__library", label: "Poem / Writing / Book → Ereader" },
   { group: "CV / About window" },
   { type: "experience", label: "Experience      → CV: Experience" },
   { type: "education", label: "Education       → CV: Education" },
@@ -130,6 +83,13 @@ async function main() {
     const k = parseInt(await ask("Choice number"), 10);
     if (k >= 1 && k <= CHOICES.length) type = CHOICES[k - 1].type;
     else console.log("  Please enter a number from the list.");
+  }
+
+  // --- reading library: same wizard as `npm run add:doc` ---
+  if (type === "__library") {
+    await addDoc(ask, askYesNo);
+    rl.close();
+    return;
   }
 
   // --- drop-and-go reminders ---
