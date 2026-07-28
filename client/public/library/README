@@ -1,0 +1,50 @@
+Reading library — the files behind the Ereader app.
+(No extension on this file on purpose: the generator ignores it.)
+
+Easiest way in:
+
+    npm run add:doc
+
+It asks for a file, a title and an author, copies everything into the right
+shelf, and regenerates the index. `npm run add` has the same wizard under
+"Poem / Writing / Book".
+
+Doing it by hand works too — drop files in and run `npm run library`:
+
+    Poems/on leaving.md
+    Writings/notes on quiet.txt
+    Books/Franz Kafka - The Trial.pdf
+
+The folder name is the shelf. It becomes a filter chip in the Ereader and a
+folder in the File Explorer, so a new folder here is a new shelf — no code
+change needed.
+
+Formats: .pdf, .md, .txt. Where the metadata comes from:
+
+  .md   frontmatter at the top of the file:
+            ---
+            title: On Leaving
+            author:            (leave out if it's yours)
+            date: 2026-07
+            blurb: One line for the card.
+            note:              (edition, source, anything worth recording)
+            ---
+  .txt  the filename is the title
+  .pdf  the filename is "Author - Title.pdf"
+
+Two optional companions, both matched by base name:
+
+  Franz Kafka - The Trial.cover.png    cover art for the card
+  Franz Kafka - The Trial.meta.md      frontmatter-only sidecar, for anything
+                                       a filename can't hold (blurb, note,
+                                       date). Sidecar values win.
+
+Without cover art, PDFs render their own first page as the thumbnail and
+everything else gets the title set on paper. Nothing to prepare either way.
+
+A note on the Books shelf: those are other people's work. Keep the author in
+the filename so the card credits them, and use `note:` for the edition or
+source if you have it.
+
+Poems are read as one continuous piece; longer prose and PDFs paginate into a
+two-page spread when the window is wide enough.

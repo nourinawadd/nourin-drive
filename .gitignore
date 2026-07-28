@@ -9,6 +9,10 @@ out/
 dist/
 build/
 
+# pdf.js worker — copied out of node_modules by scripts/copy-pdf-worker.mjs on
+# every `npm run gen` (predev/prebuild), so it never needs to be tracked.
+client/public/vendor/
+
 # Env
 .env
 .env.local
