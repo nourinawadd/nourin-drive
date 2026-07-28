@@ -8,7 +8,7 @@ stack: React Native (Expo) · TypeScript · Node · Express · MongoDB · JWT ·
 cv: true
 ---
 
-A focus app that blocks distracting apps and uses a physical NFC tap to prove you actually showed up — with streaks, goals, and AI insights.
+A focus app that blocks distracting apps and uses a physical NFC tap to prove you actually showed up, with streaks, goals, and AI insights.
 
 - Built a cross-platform focus app in React Native (Expo) + TypeScript with a custom dev build for native iOS features
 - Designed an NFC check-in flow where a physical tap verifies real presence, making sessions trustworthy instead of self-reported

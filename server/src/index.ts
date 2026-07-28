@@ -30,7 +30,7 @@ const limiter = rateLimit({
   max: 200,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: "Too many requests — try again later." },
+  message: { error: "Too many requests. Try again later." },
 });
 app.use("/api", limiter);
 

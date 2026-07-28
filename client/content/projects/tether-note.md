@@ -6,7 +6,7 @@ url: https://tethernote.vercel.app/
 stack: Node.js · MongoDB · Express · React
 cv: true
 ---
-Time-delayed note delivery — send messages to your future self at custom intervals.
+Time-delayed note delivery: send messages to your future self at custom intervals.
 
 - Scheduled note delivery letting users send messages to their future selves at custom intervals.
 - Node.js cron jobs + MongoDB automate time-based delivery and scheduling logic.

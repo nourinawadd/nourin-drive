@@ -24,7 +24,7 @@ const mkId = () => `note-${nextId++}`;
 const SEED: StickyNote[] = [
   { id: mkId(), text: "Drag me around ✎", x: 60, y: 96, color: COLORS[0], rotate: -5 },
   { id: mkId(), text: "Double-click Notes:\nto add your own", x: 232, y: 250, color: COLORS[1], rotate: 4 },
-  { id: mkId(), text: "Heads up — I vanish\non refresh!", x: 120, y: 392, color: COLORS[2], rotate: -3 },
+  { id: mkId(), text: "Heads up! I vanish\non refresh.", x: 120, y: 392, color: COLORS[2], rotate: -3 },
 ];
 
 type State = { notes: StickyNote[] };

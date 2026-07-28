@@ -10,7 +10,7 @@ const FORTUNES = [
   "The right tool is the one already open.",
   "A program is never finished, only abandoned at a good stopping point.",
   "Guru Meditation is just the machine taking a moment for itself.",
-  "640K ought to be enough for anybody. — allegedly",
+  "640K ought to be enough for anybody. (allegedly)",
   "Ship the ugly version. The pretty one never ships.",
   "Every bug was, at some point, a very reasonable idea.",
   "Copper lists don't lie.",

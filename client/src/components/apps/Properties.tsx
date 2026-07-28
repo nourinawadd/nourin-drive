@@ -41,10 +41,10 @@ export function Properties({ winId, payload }: { winId: string; payload: unknown
 
         <Rule />
 
-        <Field label="Type" value={p.typeLabel ?? "—"} />
-        <Field label="Location" value={p.location ?? "—"} />
+        <Field label="Type" value={p.typeLabel ?? "-"} />
+        <Field label="Location" value={p.location ?? "-"} />
         {p.contains && <Field label="Contains" value={p.contains} />}
-        <Field label="Modified" value={p.date ?? "—"} />
+        <Field label="Modified" value={p.date ?? "-"} />
 
         {p.blurb && (
           <>

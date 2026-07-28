@@ -4,18 +4,18 @@
 import type { Entry } from "./about";
 
 export const CV_PROJECTS: Entry[] = [
-  { title: "Anchor", subtitle: "A focus app that blocks distracting apps and uses a physical NFC tap to prove you actually showed up — with streaks, goals, and AI insights.", meta: "Jun 2026", stack: "React Native (Expo) · TypeScript · Node · Express · MongoDB · JWT · iOS Screen Time · NFC · Live Activities", url: "https://anchor-iesq.onrender.com/", bullets: ["Built a cross-platform focus app in React Native (Expo) + TypeScript with a custom dev build for native iOS features","Designed an NFC check-in flow where a physical tap verifies real presence, making sessions trustworthy instead of self-reported","Integrated iOS Screen Time to shield distracting apps mid-session, plus Live Activities on the Lock Screen and Dynamic Island","Built a Node/Express + MongoDB backend with JWT auth and Google/Apple sign-in, deployed on Render with MongoDB Atlas","Added AI insights (GitHub Models with a Gemini fallback) that recommend best focus hours, ideal session length, and a weekly schedule","Shipped from TestFlight beta to the App Store, with focus scores, streaks, goals, and day/week/month analytics"] },
-  { title: "Tether Note", subtitle: "Time-delayed note delivery — send messages to your future self at custom intervals.", meta: "Nov 2025", stack: "Node.js · MongoDB · Express · React", url: "https://tethernote.vercel.app/", bullets: ["Scheduled note delivery letting users send messages to their future selves at custom intervals.","Node.js cron jobs + MongoDB automate time-based delivery and scheduling logic.","JWT session management with server-side middleware validation across all note operations.","Deployed to Vercel with env-var API config separating dev and production."] },
+  { title: "Anchor", subtitle: "A focus app that blocks distracting apps and uses a physical NFC tap to prove you actually showed up, with streaks, goals, and AI insights.", meta: "Jun 2026", stack: "React Native (Expo) · TypeScript · Node · Express · MongoDB · JWT · iOS Screen Time · NFC · Live Activities", url: "https://anchor-iesq.onrender.com/", bullets: ["Built a cross-platform focus app in React Native (Expo) + TypeScript with a custom dev build for native iOS features","Designed an NFC check-in flow where a physical tap verifies real presence, making sessions trustworthy instead of self-reported","Integrated iOS Screen Time to shield distracting apps mid-session, plus Live Activities on the Lock Screen and Dynamic Island","Built a Node/Express + MongoDB backend with JWT auth and Google/Apple sign-in, deployed on Render with MongoDB Atlas","Added AI insights (GitHub Models with a Gemini fallback) that recommend best focus hours, ideal session length, and a weekly schedule","Shipped from TestFlight beta to the App Store, with focus scores, streaks, goals, and day/week/month analytics"] },
+  { title: "Tether Note", subtitle: "Time-delayed note delivery: send messages to your future self at custom intervals.", meta: "Nov 2025", stack: "Node.js · MongoDB · Express · React", url: "https://tethernote.vercel.app/", bullets: ["Scheduled note delivery letting users send messages to their future selves at custom intervals.","Node.js cron jobs + MongoDB automate time-based delivery and scheduling logic.","JWT session management with server-side middleware validation across all note operations.","Deployed to Vercel with env-var API config separating dev and production."] },
   { title: "SSH Portfolio", subtitle: "Fully interactive TUI portfolio served over SSH (Go + the Charmbracelet stack).", meta: "Oct 2025", stack: "Go · Bubble Tea · Wish · Linux · Oracle Cloud", url: "https://nourin.is-a.dev", bullets: ["Fully interactive TUI portfolio served over SSH using Go and the Charmbracelet stack.","Deployed on Oracle Cloud (Ubuntu 22.04) with systemd, iptables, and an Nginx HTTPS landing page (Let's Encrypt)."] },
-  { title: "Subscriptions Tracker API", subtitle: "RESTful subscription-management API — JWT auth and 15+ endpoints.", meta: "May 2025", stack: "Node.js · Express · MongoDB", url: "https://github.com/nourinawadd/subscriptions-tracker-api", bullets: ["RESTful API with 15+ endpoints for subscription management.","JWT auth with bcrypt hashing and role-based access control.","Mongoose schema across 3 collections with referential integrity."] },
+  { title: "Subscriptions Tracker API", subtitle: "RESTful subscription-management API with JWT auth and 15+ endpoints.", meta: "May 2025", stack: "Node.js · Express · MongoDB", url: "https://github.com/nourinawadd/subscriptions-tracker-api", bullets: ["RESTful API with 15+ endpoints for subscription management.","JWT auth with bcrypt hashing and role-based access control.","Mongoose schema across 3 collections with referential integrity."] },
   { title: "Task Manager API", subtitle: "Task Manager API with JWT auth, role-based access, and a relational PostgreSQL schema.", meta: "Apr 2025", stack: "Node.js · Express · Sequelize · PostgreSQL · JWT · bcrypt · Swagger", url: "https://github.com/nourinawadd/task-manager-api", bullets: ["RESTful Task Manager API with JWT auth, role-based access, and secure password hashing.","Relational PostgreSQL schema with task filtering, sorting, and full CRUD."] },
-  { title: "Line Follower Robot", subtitle: "Autonomous line-following car — IR sensors and real-time control logic in C on Arduino.", meta: "May 2024", stack: "C · Arduino · IR sensors · DC motors", url: "https://github.com/nourinawadd/Line-Follower-Robot", bullets: ["Autonomous line-following car with IR sensors and real-time control logic in C on Arduino."] },
+  { title: "Line Follower Robot", subtitle: "Autonomous line-following car with IR sensors and real-time control logic in C on Arduino.", meta: "May 2024", stack: "C · Arduino · IR sensors · DC motors", url: "https://github.com/nourinawadd/Line-Follower-Robot", bullets: ["Autonomous line-following car with IR sensors and real-time control logic in C on Arduino."] },
   { title: "Obstacle-Avoiding Car", subtitle: "Obstacle avoidance using an ultrasonic sensor on a servo, with real-time motor control in C.", meta: "May 2024", stack: "C · Arduino · Ultrasonic sensor · Servo · DC motors", url: "https://github.com/nourinawadd/obstacle-avoiding-car-arduino", bullets: ["Obstacle avoidance using an ultrasonic sensor on a servo, with real-time motor control in C on Arduino."] },
 ];
 
 export const CV_GAMES: Entry[] = [
-  { title: "Suhoor Rush", subtitle: "2D web game blending rapid item collection with narrative — built in 3 days for a jam.", meta: "Mar 2025", stack: "Unity · C# · WebGL", url: "https://sifrstudios.itch.io/suhoor-rush", bullets: ["2D web game blending rapid item collection with narrative; built in 3 days for a 'Collect Them All' jam.","UI Toolkit menus, Scriptable Objects, C# events/delegates, object pooling, sprite atlasing, WebGL tweaks."] },
-  { title: "Puppetry", subtitle: "2D puzzle for a power-themed jam — multi-puppet coordination, built in 9 days.", meta: "Jan 2025", stack: "Godot 4.3", url: "https://sifrstudios.itch.io/puppetry", bullets: ["2D puzzle for a power-themed jam, built in 9 days.","Environmental interaction, multi-puppet coordination, and timed disintegration mechanics."] },
+  { title: "Suhoor Rush", subtitle: "2D web game blending rapid item collection with narrative, built in 3 days for a jam.", meta: "Mar 2025", stack: "Unity · C# · WebGL", url: "https://sifrstudios.itch.io/suhoor-rush", bullets: ["2D web game blending rapid item collection with narrative; built in 3 days for a 'Collect Them All' jam.","UI Toolkit menus, Scriptable Objects, C# events/delegates, object pooling, sprite atlasing, WebGL tweaks."] },
+  { title: "Puppetry", subtitle: "2D puzzle for a power-themed jam: multi-puppet coordination, built in 9 days.", meta: "Jan 2025", stack: "Godot 4.3", url: "https://sifrstudios.itch.io/puppetry", bullets: ["2D puzzle for a power-themed jam, built in 9 days.","Environmental interaction, multi-puppet coordination, and timed disintegration mechanics."] },
   { title: "AstraCipher", subtitle: "2D story-driven top-down platformer for dark-web awareness.", meta: "Nov 2024", stack: "Godot 4.3", url: "https://sifrstudios.itch.io/astracipher", bullets: ["2D story-driven top-down platformer for dark-web awareness.","Scene instancing + event-driven architecture, AI-driven NPCs, state machines, and pathfinding."] },
 ];
 
@@ -26,26 +26,26 @@ export const CV_EXPERIENCE: Entry[] = [
 ];
 
 export const CV_EDUCATION: Entry[] = [
-  { title: "Mansoura University", subtitle: "B.Eng. — Communications and Computer Engineering", meta: "Mansoura, Egypt · Sep 2022 – Present", bullets: ["GPA: 3.95 / 4.0","Coursework: Data Structures, Operating Systems, Distributed Systems, Artificial Intelligence, Calculus"] },
-  { title: "Mansoura College International Schools", subtitle: "IGCSE — 99%", meta: "Mansoura, Egypt · Sep 2020 – Sep 2022" },
+  { title: "Mansoura University", subtitle: "B.Eng. in Communications and Computer Engineering", meta: "Mansoura, Egypt · Sep 2022 – Present", bullets: ["GPA: 3.95 / 4.0","Coursework: Data Structures, Operating Systems, Distributed Systems, Artificial Intelligence, Calculus"] },
+  { title: "Mansoura College International Schools", subtitle: "IGCSE · 99%", meta: "Mansoura, Egypt · Sep 2020 – Sep 2022" },
 ];
 
 export const CV_EXTRACURRICULARS: Entry[] = [
-  { title: "IEEE Mansoura Student Branch — Victoris 3.0", subtitle: "Technical Director", meta: "Jun – Sep 2024", bullets: ["Led technical planning and execution for a national event with 880+ participants and 200+ teams across 4 tracks (IoT, CTF, Software, Micromouse).","Managed online/offline phases, coordinated with teams and mentors, ensured smooth technical operations."] },
+  { title: "IEEE Mansoura Student Branch · Victoris 3.0", subtitle: "Technical Director", meta: "Jun – Sep 2024", bullets: ["Led technical planning and execution for a national event with 880+ participants and 200+ teams across 4 tracks (IoT, CTF, Software, Micromouse).","Managed online/offline phases, coordinated with teams and mentors, ensured smooth technical operations."] },
   { title: "IEEE Mansoura Computer Society Chapter", subtitle: "Backend Committee Member", meta: "Dec 2024 – Present", bullets: ["Built backend components of a MERN-stack application: RESTful APIs, database management, and server-side logic."] },
   { title: "CATReloaded", subtitle: "Game Developer", meta: "Dec 2024 – Present", bullets: ["Applied Unity fundamentals (2D/3D, mechanics, physics, UI) and game design principles.","Collaborated in 48-hour game jams, designing assets and building prototypes in Unity/Godot."] },
 ];
 
 export const CV_CERTIFICATIONS: string[] = [
-  "Backend Development and APIs — freeCodeCamp",
-  "Relational Database — freeCodeCamp",
-  "Foundational C# with Microsoft — freeCodeCamp",
-  "Project Management Foundations — LinkedIn",
-  "Time Management Fundamentals — LinkedIn",
-  "Python Programming — MaharaTech",
+  "Backend Development and APIs · freeCodeCamp",
+  "Relational Database · freeCodeCamp",
+  "Foundational C# with Microsoft · freeCodeCamp",
+  "Project Management Foundations · LinkedIn",
+  "Time Management Fundamentals · LinkedIn",
+  "Python Programming · MaharaTech",
 ];
 
 export const CV_LANGUAGES: string[] = [
-  "English — Full Professional Proficiency",
-  "Arabic — Native",
+  "English · Full Professional Proficiency",
+  "Arabic · Native",
 ];

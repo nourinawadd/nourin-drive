@@ -197,16 +197,16 @@ export function InfoView() {
         books I didn&apos;t.
       </p>
       <p style={infoPara}>
-        Everything on the <strong>Books</strong> shelf is someone else&apos;s work —
+        Everything on the <strong>Books</strong> shelf is someone else&apos;s work:
         freely available editions of published titles, kept here to read rather
         than to claim. Authorship is on every card. The <strong>Poems</strong> and{" "}
         <strong>Writings</strong> shelves are mine.
       </p>
       <p style={infoPara}>
         PDFs render page by page; Markdown and plain text are typeset into
-        columns. Short pieces scroll as one piece instead — a poem cut across a
-        spread stops being a poem. Every document can be downloaded in its
-        original format or shared as a direct link.
+        columns. Short pieces scroll as one piece instead, because a poem cut
+        across a spread stops being a poem. Every document can be downloaded in
+        its original format or shared as a direct link.
       </p>
       <p style={{ ...infoPara, opacity: 0.7 }}>
         {LIBRARY.length} document{LIBRARY.length === 1 ? "" : "s"} across{" "}

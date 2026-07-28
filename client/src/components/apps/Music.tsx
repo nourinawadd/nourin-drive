@@ -146,7 +146,7 @@ export function Music({ winId }: { winId: string }) {
   if (TRACKS.length === 0) {
     return (
       <div style={empty}>
-        No tracks yet — drop audio files into <code>client/public/music/</code>,
+        No tracks yet. Drop audio files into <code>client/public/music/</code>,
         then run <code>npm run tracks</code> (or restart the dev server) and reload.
       </div>
     );
@@ -164,7 +164,7 @@ export function Music({ winId }: { winId: string }) {
               key={t.id}
               style={{ ...row, ...(active ? rowActive : null) }}
               onClick={() => (active ? togglePlay() : setIndex(i))}
-              title={`${t.title} — ${t.artist}`}
+              title={`${t.title} · ${t.artist}`}
             >
               <span style={rowNum}>
                 {active && playing ? "♪" : i + 1}
@@ -190,7 +190,7 @@ export function Music({ winId }: { winId: string }) {
             }}
           />
           <span style={barMeta}>
-            <strong style={barTitle}>{current ? current.title : "—"}</strong>
+            <strong style={barTitle}>{current ? current.title : "..."}</strong>
             <span style={barArtist}>
               {error ? "file not found" : current ? current.artist : "nothing playing"}
             </span>

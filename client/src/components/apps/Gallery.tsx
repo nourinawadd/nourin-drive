@@ -45,7 +45,7 @@ export function Gallery({ payload }: { payload?: unknown }) {
   if (PHOTOS.length === 0) {
     return (
       <div style={empty}>
-        No images yet — drop photos into <code>client/public/gallery/</code>
+        No images yet. Drop photos into <code>client/public/gallery/</code>
         {" "}(use subfolders for categories, e.g. <code>gallery/Photography/…</code>),
         then run <code>npm run gallery</code> (or restart the dev server) and reload.
       </div>

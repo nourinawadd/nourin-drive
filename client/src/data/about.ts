@@ -58,7 +58,7 @@ export const ABOUT: About = {
     { label: "Sifr Studios", url: "https://sifrstudios.itch.io/" },
   ],
   bio: [
-    "Full stack engineer studying Communications and Computer Engineering at Mansoura University. I build web apps end to end — Node/Express/Mongo and .NET/SQL Server alike — and also work across embedded systems and graphic design.",
+    "Full stack engineer studying Communications and Computer Engineering at Mansoura University. I build web apps end to end (Node/Express/Mongo and .NET/SQL Server alike) and also work across embedded systems and graphic design.",
     "Across internships and personal projects I've built REST APIs with JWT auth and worked with MongoDB, PostgreSQL, and SQL Server, shipping full-stack applications from database to deployment.",
   ],
   skills: [

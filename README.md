@@ -1,9 +1,15 @@
-# retrodesk
+# NOURIN:
 
-a personal portfolio built as a fake operating system — an **amiga workbench 3.31**
+a personal computer.
+
+a personal portfolio built as a fake operating system: an **amiga workbench 3.31**
 desktop you can actually use. it boots, you double-click icons, windows open, drag,
 resize, and stack. every section of the portfolio is an "app" living inside its own
 window.
+
+the name is an amiga volume. the desktop mounts `User:`, `Projects:`, `Games:`,
+`Music:`, `Library:` and `Trash:`, and the site itself is one more drive in that
+set: everything-nourin, mounted.
 
 ```
 https://nourin.is-a.dev       ← this project (next.js / mern)
@@ -70,7 +76,7 @@ env:
 NEXT_PUBLIC_API_URL=http://localhost:5000
 
 # server/.env
-MONGO_URI=mongodb://localhost:27017/retrodesk
+MONGO_URI=mongodb://localhost:27017/nourin
 PORT=5000
 CLIENT_URL=http://localhost:3000
 NODE_ENV=development

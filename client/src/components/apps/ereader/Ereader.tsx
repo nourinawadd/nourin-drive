@@ -179,7 +179,7 @@ export function Ereader({ winId, payload }: { winId: string; payload: unknown })
                     ? `Nothing matches “${query}”.`
                     : LIBRARY.length
                       ? `Nothing on the ${shelf} shelf yet.`
-                      : "The library is empty — drop a file into client/public/library/ and run npm run library."
+                      : "The library is empty. Drop a file into client/public/library/ and run npm run library."
                 }
               />
             </>
@@ -207,7 +207,7 @@ function ShareDialog({
         <div style={{ fontSize: 11, marginBottom: 8, lineHeight: 1.5 }}>
           {copied
             ? "The link is on your clipboard. It opens this document in the reader."
-            : "Your browser blocked the clipboard — select and copy it by hand:"}
+            : "Your browser blocked the clipboard. Select and copy it by hand:"}
         </div>
         <input
           readOnly

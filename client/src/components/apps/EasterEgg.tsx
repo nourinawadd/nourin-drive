@@ -14,7 +14,7 @@ const MESSAGE = [
   "you typed the konami code.",
   "respect.",
   "",
-  "there's nothing here yet —",
+  "there's nothing here yet...",
   "but you clearly know where to look.",
   "",
   "(placeholder secret · replace me)",

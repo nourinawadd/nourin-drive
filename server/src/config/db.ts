@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 export async function connectDB(): Promise<boolean> {
   const uri = process.env.MONGO_URI;
   if (!uri) {
-    console.warn("[db] MONGO_URI not set — skipping database connection.");
+    console.warn("[db] MONGO_URI not set, skipping database connection.");
     return false;
   }
 

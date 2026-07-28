@@ -85,7 +85,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export function CVDocument() {
   return (
-    <Document author={ABOUT.name} title={`${ABOUT.name} — CV`}>
+    <Document author={ABOUT.name} title={`${ABOUT.name} · CV`}>
       <Page size="A4" style={s.page}>
         <Text style={s.name}>{ABOUT.name}</Text>
         <Text style={s.role}>{ABOUT.title}</Text>

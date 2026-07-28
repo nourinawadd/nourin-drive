@@ -22,8 +22,8 @@ const paperFont = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Workbench 3.31 · Nourin Awad",
-  description: "Amiga-style portfolio desktop.",
+  title: "NOURIN: · Nourin Awad",
+  description: "A personal computer. Everything-Nourin, mounted as an Amiga Workbench desktop.",
 };
 
 export default function RootLayout({

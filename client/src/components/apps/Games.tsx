@@ -14,7 +14,7 @@ export function Games() {
       <div style={grid}>
         {games.length === 0 && (
           <div style={{ padding: 12, fontSize: 12, opacity: 0.6 }}>
-            no games yet — add one with `npm run add`.
+            no games yet. add one with `npm run add`.
           </div>
         )}
         {games.map((g) => {

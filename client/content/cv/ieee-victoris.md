@@ -1,6 +1,6 @@
 ---
 type: extracurricular
-name: IEEE Mansoura Student Branch — Victoris 3.0
+name: IEEE Mansoura Student Branch · Victoris 3.0
 meta: Jun – Sep 2024
 order: 1
 ---

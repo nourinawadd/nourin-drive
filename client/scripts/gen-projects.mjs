@@ -231,7 +231,7 @@ ${projectRows}
   const stringArray = (section, detailKey) =>
     cvItems
       .filter((it) => CV_STRING_TYPES[it.type] === section)
-      .map((it) => JSON.stringify(it[detailKey] ? `${it.name} — ${it[detailKey]}` : it.name))
+      .map((it) => JSON.stringify(it[detailKey] ? `${it.name} · ${it[detailKey]}` : it.name))
       .map((s) => `  ${s},`)
       .join("\n");
 

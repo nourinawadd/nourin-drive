@@ -25,7 +25,7 @@ const NET_TITLE = `${NET_NAME} [ver. 1.0] - Personal Profile System`;
 const USER_ID = "nourinawadd";
 const MEMBER_SINCE = "09-2022";
 const STATUS = "ONLINE";
-const QUOTE = "I build end to end — where engineering meets creativity.";
+const QUOTE = "I build end to end, where engineering meets creativity.";
 
 const IDENTITY: { label: string; value: string }[] = [
   { label: "LOCATION",     value: ABOUT.location },
@@ -46,7 +46,7 @@ const STATS: { label: string; value: string }[] = [
 const FEATURED = ABOUT.projects.slice(0, 3);
 
 const SYSTEM_MESSAGE =
-  `Welcome to ${NET_NAME}. This profile runs inside a retro desktop environment — ` +
+  `Welcome to ${NET_NAME}. This profile runs inside a retro desktop environment, ` +
   `explore the other drives for projects, games, music and more. ` +
   `Use EXPORT PDF in the sidebar to download the full CV.`;
 
@@ -212,7 +212,7 @@ function Sidebar({ tab, setTab }: { tab: TabId; setTab: (t: TabId) => void }) {
           </span>
           <span style={{ flex: 1 }}>{busy ? "BUILDING…" : "EXPORT PDF"}</span>
         </button>
-        {err && <div style={{ color: "#a11", fontSize: 9, marginTop: 4 }}>Export failed — try again.</div>}
+        {err && <div style={{ color: "#a11", fontSize: 9, marginTop: 4 }}>Export failed. Try again.</div>}
       </div>
     </div>
   );
