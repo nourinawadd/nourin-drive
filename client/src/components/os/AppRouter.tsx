@@ -12,7 +12,6 @@ import { GamePlayer } from "@/components/apps/GamePlayer";
 import { Games } from "@/components/apps/Games";
 import { Guestbook } from "@/components/apps/Guestbook";
 import { Music } from "@/components/apps/Music";
-import { Notepad } from "@/components/apps/Notepad";
 import { Profile } from "@/components/apps/Profile";
 import { Properties } from "@/components/apps/Properties";
 import { RecycleBin } from "@/components/apps/RecycleBin";
@@ -33,7 +32,6 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "games":       return <Games />;
     case "guestbook":   return <Guestbook />;
     case "music":       return <Music winId={win.id} />;
-    case "notepad":     return <Notepad winId={win.id} payload={win.payload} />;
     case "profile":     return <Profile />;
     case "properties":  return <Properties winId={win.id} payload={win.payload} />;
     case "recycle":     return <RecycleBin />;

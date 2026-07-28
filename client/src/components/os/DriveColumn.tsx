@@ -7,28 +7,38 @@ import { useStickyStore } from "@/context/stickyStore";
 import type { AppId } from "@/types/window";
 import {
   IconFloppyUser,
+  IconFloppySystem,
   IconDrawer,
+  IconFloppyTerminal,
   IconFloppyJoystick,
   IconFloppyPhoto,
   IconFloppyNotepad,
   IconFloppyBook,
   IconFloppyQuill,
   IconFloppyMusic,
+  IconFloppyGlobe,
   IconFloppyStickies,
   IconTrashcan,
 } from "@/components/os/icons";
 
+// Every app that makes sense to launch cold gets a volume. The three that
+// don't: `game` and `properties` only exist once something hands them a
+// payload, and `easter-egg` would stop being one.
+//
 // `appId` opens an app window; a drive without one (Notes) runs a custom
 // action on open instead — handled in the double-click below.
 const DRIVES: { id: string; label: string; appId?: AppId; Icon: ComponentType }[] = [
   { id: "work",      label: "User:",      appId: "profile",   Icon: IconFloppyUser },
+  { id: "about",     label: "About:",     appId: "about",     Icon: IconFloppySystem },
   { id: "projects",  label: "Projects:",  appId: "explorer",  Icon: IconDrawer },
+  { id: "apis",      label: "APIs:",      appId: "apis",      Icon: IconFloppyTerminal },
   { id: "games",     label: "Games:",     appId: "games",     Icon: IconFloppyJoystick },
   { id: "photos",    label: "Photos:",    appId: "gallery",   Icon: IconFloppyPhoto },
   { id: "blog",      label: "Blog:",      appId: "blog",      Icon: IconFloppyNotepad },
   { id: "library",   label: "Library:",   appId: "ereader",   Icon: IconFloppyBook },
   { id: "guestbook", label: "Guestbook:", appId: "guestbook", Icon: IconFloppyQuill },
   { id: "music",     label: "Music:",     appId: "music",     Icon: IconFloppyMusic },
+  { id: "browser",   label: "Browser:",   appId: "browser",   Icon: IconFloppyGlobe },
   { id: "stickies",  label: "Notes:",     Icon: IconFloppyStickies },
   { id: "trash",     label: "Trash:",     appId: "recycle",   Icon: IconTrashcan },
 ];

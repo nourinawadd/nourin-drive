@@ -101,8 +101,76 @@ function PlaceholderCover({ doc, width, height }: { doc: LibraryDoc; width: numb
   );
 }
 
+/** Below this a cover is a colour swatch; type would be unreadable anyway. */
+const MIN_TEXT_WIDTH = 56;
+/** Monospace advance width as a fraction of font size, near enough for IBM Plex Mono. */
+const CHAR_RATIO = 0.6;
+const LINE_RATIO = 1.3;
+const MIN_SIZE = 6;
+
+/** Lines needed at `perLine` characters, wrapping on spaces only. */
+function countLines(words: string[], perLine: number): number {
+  let lines = 1;
+  let col = 0;
+  for (const word of words) {
+    if (col === 0) col = word.length;
+    else if (col + 1 + word.length <= perLine) col += 1 + word.length;
+    else {
+      lines += 1;
+      col = word.length;
+    }
+  }
+  return lines;
+}
+
+/**
+ * Largest type size at which the text fits the cover with every word intact.
+ *
+ * Two constraints: the longest word must sit on one line, so nothing is ever
+ * split down the middle, and the wrapped result must fit the height. Nothing
+ * is truncated either — the type shrinks until it fits. A fixed advance width
+ * makes both computable, which is the one place the monospace page font earns
+ * its keep outside the reader.
+ */
+function fitSize(text: string, boxW: number, boxH: number, max: number): number {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  if (!words.length) return max;
+  const longest = Math.max(...words.map((w) => w.length));
+  for (let size = max; size >= MIN_SIZE; size--) {
+    const perLine = Math.floor(boxW / (size * CHAR_RATIO));
+    if (perLine < longest) continue;   // this size would have to break a word
+    if (countLines(words, perLine) * size * LINE_RATIO <= boxH) return size;
+  }
+  return MIN_SIZE;
+}
+
 /** The drawn face: a spine stripe, the title, and the author if there is one. */
 function PlaceholderFace({ doc, width, height }: { doc: LibraryDoc; width: number; height: number }) {
+  const spine = Math.max(3, Math.round(width * 0.05));
+  const padX = Math.round(width * 0.1);
+  const padY = Math.round(height * 0.08);
+
+  if (width < MIN_TEXT_WIDTH) {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          borderLeft: `${spine}px solid ${spineColor(doc.shelf)}`,
+        }}
+      />
+    );
+  }
+
+  const boxW = width - spine - padX * 2;
+  const boxH = height - padY * 2;
+  // The author takes roughly a third of the height when there is one.
+  const titleH = doc.author ? boxH * 0.62 : boxH;
+  const titleSize = fitSize(doc.title, boxW, titleH, Math.round(width * 0.12));
+  const authorSize = doc.author
+    ? fitSize(doc.author, boxW, boxH * 0.3, Math.max(MIN_SIZE, Math.round(titleSize * 0.85)))
+    : 0;
+
   return (
     <div
       style={{
@@ -111,9 +179,9 @@ function PlaceholderFace({ doc, width, height }: { doc: LibraryDoc; width: numbe
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        gap: 4,
-        padding: `${Math.round(height * 0.1)}px ${Math.round(width * 0.12)}px`,
-        borderLeft: `${Math.max(3, Math.round(width * 0.05))}px solid ${spineColor(doc.shelf)}`,
+        gap: Math.round(height * 0.05),
+        padding: `${padY}px ${padX}px`,
+        borderLeft: `${spine}px solid ${spineColor(doc.shelf)}`,
         fontFamily: "var(--wb-paper-font)",
         color: "var(--wb-paper-ink)",
         textAlign: "center",
@@ -122,14 +190,13 @@ function PlaceholderFace({ doc, width, height }: { doc: LibraryDoc; width: numbe
     >
       <span
         style={{
-          fontSize: Math.max(9, Math.round(width * 0.13)),
-          lineHeight: 1.25,
+          fontSize: titleSize,
+          lineHeight: LINE_RATIO,
+          // Backstop only. fitSize picks a size where no word needs breaking,
+          // so this fires solely for a word too long to fit at any legible
+          // size, where breaking still beats spilling outside the cover.
           fontWeight: 600,
-          // Long titles get clipped rather than pushing the author out.
-          display: "-webkit-box",
-          WebkitLineClamp: 4,
-          WebkitBoxOrient: "vertical",
-          overflow: "hidden",
+          overflowWrap: "break-word",
         }}
       >
         {doc.title}
@@ -137,11 +204,13 @@ function PlaceholderFace({ doc, width, height }: { doc: LibraryDoc; width: numbe
       {doc.author && (
         <span
           style={{
-            fontSize: Math.max(8, Math.round(width * 0.1)),
+            fontSize: authorSize,
+            lineHeight: LINE_RATIO,
+          // Backstop only. fitSize picks a size where no word needs breaking,
+          // so this fires solely for a word too long to fit at any legible
+          // size, where breaking still beats spilling outside the cover.
             color: "var(--wb-paper-dim)",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
+            overflowWrap: "break-word",
           }}
         >
           {doc.author}

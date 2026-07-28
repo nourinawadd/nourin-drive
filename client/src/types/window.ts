@@ -11,7 +11,6 @@ export type AppId =
   | "games"
   | "guestbook"
   | "music"
-  | "notepad"
   | "profile"
   | "properties"
   | "recycle";
@@ -27,7 +26,7 @@ export type WindowInstance = {
   z: number;
   minimized: boolean;
   maximized: boolean;  // filling the desktop (Windows-style); x/y/w/h keep the restore bounds
-  payload?: unknown;   // arbitrary per-instance data (e.g. notepad text)
+  payload?: unknown;   // arbitrary per-instance data (e.g. the ereader's page)
 };
 
 export type AppDef = {

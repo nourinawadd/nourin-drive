@@ -48,7 +48,8 @@ the windows on the desktop:
 - **guestbook** — sign it; entries persist in mongo
 - **music player** — plays tracks from `public/music`, reads embedded artist/title tags
 - **user profile** — a nourin-net style profile with pdf export
-- **notepad · recycle bin · about · easter egg** — desktop fixtures (the egg is a konami code)
+- **ereader** — poems, writing and open-licence books, with a pdf.js viewer
+- **sticky notes · recycle bin · about · easter egg** — desktop fixtures (the egg is a konami code)
 
 ## ✦ content
 

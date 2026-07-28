@@ -310,6 +310,48 @@ export function IconFloppyNotepad() {
   return driveSvg(shell(C.gray3, ill));
 }
 
+export function IconFloppyTerminal() {
+  const ill = g(
+    r(9, 12, 34, 17, C.black),          // bezel
+    r(10, 13, 32, 15, C.blue2),         // screen
+    r(10, 13, 32, 1, C.blue),           // scanline glow along the top
+    r(12, 16, 2, 1, C.teal),            // "›" prompt, kept edge-connected so it
+    r(13, 17, 2, 1, C.teal),            // reads as a stroke and not three dots
+    r(12, 18, 2, 1, C.teal),
+    r(16, 18, 9, 1, C.white),
+    r(12, 21, 4, 1, C.orange),
+    r(17, 21, 13, 1, C.gray0),
+    r(12, 24, 6, 1, C.teal),
+    r(19, 24, 10, 1, C.gray0),
+    r(12, 26, 3, 2, C.white),           // cursor block
+  );
+  return driveSvg(shell(C.teal, ill));
+}
+
+export function IconFloppyGlobe() {
+  const ill = g(
+    r(20, 11, 12, 1, C.black),          // silhouette, rounded top to bottom
+    r(18, 12, 16, 1, C.black),
+    r(17, 13, 18, 1, C.black),
+    r(16, 14, 20, 12, C.black),
+    r(17, 26, 18, 1, C.black),
+    r(18, 27, 16, 1, C.black),
+    r(20, 28, 12, 1, C.black),
+    r(20, 12, 12, 1, C.blue3),          // ── fill, inset one pixel ──
+    r(18, 13, 16, 1, C.blue3),
+    r(17, 14, 18, 12, C.blue3),
+    r(18, 26, 16, 1, C.blue3),
+    r(20, 27, 12, 1, C.blue3),
+    r(17, 19, 18, 1, C.blue2),          // equator
+    r(25, 12, 1, 16, C.blue2),          // prime meridian
+    r(20, 15, 1, 10, C.blue2),
+    r(31, 15, 1, 10, C.blue2),
+    r(19, 14, 5, 1, C.white),           // gloss
+    r(19, 15, 2, 1, C.white),
+  );
+  return driveSvg(shell(C.blue3, ill));
+}
+
 export function IconFloppyQuill() {
   const ill = g(
     r(9, 20, 34, 1, C.gray2),

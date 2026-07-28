@@ -94,12 +94,6 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     minWidth: 260, minHeight: 116,
     singleton: true,
   },
-  notepad: {
-    appId: "notepad", title: "Notepad",
-    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
-    defaultX: WINDOW_X, defaultY: WINDOW_Y,
-    singleton: false,
-  },
   profile: {
     appId: "profile", title: "User Profile",
     defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,

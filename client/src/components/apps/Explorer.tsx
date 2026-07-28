@@ -16,7 +16,7 @@ type ViewMode = "list" | "icons";
 type SortKey = "name" | "type" | "date";
 
 // Persisted in the window payload so the view survives minimize/restore, the
-// same way Notepad keeps its text.
+// same way the Ereader keeps its page.
 type ExplorerState = {
   folderId: string;
   expanded: string[];

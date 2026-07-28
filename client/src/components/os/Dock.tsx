@@ -16,7 +16,7 @@ import type { ComponentType } from "react";
 const ITEMS: { id: string; Icon: ComponentType; title: string; appId: AppId }[] = [
   { id: "browser",  Icon: DockGlobe,     title: "Browser",             appId: "browser" },
   { id: "explorer", Icon: DockDrawerMag, title: "File Explorer",       appId: "explorer" },
-  { id: "notepad",  Icon: DockNote,      title: "Notepad / Guestbook", appId: "notepad" },
+  { id: "guestbook", Icon: DockNote,     title: "Guestbook",           appId: "guestbook" },
   { id: "ereader",  Icon: DockBook,      title: "Ereader",             appId: "ereader" },
   { id: "apis",     Icon: DockTerminal,  title: "API Studio",          appId: "apis" },
   { id: "music",    Icon: DockMusic,     title: "Music Player",        appId: "music" },
