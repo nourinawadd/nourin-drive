@@ -5,6 +5,7 @@ import { APIStudio } from "@/components/apps/APIStudio";
 import { Blog } from "@/components/apps/Blog";
 import { Browser } from "@/components/apps/Browser";
 import { EasterEgg } from "@/components/apps/EasterEgg";
+import { Ereader } from "@/components/apps/ereader/Ereader";
 import { Explorer } from "@/components/apps/Explorer";
 import { Gallery } from "@/components/apps/Gallery";
 import { GamePlayer } from "@/components/apps/GamePlayer";
@@ -25,6 +26,7 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "blog":        return <Blog />;
     case "browser":     return <Browser winId={win.id} payload={win.payload} />;
     case "easter-egg":  return <EasterEgg />;
+    case "ereader":     return <Ereader winId={win.id} payload={win.payload} />;
     case "explorer":    return <Explorer winId={win.id} payload={win.payload} />;
     case "gallery":     return <Gallery payload={win.payload} />;
     case "game":        return <GamePlayer payload={win.payload} />;

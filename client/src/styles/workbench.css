@@ -333,6 +333,89 @@ body {
   background: var(--wb-gray);
 }
 
+/* ------- ereader page ------------------------------------------------ */
+/* The reading surface. Everything else in the Ereader is Workbench grey; the
+   page is warm paper in a serif face, because that is the whole point of it.
+   Font size is set inline from the reader's zoom control — these rules are
+   all relative to it (em), so zoom scales the whole page, not just body text. */
+.wb-paper {
+  background: var(--wb-paper);
+  color: var(--wb-paper-ink);
+  font-family: var(--wb-serif);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  image-rendering: auto;
+  hyphens: auto;
+}
+.wb-paper h1, .wb-paper h2, .wb-paper h3, .wb-paper h4 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 1.4em 0 0.5em;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+.wb-paper h1 { font-size: 1.55em; }
+.wb-paper h2 { font-size: 1.3em; }
+.wb-paper h3 { font-size: 1.12em; }
+.wb-paper h4 { font-size: 1em; letter-spacing: 0.04em; text-transform: uppercase; }
+.wb-paper > :first-child { margin-top: 0; }
+.wb-paper p { margin: 0 0 0.9em; text-align: justify; }
+.wb-paper ul, .wb-paper ol { margin: 0 0 0.9em; padding-left: 1.4em; }
+.wb-paper li { margin: 0.2em 0; }
+.wb-paper a { color: #7a4a12; text-decoration: underline; }
+.wb-paper hr {
+  border: none;
+  border-top: 1px solid var(--wb-paper-edge);
+  margin: 1.6em 0;
+}
+.wb-paper blockquote {
+  margin: 0 0 0.9em;
+  padding-left: 1em;
+  border-left: 2px solid var(--wb-paper-edge);
+  font-style: italic;
+  color: var(--wb-paper-dim);
+}
+.wb-paper code, .wb-paper pre {
+  font-family: var(--wb-font);
+  font-size: 0.9em;
+  background: rgba(0, 0, 0, 0.05);
+}
+.wb-paper pre { padding: 0.6em 0.8em; overflow-x: auto; break-inside: avoid; }
+.wb-paper img { max-width: 100%; height: auto; }
+.wb-paper table { border-collapse: collapse; margin: 0 0 0.9em; }
+.wb-paper th, .wb-paper td {
+  border: 1px solid var(--wb-paper-edge);
+  padding: 0.25em 0.6em;
+  text-align: left;
+}
+
+/* Plain .txt — a poem's indentation and line breaks ARE the poem, so they are
+   preserved verbatim rather than reflowed. Justification is off for the same
+   reason. */
+.wb-paper-verse {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  font-family: var(--wb-serif);
+  text-align: left;
+}
+
+/* Paginated long-form. A fixed-height multicol box spills into overflow
+   columns to the right, so scrolling by exactly one container width turns
+   exactly one spread — the same trick ebook readers use. The scrollbar is
+   hidden because pages are turned with the buttons and arrow keys; letting
+   the user drag would strand them mid-spread. */
+.wb-paper-cols {
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
+.wb-paper-cols::-webkit-scrollbar { display: none; }
+.wb-paper-cols > * { height: 100%; }
+
 /* ------- prism (json syntax highlight) ------------------------------ */
 .token.punctuation { color: #555; }
 .token.property    { color: #06a; }

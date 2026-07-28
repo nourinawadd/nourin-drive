@@ -29,4 +29,14 @@
   --wb-border:  2px;
 
   --wb-font: var(--font-wb), "Lucida Console", "Andale Mono", monospace;
+
+  /* Ereader page stock. The one place the Workbench palette steps aside:
+     long-form reading in a pixel font on #ffffff is punishing, so the page
+     itself gets warm paper and a serif face. Chrome around it stays grey. */
+  --wb-paper:      #f4ecd8;
+  --wb-paper-ink:  #2b2318;
+  --wb-paper-edge: #d8cbb0;
+  --wb-paper-dim:  #6b5d47;
+  --wb-serif: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino,
+              "Times New Roman", serif;
 }

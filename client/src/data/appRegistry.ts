@@ -45,6 +45,15 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     defaultX: WINDOW_X, defaultY: WINDOW_Y,
     singleton: true,
   },
+  ereader: {
+    appId: "ereader", title: "Ereader",
+    defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
+    defaultX: WINDOW_X, defaultY: WINDOW_Y,
+    minWidth: 480, minHeight: 360,
+    // Not a singleton: reading two things at once is the whole point of having
+    // a window manager, and each window carries its own document + page.
+    singleton: false,
+  },
   explorer: {
     appId: "explorer", title: "File Explorer",
     defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,

@@ -4,6 +4,7 @@ export type AppId =
   | "blog"
   | "browser"
   | "easter-egg"
+  | "ereader"
   | "explorer"
   | "gallery"
   | "game"
