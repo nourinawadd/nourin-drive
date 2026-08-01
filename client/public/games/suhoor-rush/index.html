@@ -63,12 +63,25 @@
         productName: "Suhoor Rush",
         productVersion: "1.0",
         showBanner: unityShowBanner,
+        // Provide safe wrappers so the loader's internal cachedFetch won't
+        // receive undefined inputs or try to read .url of an undefined value.
+        fetchWithProgress: function (input, init) {
+          if (input == null) return Promise.reject(new Error('fetchWithProgress: input is undefined'));
+          return fetch(input, init);
+        },
+        readBodyWithProgress: function (response, onProgress) {
+          // Unity expects a function that reads the body and optionally reports progress.
+          // We provide a minimal implementation that returns an ArrayBuffer.
+          if (!response) return Promise.reject(new Error('readBodyWithProgress: response is undefined'));
+          return response.arrayBuffer();
+        },
         // Unity's default cacheControl crashes when the loader calls it with an
-        // undefined URL ("Cannot read properties of undefined (reading 'match')"),
-        // which aborts the whole load. Provide an undefined-safe one.
-        cacheControl: function (url) {
+        // undefined value or with a Request object. Provide a robust, undefined-
+        // safe implementation that accepts either a string URL or a Request.
+        cacheControl: function (requestOrUrl) {
+          var url = requestOrUrl && (typeof requestOrUrl === 'string' ? requestOrUrl : requestOrUrl.url);
           if (!url) return "no-store";
-          if (url.match(/\.(data|unityweb|bundle)(\?.*)?$/)) return "must-revalidate";
+          if (/\.(data|unityweb|bundle)(\?.*)?$/.test(url)) return "must-revalidate";
           return "no-store";
         },
       };
@@ -115,18 +128,38 @@
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                document.querySelector("#unity-fullscreen-button").onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
+        // Temporarily wrap fetch to log invalid inputs passed by the loader.
+        var _origFetch = window.fetch;
+        window.fetch = function(input, init) {
+          if (input == null) console.warn('fetch called with undefined input', { input, init, stack: (new Error()).stack });
+          return _origFetch.apply(this, arguments);
+        };
 
-              }).catch((message) => {
-                alert(message);
-              });
-            };
+        try {
+          var p = createUnityInstance(canvas, config, (progress) => {
+            document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+          });
+
+          if (p && typeof p.then === 'function') {
+            p.then((unityInstance) => {
+              document.querySelector("#unity-loading-bar").style.display = "none";
+              document.querySelector("#unity-fullscreen-button").onclick = () => {
+                unityInstance.SetFullscreen(1);
+              };
+            }).catch((message) => {
+              console.error('createUnityInstance promise rejected:', message);
+              alert(message);
+            }).finally(() => { window.fetch = _origFetch; });
+          } else {
+            // restore if no promise
+            window.fetch = _origFetch;
+          }
+        } catch (err) {
+          console.error('createUnityInstance threw synchronously:', err);
+          unityShowBanner('Error starting Unity: ' + (err && err.message ? err.message : err), 'error');
+          window.fetch = _origFetch;
+        }
+      };
 
       document.body.appendChild(script);
 
