@@ -5,6 +5,7 @@ import { BootScreen } from "@/components/os/BootScreen";
 import { DesktopStickies } from "@/components/os/DesktopStickies";
 import { Dock } from "@/components/os/Dock";
 import { DriveColumn } from "@/components/os/DriveColumn";
+import { GuestbookStand } from "@/components/os/GuestbookStand";
 import { KonamiListener } from "@/components/os/KonamiListener";
 import { Taskbar } from "@/components/os/Taskbar";
 import { TopMenubar } from "@/components/os/TopMenubar";
@@ -42,6 +43,7 @@ export default function Home() {
       <DriveColumn />
       <DesktopStickies />
       <WindowLayer />
+      <GuestbookStand />
       <Taskbar />
       <Dock />
 

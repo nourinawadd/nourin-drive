@@ -1,6 +1,7 @@
 "use client";
 
 import { useWindowStore } from "@/context/windowStore";
+import { STAND_LEFT, STAND_WIDTH } from "@/components/os/GuestbookStand";
 
 // Shows minimized windows as restore chips, bottom-left so it doesn't
 // collide with the centered dock.
@@ -25,12 +26,14 @@ export function Taskbar() {
 
 const wrap: React.CSSProperties = {
   position: "fixed",
-  left: 10,
+  // Starts clear of the guestbook stand, which occupies the bottom-left corner.
+  // Derived from the stand's own constants so the two can't drift apart.
+  left: STAND_LEFT + STAND_WIDTH + 12,
   bottom: 10,
   display: "flex",
   gap: 8,
   flexWrap: "wrap",
-  maxWidth: "55vw",
+  maxWidth: "45vw",
   zIndex: 900, // floats above windows (incl. a maximized one), below the menu bar
 };
 const chip: React.CSSProperties = {
