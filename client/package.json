@@ -5,11 +5,12 @@
   "scripts": {
     "gen": "node scripts/gen-tracks.mjs && node scripts/gen-gallery.mjs && node scripts/gen-projects.mjs && node scripts/gen-games.mjs && node scripts/gen-library.mjs && node scripts/copy-pdf-worker.mjs",
     "predev": "npm run gen",
-    "dev": "concurrently -k -n gen,next -c gray,cyan \"npm:library:watch\" \"next dev -p 3000\"",
+    "dev": "concurrently -k -n lib,music,next -c gray,gray,cyan \"npm:library:watch\" \"npm:music:watch\" \"next dev -p 3000\"",
     "prebuild": "npm run gen",
     "build": "next build",
     "start": "next start -p 3000",
     "tracks": "node scripts/gen-tracks.mjs",
+    "music:watch": "node scripts/gen-tracks.mjs --watch",
     "gallery": "node scripts/gen-gallery.mjs",
     "projects": "node scripts/gen-projects.mjs",
     "games": "node scripts/gen-games.mjs",

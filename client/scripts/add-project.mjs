@@ -110,7 +110,12 @@ async function main() {
         "  Drop audio files into:\n" +
         "      client/public/music/Artist - Title.mp3\n" +
         "  An image with the same base name becomes the cover art.\n" +
-        "  They appear on the next `npm run dev`.\n",
+        "\n  A FOLDER in there is a playlist:\n" +
+        "      client/public/music/01 - Late Night/Artist - Title.mp3\n" +
+        "  The '01 - ' is optional and only pins the playlist's position.\n" +
+        "  Loose files land in 'Singles'. See public/music/README.md.\n" +
+        "\n  They appear on the next `npm run dev` — or straight away, since\n" +
+        "  dev watches the folder.\n",
     );
     rl.close();
     return;

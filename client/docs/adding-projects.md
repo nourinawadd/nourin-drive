@@ -67,6 +67,9 @@ These three never use `npm run add` — you just drop files in a folder and they
   (the folder name becomes the category, e.g. `…/gallery/Posters/jazz night.png`).
 - **Songs** → drop audio in `client/public/music/Artist - Title.mp3`
   (an image with the same base name becomes the cover art).
+  **A folder in there is a playlist**: `…/music/01 - Late Night/song.mp3` gives
+  you a "Late Night" playlist, the `01 - ` just pins its position. Loose files
+  land in "Singles". Full details in `client/public/music/README.md`.
 
 If you pick one of those in the wizard, it just reminds you of the folder and exits.
 
