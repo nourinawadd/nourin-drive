@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { AudioEngine } from "@/components/os/AudioEngine";
 import { BootScreen } from "@/components/os/BootScreen";
 import { DesktopStickies } from "@/components/os/DesktopStickies";
 import { DesktopTray } from "@/components/os/DesktopTray";
@@ -44,6 +45,9 @@ export default function Home() {
       <DesktopTray />
 
       <BootScreen />
+      {/* Outside WindowLayer on purpose: a minimized window unmounts, and the
+          music should not stop just because you put the player away. */}
+      <AudioEngine />
       <KonamiListener onTrigger={() => openApp("easter-egg")} />
     </main>
   );

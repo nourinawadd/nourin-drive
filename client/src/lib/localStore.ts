@@ -1,9 +1,9 @@
 // The one place in the client that touches browser storage.
 //
-// Both zustand stores (windowStore, stickyStore) are deliberately in-memory —
-// windows and notes are meant to vanish on refresh. Only a couple of guestbook
-// flags need to outlive the tab, so this is a narrow helper rather than
-// `persist` middleware, which would drag whole stores into storage.
+// The window and sticky stores are deliberately in-memory — windows and notes
+// are meant to vanish on refresh. Only a couple of guestbook flags and the music
+// player's settings need to outlive the tab, so this is a narrow helper rather
+// than `persist` middleware, which would drag whole stores into storage.
 //
 // Every read is guarded for SSR (`window` is undefined during the server pass)
 // and every access is wrapped: Safari in private mode throws on write, and a
@@ -15,6 +15,9 @@ export const KEY_SIGNED = "wb:guestbook-signed";
 export const KEY_STAND_COLLAPSED = "wb:guestbook-collapsed";
 /** Hit counter already incremented for this tab session. */
 export const KEY_VISIT_COUNTED = "wb:guestbook-counted";
+/** Music player settings that should outlive the tab — volume, shuffle, repeat,
+ *  and the last track, so the player comes back how you left it. */
+export const KEY_PLAYER = "wb:player";
 
 function store(kind: "local" | "session"): Storage | null {
   if (typeof window === "undefined") return null;
@@ -41,6 +44,28 @@ export function writeFlag(key: string, value: boolean): void {
     else s.removeItem(key);
   } catch {
     /* storage full or blocked — the flag is a nicety, not worth throwing over */
+  }
+}
+
+/**
+ * The one non-boolean pair, for the music player's settings blob. Anything
+ * unparseable (hand-edited, or written by an older version of the shape) is
+ * treated as absent rather than thrown — the caller's defaults are always fine.
+ */
+export function readJson<T>(key: string): T | null {
+  try {
+    const raw = store("local")?.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function writeJson(key: string, value: unknown): void {
+  try {
+    store("local")?.setItem(key, JSON.stringify(value));
+  } catch {
+    /* see writeFlag */
   }
 }
 
