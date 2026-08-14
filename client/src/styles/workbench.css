@@ -241,7 +241,9 @@ body {
 .wb-dock {
   position: fixed;
   left: 50%;
-  bottom: 20px;
+  /* --wb-tray-shift comes from .wb-tray and slides the whole bottom tier off
+     the screen when a window is maximised. See the tray block below. */
+  bottom: calc(20px + var(--wb-tray-shift, 0px));
   transform: translateX(-50%);
   display: flex;
   gap: 8px;
@@ -300,6 +302,70 @@ body {
   transition: opacity 0.08s;
 }
 .wb-dock-item:hover[data-label]::after { opacity: 1; }
+
+/* ------- desktop tray (dock + chips + stand, as one unit) ------------ */
+/* A maximised window paints all the way to the bottom edge, so the three
+   fixed pieces down there sit on top of its content and the last few lines
+   become unreadable. While anything is maximised the tray slides off-screen
+   and leaves a pull-tab; DesktopTray.tsx owns the state.
+
+   It slides `bottom`, not `transform`: .wb-dock's transform is spoken for by
+   the pixel-snapping @supports block above, and the prefers-reduced-motion
+   block at the end of this file zeroes `transform` on the animated elements.
+   One inherited custom property moves all three in unison, and every value
+   stays a whole pixel, so no icon seams. */
+
+.wb-tray {
+  --wb-tray-shift: 0px;
+  visibility: visible;
+}
+.wb-tray.is-down {
+  /* Clears the tallest piece: the expanded stand is ~190px on a 16px inset. */
+  --wb-tray-shift: -280px;
+  /* Once it has finished sliding, stop it swallowing clicks and take it out of
+     the tab order. Delayed so the slide itself is still visible on the way
+     down; on the way up .wb-tray's own rule applies with no delay. */
+  pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s linear 220ms;
+}
+/* The chip row positions itself inline (Taskbar.tsx) apart from this — an
+   inline `bottom` would outrank the rule and never slide. */
+.wb-taskbar { bottom: calc(10px + var(--wb-tray-shift, 0px)); }
+
+.wb-dock,
+.wb-stand,
+.wb-taskbar {
+  transition: bottom 220ms ease-in-out;
+}
+
+/* Centred with left/right/margin rather than translateX(-50%): the tab lives
+   at the same half-pixel-prone centre as the dock, and this way there is no
+   transform to snap. Chrome copies .wb-stand-gadget. */
+.wb-tray-handle {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 auto;
+  width: 32px;
+  height: 14px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: var(--wb-gray);
+  border: 1px solid var(--wb-black);
+  border-bottom: none;
+  box-shadow: inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-2);
+  cursor: pointer;
+  z-index: 901;   /* above the tray tier (900), below the menu bar (1000) */
+}
+.wb-tray-handle svg { display: block; }
+.wb-tray-handle:hover { background: var(--wb-gray-0); }
+.wb-tray-handle:active {
+  box-shadow: inset -1px -1px 0 var(--wb-white), inset 1px 1px 0 var(--wb-gray-2);
+}
+.wb-tray-handle:focus-visible { outline: 1px solid var(--wb-orange); outline-offset: -2px; }
 
 /* ------- markdown prose (blog) -------------------------------------- */
 .wb-prose h1, .wb-prose h2, .wb-prose h3 {
@@ -572,7 +638,7 @@ body {
 .wb-stand {
   position: fixed;
   left: 16px;
-  bottom: 16px;
+  bottom: calc(16px + var(--wb-tray-shift, 0px));   /* see the tray block */
   width: 236px;
   z-index: 900;
   background: var(--wb-gray);
@@ -715,5 +781,12 @@ body {
   .wb-pulse {
     animation: none;
     transform: none;
+  }
+  /* Deliberately a separate rule: the tray must keep its transform (that's
+     what centres the dock) and only lose the slide, so it snaps into place. */
+  .wb-dock,
+  .wb-stand,
+  .wb-taskbar {
+    transition: none;
   }
 }

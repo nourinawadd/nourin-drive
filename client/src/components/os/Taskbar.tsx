@@ -13,7 +13,7 @@ export function Taskbar() {
   if (minimized.length === 0) return null;
 
   return (
-    <div style={wrap}>
+    <div className="wb-taskbar" style={wrap}>
       {minimized.map((w) => (
         <button key={w.id} onClick={() => restore(w.id)} style={chip} title={`Restore ${w.title}`}>
           <span style={dot} />
@@ -29,7 +29,8 @@ const wrap: React.CSSProperties = {
   // Starts clear of the guestbook stand, which occupies the bottom-left corner.
   // Derived from the stand's own constants so the two can't drift apart.
   left: STAND_LEFT + STAND_WIDTH + 12,
-  bottom: 10,
+  // `bottom` deliberately lives in .wb-taskbar (workbench.css) instead of here:
+  // an inline value would outrank the class and the tray could never slide it.
   display: "flex",
   gap: 8,
   flexWrap: "wrap",

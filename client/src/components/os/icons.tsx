@@ -869,6 +869,32 @@ export function WinRestoreGlyph() {
     r(2, 5, 1, 6, C.black), r(7, 5, 1, 6, C.black),
   ]);
 }
+// ── DESKTOP TRAY HANDLE GLYPHS ──────────────────────────────────────────
+// The pull-tab that raises/lowers the dock tier over a maximised window.
+// Two explicit glyphs rather than one rotated in CSS — same reason the
+// zoom/restore pair above are separate, and see the integer-scale note on
+// svg(): this art is never sized or transformed from a stylesheet.
+export function TrayUpGlyph() {
+  // Stepped triangle, apex up. 12×8 grid so the 5 rows sit centred in the tab.
+  return svg(12, 8, [
+    r(5, 1, 2, 1, C.black),
+    r(4, 2, 4, 1, C.black),
+    r(3, 3, 6, 1, C.black),
+    r(2, 4, 8, 1, C.black),
+    r(1, 5, 10, 1, C.black),
+  ]);
+}
+export function TrayDownGlyph() {
+  // Same triangle mirrored vertically.
+  return svg(12, 8, [
+    r(1, 2, 10, 1, C.black),
+    r(2, 3, 8, 1, C.black),
+    r(3, 4, 6, 1, C.black),
+    r(4, 5, 4, 1, C.black),
+    r(5, 6, 2, 1, C.black),
+  ]);
+}
+
 // ── EREADER RAIL GLYPHS ─────────────────────────────────────────────────
 // The left nav rail in the Ereader. Black ink on whatever the rail tile is
 // filled with, so the active (orange) state needs no second set of art.
