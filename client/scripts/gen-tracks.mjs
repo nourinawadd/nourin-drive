@@ -9,21 +9,45 @@
 //   "Title.mp3"                 → artist "Unknown Artist", title "Title"
 // A cover image with the same base name (.jpg/.jpeg/.png/.webp/.gif) next to
 // the audio file is picked up automatically as the track art. If no sidecar
-// image exists, the script will also read embedded cover art from the audio file.
+// image exists, embedded cover art is extracted from the audio file and written
+// to public/music/covers/ as a real image.
+//
+// Embedded art is written to disk rather than inlined as a base64 data URI: a
+// data URI lands in tracks.generated.ts, which is a TypeScript module the
+// bundler has to parse and ship to the browser. Thirty covers inlined that way
+// made this file 9.3 MB, with single lines over 600 KB — enough to wedge the
+// dev compiler outright. As files they cost nothing to compile, get cached by
+// the browser, and skip the ~33% base64 size penalty.
 
-import { readdirSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import { readdirSync, writeFileSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { join, dirname, parse } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseFile } from "music-metadata";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const MUSIC_DIR = join(here, "..", "public", "music");
+const COVERS_DIR = join(MUSIC_DIR, "covers");
 const OUT_FILE = join(here, "..", "src", "data", "tracks.generated.ts");
 
 const AUDIO_EXT = new Set([".mp3", ".m4a", ".aac", ".ogg", ".oga", ".wav", ".flac", ".webm"]);
 const IMAGE_EXT = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
 
+// Cover MIME → extension. Anything unrecognised is treated as JPEG, which is
+// what virtually all embedded art is.
+const COVER_EXT = {
+  "image/jpeg": ".jpg",
+  "image/jpg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
+  "image/gif": ".gif",
+};
+
 if (!existsSync(MUSIC_DIR)) mkdirSync(MUSIC_DIR, { recursive: true });
+
+// Wiped and rebuilt every run so covers for deleted tracks don't linger. The
+// directory holds nothing but this script's output, so it's safe to remove.
+rmSync(COVERS_DIR, { recursive: true, force: true });
+mkdirSync(COVERS_DIR, { recursive: true });
 
 const entries = readdirSync(MUSIC_DIR);
 const images = new Set(entries.map((f) => f.toLowerCase()));
@@ -38,17 +62,29 @@ async function readMetadata(file) {
         : String(metadata.common.artist).trim()
       : undefined;
     const picture = metadata.common.picture?.[0];
-    const art = picture?.data?.length
-      ? `data:${picture.format || "image/jpeg"};base64,${Buffer.from(picture.data).toString("base64")}`
-      : undefined;
-    return { title, artist, art };
+    return { title, artist, picture: picture?.data?.length ? picture : undefined };
   } catch (error) {
     console.warn(`[gen-tracks] could not read embedded metadata for ${file}: ${error.message}`);
     return {};
   }
 }
 
-function findArt(file, metadataArt) {
+// Writes embedded art to public/music/covers/<id>.<ext> and returns its public
+// path, or undefined if the write fails (a missing cover is cosmetic — never a
+// reason to fail the whole generation step).
+function writeCover(id, picture) {
+  const ext = COVER_EXT[String(picture.format || "").toLowerCase()] ?? ".jpg";
+  const filename = `${id}${ext}`;
+  try {
+    writeFileSync(join(COVERS_DIR, filename), Buffer.from(picture.data));
+    return `/music/covers/${encodeURIComponent(filename)}`;
+  } catch (error) {
+    console.warn(`[gen-tracks] could not write cover for ${id}: ${error.message}`);
+    return undefined;
+  }
+}
+
+function findArt(file, id, picture) {
   const base = parse(file).name;
 
   for (const ext of IMAGE_EXT) {
@@ -57,7 +93,7 @@ function findArt(file, metadataArt) {
     if (match) return `/music/${encodeURIComponent(match)}`;
   }
 
-  return metadataArt;
+  return picture ? writeCover(id, picture) : undefined;
 }
 
 function parseName(filename) {
@@ -94,14 +130,14 @@ const seen = new Set();
 const tracks = [];
 for (const [i, file] of audioFiles.entries()) {
   const metadata = await readMetadata(file);
-  const { artist: embeddedArtist, title: embeddedTitle, art: embeddedArt } = metadata;
+  const { artist: embeddedArtist, title: embeddedTitle, picture } = metadata;
   const { artist, title, order } = parseName(file);
   const finalArtist = embeddedArtist || artist || "Unknown Artist";
   const finalTitle = embeddedTitle || title;
   let id = slug(`${finalArtist}-${finalTitle}`);
   if (seen.has(id)) id = `${id}-${i}`;
   seen.add(id);
-  const art = findArt(file, embeddedArt);
+  const art = findArt(file, id, picture);
   tracks.push({ id, title: finalTitle, artist: finalArtist, src: `/music/${encodeURIComponent(file)}`, art, order });
 }
 
@@ -137,4 +173,8 @@ ${body}
 `;
 
 writeFileSync(OUT_FILE, out, "utf8");
-console.log(`[gen-tracks] wrote ${tracks.length} track(s) to tracks.generated.ts`);
+const covers = tracks.filter((t) => t.art?.startsWith("/music/covers/")).length;
+console.log(
+  `[gen-tracks] wrote ${tracks.length} track(s) to tracks.generated.ts` +
+    (covers ? ` and extracted ${covers} cover(s) to public/music/covers/` : ""),
+);

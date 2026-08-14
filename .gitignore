@@ -19,6 +19,11 @@ build/
 # every `npm run gen` (predev/prebuild), so it never needs to be tracked.
 client/public/vendor/
 
+# Album art extracted from the audio tags by scripts/gen-tracks.mjs on every
+# `npm run gen` (predev/prebuild). Derived from the tracked files in
+# public/music/, so it rebuilds itself on a fresh clone.
+client/public/music/covers/
+
 # Env
 .env
 .env.local
