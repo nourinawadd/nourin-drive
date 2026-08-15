@@ -1,94 +1,190 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { getBlog, listBlog, type BlogPostSummary } from "@/lib/api";
+import { useEffect, useRef, useState } from "react";
+import { BLOG_URL, findPost, postUrl } from "@/data/blog";
+import { useWindowStore } from "@/context/windowStore";
 
-function fmt(iso: string) {
-  return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+const LOAD_TIMEOUT_MS = 4000;
+
+export type BlogPayload = { slug?: string; url?: string };
+
+function urlFor(payload: BlogPayload | undefined): string {
+  if (payload?.url) return payload.url;
+  if (payload?.slug) return postUrl(payload.slug);
+  return `${BLOG_URL}/`;
 }
 
-export function Blog() {
-  const [selected, setSelected] = useState<string | null>(null);
+export function Blog({ winId, payload }: { winId: string; payload?: unknown }) {
+  const patchPayload = useWindowStore((s) => s.patchPayload);
 
-  const listQ = useQuery({ queryKey: ["blog"], queryFn: listBlog });
-  const postQ = useQuery({
-    queryKey: ["blog", selected],
-    queryFn: () => getBlog(selected!),
-    enabled: !!selected,
-  });
+  const p = payload as BlogPayload | undefined;
+  const url = urlFor(p);
+
+  const [status, setStatus] = useState<"loading" | "ok" | "blocked">("loading");
+  const [nonce, setNonce] = useState(0);
+  const timerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    setStatus("loading");
+    const t = window.setTimeout(() => setStatus("blocked"), LOAD_TIMEOUT_MS);
+    timerRef.current = t;
+    return () => {
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+    };
+  }, [url, nonce]);
+
+  function goHome() {
+    patchPayload(winId, { slug: undefined, url: undefined });
+    setNonce((n) => n + 1);
+  }
 
   return (
-    <div style={{ display: "flex", height: "100%", gap: 4 }}>
-      <aside style={sidebar}>
-        <div style={sidebarHeader}>Posts</div>
-        {listQ.isLoading && <div style={msg}>loading…</div>}
-        {listQ.isError && <div style={{ ...msg, color: "#a00" }}>could not reach server</div>}
-        {listQ.data?.length === 0 && <div style={msg}>no posts yet.</div>}
-        {listQ.data?.map((p) => (
-          <button
-            key={p._id}
-            onClick={() => setSelected(p.slug)}
-            style={{
-              ...postRow,
-              background: selected === p.slug ? "var(--wb-orange)" : "transparent",
-            }}
-          >
-            <strong style={{ fontSize: 12 }}>{p.title}</strong>
-            <span style={{ fontSize: 10, opacity: 0.7 }}>{fmt(p.createdAt)}</span>
-          </button>
-        ))}
-      </aside>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: 4 }}>
+      <div style={chrome}>
+        <button style={chromeBtn} onClick={() => setNonce((n) => n + 1)} title="Reload">⟳</button>
+        <button style={chromeBtn} onClick={goHome} title="Blog index">⌂</button>
+        <span style={address} title={url}>{url}</span>
+        <a style={openBtn} href={url} target="_blank" rel="noopener noreferrer" title="Open in a real browser tab">
+          Open ↗
+        </a>
+      </div>
 
-      <section style={pane}>
-        {!selected && <div style={msg}>select a post.</div>}
-        {selected && postQ.isLoading && <div style={msg}>loading post…</div>}
-        {selected && postQ.isError && <div style={{ ...msg, color: "#a00" }}>could not load post</div>}
-        {postQ.data && (
-          <article style={article}>
-            <header style={{ marginBottom: 8 }}>
-              <h1 style={{ margin: 0, fontSize: 18 }}>{postQ.data.title}</h1>
-              <div style={{ fontSize: 11, opacity: 0.6 }}>
-                {fmt(postQ.data.createdAt)}
-                {postQ.data.tags.length > 0 && ` · ${postQ.data.tags.join(", ")}`}
-              </div>
-            </header>
-            <div className="wb-prose">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{postQ.data.content}</ReactMarkdown>
-            </div>
-          </article>
-        )}
-      </section>
+      <div style={viewport}>
+        <iframe
+          key={`${url}#${nonce}`}
+          src={url}
+          title="Blog"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+          onLoad={() => {
+            if (timerRef.current) {
+              window.clearTimeout(timerRef.current);
+              timerRef.current = null;
+            }
+            setStatus("ok");
+          }}
+          style={{
+            width: "100%",
+            height: "100%",
+            border: "1px solid var(--wb-black)",
+            background: "var(--wb-paper)",
+          }}
+        />
+        {status === "blocked" && <OfflinePanel url={url} />}
+        {status === "loading" && <LoadingPanel />}
+      </div>
     </div>
   );
 }
 
-const sidebar: React.CSSProperties = {
-  width: 160,
+function OfflinePanel({ url }: { url: string }) {
+  const post = (() => {
+    const m = url.match(/\/posts\/([^/]+)\.html$/);
+    return m ? findPost(m[1]) : undefined;
+  })();
+
+  return (
+    <div style={overlay}>
+      <div style={panel}>
+        <strong>The blog didn&apos;t load.</strong>
+        <p style={{ margin: "8px 0 12px", fontSize: 13 }}>
+          {post ? `“${post.title}” lives at ` : "It lives at "}
+          <code>{url}</code>
+          {" — it&apos;s a separate site, so it may be down, or not running locally yet."}
+        </p>
+        <a href={url} target="_blank" rel="noopener noreferrer" style={openTabBtn}>
+          Try it in a new tab ↗
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function LoadingPanel() {
+  return (
+    <div style={{ ...overlay, background: "rgba(255,255,255,0.4)" }}>
+      <div style={{ ...panel, width: 200 }}>loading…</div>
+    </div>
+  );
+}
+
+const chrome: React.CSSProperties = {
+  display: "flex",
+  alignItems: "stretch",
+  gap: 4,
+  paddingBottom: 3,
+  borderBottom: "1px solid var(--wb-black)",
+};
+
+const chromeBtn: React.CSSProperties = {
+  fontFamily: "var(--wb-font)",
+  fontSize: 14,
+  padding: "0 10px",
+  background: "var(--wb-gray)",
+  border: "1px solid var(--wb-black)",
+  boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-2)",
+  cursor: "pointer",
+  color: "var(--wb-black)",
+};
+
+const address: React.CSSProperties = {
+  flex: 1,
+  minWidth: 0,
+  display: "flex",
+  alignItems: "center",
+  fontFamily: "var(--wb-font)",
+  fontSize: 14,
+  padding: "2px 6px",
   background: "var(--wb-white)",
   border: "1px solid var(--wb-black)",
+  color: "var(--wb-black)",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+};
+
+const openBtn: React.CSSProperties = {
   display: "flex",
-  flexDirection: "column",
-  overflow: "auto",
-  flexShrink: 0,
+  alignItems: "center",
+  fontFamily: "var(--wb-font)",
+  fontSize: 14,
+  padding: "0 10px",
+  background: "var(--wb-orange)",
+  border: "1px solid var(--wb-black)",
+  boxShadow: "inset 1px 1px 0 var(--wb-yellow), inset -1px -1px 0 var(--wb-orange-d)",
+  color: "var(--wb-black)",
+  textDecoration: "none",
 };
-const sidebarHeader: React.CSSProperties = {
-  fontSize: 12, fontWeight: "bold", padding: "2px 6px",
-  background: "var(--wb-black)", color: "var(--wb-white)",
+
+const viewport: React.CSSProperties = {
+  flex: 1,
+  position: "relative",
+  minHeight: 0,
 };
-const postRow: React.CSSProperties = {
-  display: "flex", flexDirection: "column", alignItems: "flex-start",
-  padding: "3px 6px", gap: 1,
-  border: "none", borderBottom: "1px solid #eee",
-  cursor: "pointer", textAlign: "left",
-  fontFamily: "var(--wb-font)", color: "var(--wb-black)",
+
+const overlay: React.CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  display: "grid",
+  placeItems: "center",
+  background: "var(--wb-white)",
+  padding: 16,
 };
-const pane: React.CSSProperties = {
-  flex: 1, overflow: "auto",
-  background: "var(--wb-white)", border: "1px solid var(--wb-black)",
-  padding: 8, minWidth: 0,
+
+const panel: React.CSSProperties = {
+  width: 360,
+  background: "var(--wb-white)",
+  border: "2px solid var(--wb-black)",
+  padding: 14,
+  textAlign: "center",
+  boxShadow: "4px 4px 0 var(--wb-black)",
 };
-const article: React.CSSProperties = { fontFamily: "var(--wb-font)", fontSize: 14 };
-const msg: React.CSSProperties = { padding: 8, fontSize: 12, opacity: 0.6 };
+
+const openTabBtn: React.CSSProperties = {
+  display: "inline-block",
+  padding: "4px 10px",
+  background: "var(--wb-orange)",
+  border: "1px solid var(--wb-black)",
+  color: "var(--wb-black)",
+  textDecoration: "none",
+  fontSize: 13,
+};

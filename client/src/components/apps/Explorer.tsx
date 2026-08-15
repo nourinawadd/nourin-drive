@@ -7,6 +7,7 @@ import {
 } from "@/data/fileTree";
 import { LOCAL_GAMES } from "@/data/games.generated";
 import { docById } from "@/data/library";
+import { findPost } from "@/data/blog";
 import { useWindowStore } from "@/context/windowStore";
 import { FileIcon, FolderIcon } from "@/components/os/icons";
 import { ContextMenu, type MenuItem } from "@/components/os/ContextMenu";
@@ -88,6 +89,14 @@ export function Explorer({ winId, payload }: { winId: string; payload: unknown }
         openApp("ereader", {
           payload: { docId: action.docId, view: "read" },
           title: doc ? doc.title : "Ereader",
+        });
+        break;
+      }
+      case "blog": {
+        const post = findPost(action.slug);
+        openApp("blog", {
+          payload: { slug: action.slug },
+          title: post ? post.title : "Blog",
         });
         break;
       }

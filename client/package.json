@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "gen": "node scripts/gen-tracks.mjs && node scripts/gen-gallery.mjs && node scripts/gen-projects.mjs && node scripts/gen-games.mjs && node scripts/gen-library.mjs && node scripts/copy-pdf-worker.mjs",
+    "gen": "node scripts/gen-tracks.mjs && node scripts/gen-gallery.mjs && node scripts/gen-projects.mjs && node scripts/gen-games.mjs && node scripts/gen-library.mjs && node ../blog/scripts/build.mjs --manifest && node scripts/copy-pdf-worker.mjs",
     "predev": "npm run gen",
     "dev": "concurrently -k -n lib,music,next -c gray,gray,cyan \"npm:library:watch\" \"npm:music:watch\" \"next dev -p 3000\"",
     "prebuild": "npm run gen",
@@ -16,6 +16,7 @@
     "games": "node scripts/gen-games.mjs",
     "library": "node scripts/gen-library.mjs",
     "library:watch": "node scripts/gen-library.mjs --watch",
+    "blog": "node ../blog/scripts/build.mjs --manifest",
     "add": "node scripts/add-project.mjs",
     "add:doc": "node scripts/add-doc.mjs",
     "lint": "next lint",

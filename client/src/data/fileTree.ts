@@ -12,6 +12,7 @@
 import { CATEGORIES, PROJECTS, type Project, type ProjectCategory } from "./projects";
 import { PHOTOS } from "./gallery";
 import { LIBRARY, formatLabel, type LibraryDoc } from "./library";
+import { POSTS, postFileName, type BlogPostMeta } from "./blog";
 import type { IconCategory } from "@/components/os/icons";
 
 export type FsFile = {
@@ -47,6 +48,7 @@ export type FileAction =
   | { type: "game"; projectId: string; name: string; url?: string }
   | { type: "gallery"; photoId: string }
   | { type: "ereader"; docId: string }
+  | { type: "blog"; slug: string }
   | { type: "app"; appId: "blog" | "apis" }
   | { type: "external"; url: string }
   | { type: "none" };
@@ -160,6 +162,22 @@ function libraryFile(doc: LibraryDoc, path: string): FsFile {
   };
 }
 
+function postFile(post: BlogPostMeta, path: string): FsFile {
+  return {
+    kind: "file",
+    id: `post:${post.slug}`,
+    name: postFileName(post.slug),
+    base: post.slug,
+    ext: "html",
+    typeLabel: "HTML Document",
+    path,
+    date: post.date,
+    blurb: post.summary || `${post.minutes} min read`,
+    iconCat: "blog",
+    action: { type: "blog", slug: post.slug },
+  };
+}
+
 const byNameAsc = (a: FsNode, b: FsNode) => a.name.localeCompare(b.name);
 // Newest first, undated last — matches how the old flat list was ordered.
 const byDateDesc = (a: FsFile, b: FsFile) => (b.date ?? "").localeCompare(a.date ?? "");
@@ -210,7 +228,7 @@ function build(): FsFolder {
   // image volumes below replace those placeholders (same rule the old Explorer
   // sidebar used).
   const projectFolders = CATEGORIES
-    .filter((c) => c.id !== "designs" && c.id !== "photos")
+    .filter((c) => c.id !== "designs" && c.id !== "photos" && c.id !== "blog")
     .map((c): FsFolder => {
       const path = joinPath(rootPath, c.label);
       const files = PROJECTS
@@ -260,12 +278,23 @@ function build(): FsFolder {
     };
   });
 
+  const blogPath = joinPath(rootPath, "Blog");
+  const blogFolder: FsFolder = {
+    kind: "folder",
+    id: "blog:posts",
+    name: "Blog",
+    path: blogPath,
+    children: withYearFolders(POSTS.map((p) => postFile(p, blogPath)), blogPath, "blog:posts"),
+  };
+
+  const blogFolders = blogFolder.children.length > 0 ? [blogFolder] : [];
+
   return {
     kind: "folder",
     id: "root",
     name: ROOT_NAME,
     path: rootPath,
-    children: [...projectFolders, ...photoFolders, ...libraryFolders],
+    children: [...projectFolders, ...blogFolders, ...photoFolders, ...libraryFolders],
   };
 }
 

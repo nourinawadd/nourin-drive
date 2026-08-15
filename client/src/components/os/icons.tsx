@@ -600,6 +600,27 @@ export function DockNote() {
   ]);
 }
 
+export function DockQuill() {
+  return dockSvg([
+    r(5, 2, 17, 24, C.black),
+    r(6, 3, 15, 22, C.white),
+    r(6, 3, 15, 1, C.gray0), r(6, 3, 1, 22, C.gray0),
+    r(20, 3, 1, 22, C.gray2), r(6, 24, 15, 1, C.gray2),
+    r(8, 7, 11, 1, C.steel), r(8, 10, 11, 1, C.steel),
+    r(8, 13, 11, 1, C.steel), r(8, 16, 11, 1, C.steel),
+    r(8, 19, 8, 1, C.steel),
+    r(8, 7, 7, 1, C.black), r(8, 10, 5, 1, C.black), r(8, 13, 9, 1, C.black),
+    r(9, 21, 3, 3, C.black), r(11, 19, 3, 3, C.black),
+    r(13, 17, 3, 3, C.black), r(15, 15, 3, 3, C.black),
+    r(17, 13, 4, 4, C.black),
+    r(10, 21, 2, 2, C.orange), r(10, 21, 2, 1, C.yellow),
+    r(12, 19, 2, 2, C.white),
+    r(14, 17, 2, 2, C.gray0),
+    r(16, 15, 2, 2, C.white),
+    r(18, 13, 2, 2, C.tan), r(18, 13, 2, 1, C.yellow),
+  ]);
+}
+
 export function DockTerminal() {
   return dockSvg([
     r(9, 22, 10, 3, C.gray),

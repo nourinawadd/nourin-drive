@@ -19,18 +19,6 @@ export type GuestbookEntry = {
 
 export type GuestbookStats = { visits: number; signatures: number };
 
-export type BlogPostSummary = {
-  _id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type BlogPost = BlogPostSummary & { content: string };
-
 export async function listGuestbook() {
   const { data } = await api.get<GuestbookEntry[]>("/api/guestbook");
   return data;
@@ -63,14 +51,4 @@ export function apiErrorMessage(err: unknown, fallback = "something went wrong")
     if (!err.response) return "could not reach the server";
   }
   return err instanceof Error && err.message ? err.message : fallback;
-}
-
-export async function listBlog() {
-  const { data } = await api.get<BlogPostSummary[]>("/api/blog");
-  return data;
-}
-
-export async function getBlog(slug: string) {
-  const { data } = await api.get<BlogPost>(`/api/blog/${slug}`);
-  return data;
 }

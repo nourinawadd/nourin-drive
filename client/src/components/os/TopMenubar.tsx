@@ -89,6 +89,7 @@ export function TopMenubar() {
         { label: "Browser", run: () => openApp("browser") },
         { label: "File Explorer", run: () => openApp("explorer") },
         { label: "Ereader", run: () => openApp("ereader") },
+        { label: "Blog", run: () => openApp("blog") },
         { label: "API Studio", run: () => openApp("apis") },
         { label: "Music Player", run: () => openApp("music") },
       ],

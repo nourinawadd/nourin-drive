@@ -10,20 +10,30 @@ import { KonamiListener } from "@/components/os/KonamiListener";
 import { TopMenubar } from "@/components/os/TopMenubar";
 import { WindowLayer } from "@/components/os/WindowLayer";
 import { useWindowStore } from "@/context/windowStore";
+import { findPost } from "@/data/blog";
 
 /**
  * `?doc=<id>` opens the Ereader on that document — the link the reader's Share
- * button hands out. The param is stripped afterwards so a reload doesn't
- * reopen the window (and so the URL stays clean once you're in the desktop).
+ * button hands out. `?post=<slug>` does the same for a blog post. The param is
+ * stripped afterwards so a reload doesn't reopen the window (and so the URL
+ * stays clean once you're in the desktop).
  */
 function useDeepLink() {
   const openApp = useWindowStore((s) => s.openApp);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const docId = params.get("doc");
-    if (!docId) return;
-    openApp("ereader", { payload: { docId, view: "read" } });
+    const postSlug = params.get("post");
+    if (!docId && !postSlug) return;
+
+    if (docId) openApp("ereader", { payload: { docId, view: "read" } });
+    if (postSlug) {
+      const post = findPost(postSlug);
+      openApp("blog", { payload: { slug: postSlug }, title: post ? post.title : "Blog" });
+    }
+
     params.delete("doc");
+    params.delete("post");
     const query = params.toString();
     window.history.replaceState(null, "", window.location.pathname + (query ? `?${query}` : ""));
   }, [openApp]);
