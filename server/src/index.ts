@@ -16,9 +16,23 @@ const app = express();
 const PORT = Number(process.env.PORT ?? 5000);
 
 app.use(helmet());
+
+const allowedOrigins = (
+  process.env.ALLOWED_ORIGINS ??
+  [process.env.CLIENT_URL, process.env.BLOG_URL].filter(Boolean).join(",") ??
+  ""
+)
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+if (allowedOrigins.length === 0) {
+  allowedOrigins.push("http://localhost:3000", "http://localhost:4000");
+}
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL ?? "http://localhost:3000",
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
