@@ -4,15 +4,19 @@
   "version": "0.1.0",
   "workspaces": [
     "client",
-    "server"
+    "server",
+    "blog"
   ],
   "scripts": {
-    "dev": "concurrently -n client,server -c cyan,magenta \"npm:dev:client\" \"npm:dev:server\"",
+    "dev": "concurrently -n client,server,blog -c cyan,magenta,yellow \"npm:dev:client\" \"npm:dev:server\" \"npm:dev:blog\"",
     "dev:client": "npm --workspace client run dev",
     "dev:server": "npm --workspace server run dev",
-    "build": "npm --workspace client run build && npm --workspace server run build",
+    "dev:blog": "npm --workspace blog run dev",
+    "build": "npm --workspace blog run build && npm --workspace client run build && npm --workspace server run build",
     "start:client": "npm --workspace client run start",
     "start:server": "npm --workspace server run start",
+    "blog": "npm --workspace blog run build",
+    "blog:serve": "npm --workspace blog run serve",
     "add": "npm --workspace client run add",
     "add:doc": "npm --workspace client run add:doc"
   },

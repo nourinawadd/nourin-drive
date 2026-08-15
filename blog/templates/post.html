@@ -1,0 +1,48 @@
+<article class="sheet">
+  <div class="post-num-row">
+    <span>{{number}}</span>
+    <span>{{dateLong}}</span>
+  </div>
+  <h1 class="post-title">{{title}}</h1>
+  <hr class="rule">
+  <div class="meta">{{meta}}</div>
+
+  {{cover}}
+
+  <div class="prose">
+{{body}}
+  </div>
+
+  <p class="counter" id="view-count"></p>
+</article>
+
+<nav class="sheet post-nav">{{nav}}</nav>
+
+<section class="sheet comments" id="comments">
+  <h2>comments</h2>
+  <p class="note">Say anything. A name is optional &mdash; leave it blank and you show up as <em>anonymous</em>.</p>
+
+  <div id="comment-list"><p class="note">loading&hellip;</p></div>
+
+  <form class="comment-form" id="comment-form" novalidate>
+    <div class="form-row">
+      <div>
+        <label for="c-name">name (optional)</label>
+        <input class="field" type="text" id="c-name" name="name" maxlength="40" placeholder="anonymous" autocomplete="nickname">
+      </div>
+    </div>
+
+    <label for="c-message">comment</label>
+    <textarea class="field" id="c-message" name="message" maxlength="1000" placeholder="&hellip;"></textarea>
+
+    <div class="hp" aria-hidden="true">
+      <label>Leave this field empty
+        <input type="text" id="c-website" name="website" tabindex="-1" autocomplete="off">
+      </label>
+    </div>
+
+    <p class="note" id="c-count">0 / 1000</p>
+    <button class="btn" type="submit" id="c-submit">post it</button>
+    <p class="note" id="c-status" role="status"></p>
+  </form>
+</section>

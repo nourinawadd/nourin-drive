@@ -1,0 +1,16 @@
+{
+  "name": "blog",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "manifest": "node scripts/build.mjs --manifest",
+    "serve": "node scripts/serve.mjs",
+    "dev": "concurrently -k -n build,serve -c yellow,green \"npm:watch\" \"npm:serve\""
+  },
+  "dependencies": {
+    "marked": "^15.0.7"
+  }
+}

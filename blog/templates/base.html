@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{pageTitle}}</title>
+<meta name="description" content="{{description}}">
+<link rel="canonical" href="{{canonical}}">
+
+<link rel="alternate" type="application/rss+xml" title="{{siteTitle}}" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="{{siteTitle}}" href="/atom.xml">
+
+{{ogTags}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=VT323&display=swap">
+<link rel="stylesheet" href="/styles/paper.css">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body data-api="{{api}}" data-api-dev="{{apiDev}}"{{bodyAttrs}}>
+
+<header class="bar">
+  <a class="bar-title" href="/">{{siteTitle}}</a>
+  <nav class="bar-nav">
+    <a href="/"{{navIndex}}>index</a>
+    <a href="/archive.html"{{navArchive}}>archive</a>
+    <button type="button" id="search-toggle" aria-expanded="false" aria-controls="search">search</button>
+    <a href="/random.html">random</a>
+    <a href="/feed.xml">rss</a>
+    <a class="home" href="{{desktop}}">nourin.is-a.dev ↗</a>
+  </nav>
+</header>
+
+<main>
+  <section class="sheet" id="search" aria-label="Search posts">
+    <label for="search-input">search the blog</label>
+    <input class="field" type="search" id="search-input" placeholder="title, tag or summary…" autocomplete="off">
+    <ul id="search-results"></ul>
+  </section>
+
+{{content}}
+</main>
+
+<footer class="foot">
+  <p>{{footer}}</p>
+</footer>
+
+<script src="/blog.js" defer></script>
+</body>
+</html>

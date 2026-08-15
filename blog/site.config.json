@@ -1,0 +1,15 @@
+{
+  "title": "nourin's blog",
+  "tagline": "a little corner of the interwebs",
+  "description": "Essays, notions and documentation of a life, by Nourin Awad.",
+  "author": "Nourin Awad",
+  "lang": "en",
+
+  "url": "https://blog.nourin.is-a.dev",
+  "desktop": "https://nourin.is-a.dev",
+
+  "api": "https://api.nourin.is-a.dev",
+  "apiDev": "http://localhost:5000",
+
+  "postsPerIndexPage": 10
+}
