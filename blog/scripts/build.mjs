@@ -279,12 +279,17 @@ ${rows}
 ];
 `;
 
-  const prev = existsSync(CLIENT_MANIFEST) ? readFileSync(CLIENT_MANIFEST, "utf8") : null;
-  if (prev === out) return false;
+  try {
+    const prev = existsSync(CLIENT_MANIFEST) ? readFileSync(CLIENT_MANIFEST, "utf8") : null;
+    if (prev === out) return false;
 
-  mkdirSync(dirname(CLIENT_MANIFEST), { recursive: true });
-  writeFileSync(CLIENT_MANIFEST, out, "utf8");
-  return true;
+    mkdirSync(dirname(CLIENT_MANIFEST), { recursive: true });
+    writeFileSync(CLIENT_MANIFEST, out, "utf8");
+    return true;
+  } catch (err) {
+    console.warn(`[blog] could not write the client manifest: ${err.message}`);
+    return false;
+  }
 }
 
 function buildFeeds(posts) {

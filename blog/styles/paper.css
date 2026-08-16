@@ -23,7 +23,13 @@
   --wb-paper-font: "IBM Plex Mono", Consolas, "DejaVu Sans Mono", "Courier New", monospace;
 
   --bar-h: 30px;
-  --col:   660px;
+  --col:   1040px;
+  --pad-x: 44px;
+  --pad-y: 40px;
+}
+
+@media (min-width: 1100px) {
+  :root { --pad-x: 120px; --pad-y: 52px; }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -103,7 +109,7 @@ main { padding: 28px 16px 64px; }
 .sheet {
   max-width: var(--col);
   margin: 0 auto;
-  padding: 40px 44px;
+  padding: var(--pad-y) var(--pad-x);
   background: var(--wb-paper);
   border: 1px solid var(--wb-black);
   box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
@@ -250,8 +256,8 @@ figcaption {
 }
 
 figure.wide {
-  margin-left: -84px;
-  margin-right: -84px;
+  margin-left: calc(-1 * var(--pad-x));
+  margin-right: calc(-1 * var(--pad-x));
 }
 
 .entry + .entry { margin-top: 26px; padding-top: 26px; border-top: 1px solid var(--wb-paper-edge); }
@@ -385,12 +391,12 @@ textarea.field { min-height: 92px; resize: vertical; line-height: 1.5; }
 .foot a:hover { background: var(--wb-orange); color: var(--wb-black); }
 
 @media (max-width: 760px) {
+  :root { --pad-x: 20px; --pad-y: 24px; }
   body { font-size: 15px; }
   main { padding: 16px 10px 44px; }
-  .sheet { padding: 24px 20px; max-width: none; }
+  .sheet { max-width: none; }
   .post-title { font-size: 27px; }
   .masthead h1 { font-size: 32px; }
-  figure.wide { margin-left: -20px; margin-right: -20px; }
   .bar { position: static; }
   .bar-nav { margin-left: 0; width: 100%; }
   .rows li { flex-direction: column; gap: 0; }

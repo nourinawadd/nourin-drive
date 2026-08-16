@@ -2,72 +2,72 @@
 
 a personal computer.
 
-a personal portfolio built as a fake operating system: an **amiga workbench 3.31**
-desktop you can actually use. it boots, you double-click icons, windows open, drag,
-resize, and stack. every section of the portfolio is an "app" living inside its own
-window.
+my corner of the internet, built as a fake operating system. it's an **amiga
+workbench 3.31** desktop you can actually use: it boots, you double-click icons,
+windows open, drag, resize and stack. everything i make ends up in here somewhere.
 
 the name is an amiga volume. the desktop mounts `User:`, `Projects:`, `Games:`,
-`Music:`, `Library:` and `Trash:`, and the site itself is one more drive in that
-set: everything-nourin, mounted.
+`Music:`, `Library:` and `Trash:`, and the site is one more drive in that set.
+everything-nourin, mounted.
 
 ```
-https://nourin.is-a.dev       ← this project (next.js / mern)
-ssh nourin.is-a.dev           ← the terminal version (go / bubble tea / wish)
+https://nourin.is-a.dev        the desktop (next.js / mern)
+https://blog.nourin.is-a.dev   the blog (static html, built from markdown)
+ssh nourin.is-a.dev            the terminal version (go / bubble tea / wish)
 ```
 
 ## ✦ about
 
-- a portfolio that behaves like a desktop os: boot screen, dock, top menubar,
-  draggable + resizable windows, focus / z-order, minimise + restore
-- content is data, not markup — drop a markdown file or a media asset and the site
-  regenerates itself
-- built on the mern stack with next.js on the front and express + mongo on the back
+less a portfolio, more a dumping ground: projects, apis, games, photos, the music
+i like, books and poems, a blog, a guestbook. if it's mine it goes in a window.
+
+nothing is hand-edited into the app. drop a markdown file or a media asset in the
+right folder and the site regenerates itself.
 
 ## ✦ stack
 
 next.js 16 · typescript · react · zustand · react-rnd · tailwind · tanstack query ·
 axios · express · mongodb (mongoose) · react-markdown · @react-pdf/renderer ·
-music-metadata · prismjs
+music-metadata · prismjs · marked
 
-- **frontend** — next.js app router, zustand window manager, react-rnd for drag/resize
-- **backend** — express api with mongoose models for the guestbook + blog
-- **workspace** — npm workspaces (`client` + `server`), run together with concurrently
+- **frontend**: next.js app router, zustand window manager, react-rnd for drag and resize
+- **backend**: express api with mongoose, for the guestbook and blog comments
+- **blog**: a plain node script that turns markdown into static html, deployed on its own
+- **workspace**: npm workspaces (`client`, `server`, `blog`), run together with concurrently
 
 ## ✦ apps
 
 the windows on the desktop:
 
-- **browser** — tabbed iframe browser with an address bar + bookmarks; opening a site
-  adds a tab instead of a new window
-- **file explorer** — projects as folders (websites, apis, games) you double-click to open
-- **api studio** — postman-style viewer for the api projects
-- **graphic design** — image gallery with a lightbox
-- **games** — playable web builds (unity / godot) launched in-window
-- **blog** — markdown posts served from mongo
-- **guestbook** — sign it; entries persist in mongo
-- **music player** — plays tracks from `public/music`, reads embedded artist/title tags
-- **user profile** — a nourin-net style profile with pdf export
-- **ereader** — poems, writing and open-licence books, with a pdf.js viewer
-- **sticky notes · recycle bin · about · easter egg** — desktop fixtures (the egg is a konami code)
+- **browser**: tabbed iframe browser with an address bar and bookmarks
+- **file explorer**: everything as folders you double-click to open
+- **api studio**: postman-style viewer for the api projects
+- **graphic design**: image gallery with a lightbox
+- **games**: playable unity / godot builds, launched in-window
+- **blog**: opens blog.nourin.is-a.dev, which also works on its own
+- **guestbook**: sign it, entries persist in mongo
+- **music player**: plays tracks from `public/music`, reads the embedded tags
+- **user profile**: a nourin-net style profile with pdf export
+- **ereader**: poems, writing and open-licence books in a pdf.js viewer
+- **recycle bin · about · easter egg**: desktop fixtures (the egg is a konami code)
 
 ## ✦ content
 
-nothing is hand-edited into the app — it's generated:
+- projects: drop a `.md` in `client/content/projects` (or `npm run add`)
+- cv / about: markdown in `client/content/cv`
+- blog posts: copy `blog/content/_template.md` into `blog/content/posts`
+- media: drop files into `client/public/{music,gallery,games}`
 
-- projects → drop a `.md` in `client/content/projects` (or `npm run add`)
-- cv / about → markdown in `client/content/cv`
-- media → drop files into `client/public/{music,gallery,games}`
-- `npm run gen` (runs automatically before dev/build) rebuilds the generated data via
-  `gen-tracks` · `gen-gallery` · `gen-projects` · `gen-games`
+`npm run gen` runs before dev and build, and rebuilds the generated data. longer
+notes live in `docs/`.
 
 ## ✦ running it
 
-prerequisites: node ≥ 18, mongodb (local or atlas)
+you need node ≥ 18 and mongodb (local or atlas).
 
 ```bash
-npm install            # root + client + server (npm workspaces)
-npm run dev            # client :3000 + server :5000, via concurrently
+npm install     # root, client, server, blog
+npm run dev     # client :3000, server :5000, blog :4000
 ```
 
 env:
@@ -75,14 +75,16 @@ env:
 ```
 # client/.env.local
 NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_BLOG_URL=http://localhost:4000
 
 # server/.env
 MONGO_URI=mongodb://localhost:27017/nourin
 PORT=5000
 CLIENT_URL=http://localhost:3000
+BLOG_URL=http://localhost:4000
 NODE_ENV=development
 ```
 
 ## ✦ contact
 
-[github](https://github.com/nourinawadd) ✦ [linkedin](https://linkedin.com/in/nourinawad) ✦ [nourin.is-a.dev](http://nourin.is-a.dev)
+[github](https://github.com/nourinawadd) ✦ [linkedin](https://linkedin.com/in/nourinawad) ✦ [nourin.is-a.dev](https://nourin.is-a.dev)
