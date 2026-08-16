@@ -588,6 +588,59 @@ body {
   background: var(--wb-black);
 }
 
+.wb-lock {
+  position: fixed; inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 10001;
+}
+.wb-lock-card {
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  background: var(--wb-gray);
+  border: 2px solid var(--wb-black);
+  box-shadow:
+    inset 1px 1px 0 var(--wb-white),
+    inset -1px -1px 0 var(--wb-gray-2),
+    4px 4px 0 var(--wb-black);
+  color: var(--wb-black);
+}
+.wb-lock-title {
+  height: var(--wb-title-h);
+  background: var(--wb-white);
+  border-bottom: 1px solid var(--wb-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+.wb-lock-body { padding: 18px; text-align: center; }
+.wb-lock-body p { margin: 4px 0; font-size: 13px; }
+.wb-lock-body .wb-lock-note { opacity: 0.7; font-size: 11px; margin-top: 12px; }
+.wb-lock-gadgets {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 18px;
+}
+.wb-lock-gadget {
+  padding: 6px 14px;
+  font-family: var(--wb-font);
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.5px;
+  color: var(--wb-black);
+  background: var(--wb-gray);
+  border: 1px solid var(--wb-black);
+  border-radius: 0;
+  box-shadow: inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-2);
+  cursor: pointer;
+}
+.wb-lock-gadget:active { box-shadow: inset -1px -1px 0 var(--wb-white), inset 1px 1px 0 var(--wb-gray-2); }
+.wb-lock-gadget:focus-visible { outline: 1px solid var(--wb-orange); outline-offset: -2px; }
+
 /* ------- motion ------------------------------------------------------ */
 /* The first animations in the project. Kept here with everything else
    presentational, and all of them switched off under prefers-reduced-motion

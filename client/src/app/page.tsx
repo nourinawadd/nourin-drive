@@ -7,6 +7,7 @@ import { DesktopStickies } from "@/components/os/DesktopStickies";
 import { DesktopTray } from "@/components/os/DesktopTray";
 import { DriveColumn } from "@/components/os/DriveColumn";
 import { KonamiListener } from "@/components/os/KonamiListener";
+import { SessionGate } from "@/components/os/SessionGate";
 import { TopMenubar } from "@/components/os/TopMenubar";
 import { WindowLayer } from "@/components/os/WindowLayer";
 import { useWindowStore } from "@/context/windowStore";
@@ -39,7 +40,7 @@ function useDeepLink() {
   }, [openApp]);
 }
 
-export default function Home() {
+function Desktop() {
   const openApp = useWindowStore((s) => s.openApp);
   useDeepLink();
 
@@ -60,5 +61,13 @@ export default function Home() {
       <AudioEngine />
       <KonamiListener onTrigger={() => openApp("easter-egg")} />
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <SessionGate>
+      <Desktop />
+    </SessionGate>
   );
 }

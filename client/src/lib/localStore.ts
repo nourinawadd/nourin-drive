@@ -18,6 +18,7 @@ export const KEY_VISIT_COUNTED = "wb:guestbook-counted";
 /** Music player settings that should outlive the tab — volume, shuffle, repeat,
  *  and the last track, so the player comes back how you left it. */
 export const KEY_PLAYER = "wb:player";
+export const KEY_SESSION = "wb:session";
 
 function store(kind: "local" | "session"): Storage | null {
   if (typeof window === "undefined") return null;
@@ -66,6 +67,14 @@ export function writeJson(key: string, value: unknown): void {
     store("local")?.setItem(key, JSON.stringify(value));
   } catch {
     /* see writeFlag */
+  }
+}
+
+export function clearKey(key: string): void {
+  try {
+    store("local")?.removeItem(key);
+  } catch {
+    return;
   }
 }
 
