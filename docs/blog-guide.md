@@ -28,8 +28,10 @@ nourin.is-a.dev        the desktop     (client/)
 blog.nourin.is-a.dev   the blog        (blog/)
 ```
 
-Two Vercel projects, one repo. The blog stays up even if the desktop build
-breaks, and someone can read it having never found the desktop.
+Two sites, one repo. The blog is plain static HTML, served by nginx out of
+`/var/www/blog` on the Oracle VM - `blog/deploy.sh` builds it and uploads it.
+The blog stays up even if the desktop build breaks, and someone can read it
+having never found the desktop.
 
 Inside the desktop it shows up in three places, all pointing at the same real
 pages: the **Blog** drive icon and dock tile, the **Blog** folder in the File

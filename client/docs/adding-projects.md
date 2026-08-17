@@ -103,8 +103,8 @@ both a local build *and* an itch URL exist, the card plays locally and shows a s
 - **Unity WebGL** - mind the **compression setting** (Player Settings → Publishing
   Settings). Unity ships the build compressed and its loader fetches the raw `.br`/`.gz`
   files, which only work if the browser decompresses them:
-  - **Brotli** (`*.br`): the browser only decodes it over **HTTPS**. It works on
-    Vercel (prod) because `next.config.ts` tags `/games/**.br` with `Content-Encoding: br`,
+  - **Brotli** (`*.br`): the browser only decodes it over **HTTPS**. It works in
+    production because `next.config.ts` tags `/games/**.br` with `Content-Encoding: br`,
     but it **fails on `http://localhost`** no matter what (Chrome won't decode Brotli
     over plain HTTP). That’s the *“Unable to parse ….br”* error.
   - **Fix - pick one (in order of preference):**
