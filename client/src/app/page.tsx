@@ -6,8 +6,10 @@ import { BootScreen } from "@/components/os/BootScreen";
 import { DesktopStickies } from "@/components/os/DesktopStickies";
 import { DesktopTray } from "@/components/os/DesktopTray";
 import { DriveColumn } from "@/components/os/DriveColumn";
+import { MinimizedIcons } from "@/components/os/MinimizedIcons";
 import { KonamiListener } from "@/components/os/KonamiListener";
 import { SessionGate } from "@/components/os/SessionGate";
+import { SfxEngine } from "@/components/os/SfxEngine";
 import { TopMenubar } from "@/components/os/TopMenubar";
 import { WindowLayer } from "@/components/os/WindowLayer";
 import { useWindowStore } from "@/context/windowStore";
@@ -52,6 +54,7 @@ function Desktop() {
       <TopMenubar />
       <DriveColumn />
       <DesktopStickies />
+      <MinimizedIcons />
       <WindowLayer />
       <DesktopTray />
 

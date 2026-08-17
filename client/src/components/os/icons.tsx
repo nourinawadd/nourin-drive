@@ -693,6 +693,86 @@ export function DockMusic() {
   ]);
 }
 
+export function DockInfo() {
+  return dockSvg([
+    r(3, 4, 22, 20, C.black),
+    r(4, 5, 20, 18, C.gray),
+    r(4, 5, 20, 1, C.white), r(4, 5, 1, 18, C.white),
+    r(23, 5, 1, 18, C.gray2), r(4, 22, 20, 1, C.gray2),
+    r(5, 6, 18, 4, C.steel),
+    r(5, 6, 18, 1, C.blue3), r(5, 9, 18, 1, C.blue2),
+    r(6, 7, 2, 2, C.gray0), r(20, 7, 2, 2, C.gray0),
+    r(5, 10, 18, 1, C.black),
+    r(12, 12, 4, 3, C.black),
+    r(12, 16, 4, 4, C.black),
+    r(10, 20, 8, 1, C.black),
+  ]);
+}
+
+export function DockUser() {
+  return dockSvg([
+    r(9, 3, 11, 13, C.black),
+    r(10, 4, 9, 11, C.tan),
+    r(10, 4, 9, 3, C.gray3),
+    r(10, 4, 9, 1, C.black),
+    r(18, 7, 1, 8, C.tanD),
+    r(12, 9, 1, 2, C.black), r(16, 9, 1, 2, C.black),
+    r(12, 12, 5, 1, C.tanD),
+    r(12, 16, 5, 2, C.tan), r(12, 17, 5, 1, C.tanD),
+    r(6, 18, 17, 6, C.black),
+    r(7, 19, 15, 5, C.steel),
+    r(7, 19, 15, 1, C.blue3), r(21, 19, 1, 5, C.blue2),
+    r(10, 19, 3, 2, C.white), r(16, 19, 3, 2, C.white),
+    r(13, 19, 3, 5, C.white),
+  ]);
+}
+
+export function DockPhoto() {
+  return dockSvg([
+    r(2, 4, 24, 20, C.black),
+    r(3, 5, 22, 18, C.gray0),
+    r(3, 5, 22, 1, C.white), r(3, 5, 1, 18, C.white),
+    r(24, 5, 1, 18, C.gray2), r(3, 22, 22, 1, C.gray2),
+    r(5, 7, 18, 14, C.black),
+    r(6, 8, 16, 12, C.blue3),
+    dither(6, 8, 16, 5, C.blue3, C.blue2),
+    r(17, 9, 3, 3, C.yellow),
+    r(19, 9, 1, 3, C.orange), r(17, 11, 3, 1, C.orange),
+    r(16, 12, 2, 1, C.gray2),
+    r(15, 13, 4, 1, C.gray2),
+    r(14, 14, 6, 1, C.gray2),
+    r(13, 15, 8, 1, C.gray2),
+    r(12, 16, 10, 2, C.gray2),
+    r(9, 13, 2, 1, C.white),
+    r(8, 14, 4, 1, C.white),
+    r(7, 15, 6, 1, C.gray3),
+    r(6, 16, 8, 1, C.gray3),
+    r(6, 17, 10, 1, C.gray3),
+    r(6, 18, 16, 2, C.gray3),
+  ]);
+}
+
+export function DockJoystick() {
+  return dockSvg([
+    r(4, 17, 20, 7, C.black),
+    r(5, 18, 18, 5, C.gray),
+    r(5, 18, 18, 1, C.gray0),
+    r(22, 18, 1, 5, C.gray2), r(5, 22, 18, 1, C.gray2),
+    r(6, 19, 5, 4, C.black),
+    r(7, 20, 3, 2, C.red), r(7, 20, 3, 1, C.orange),
+    r(17, 19, 5, 4, C.black),
+    r(18, 20, 3, 2, C.red), r(18, 20, 3, 1, C.orange),
+    r(11, 8, 6, 10, C.black),
+    r(12, 8, 4, 9, C.gray0),
+    r(12, 8, 1, 9, C.white), r(15, 8, 1, 9, C.gray2),
+    r(10, 1, 8, 8, C.black),
+    r(11, 2, 6, 6, C.red),
+    r(11, 2, 6, 1, C.orange),
+    r(12, 2, 2, 1, C.yellow),
+    r(16, 3, 1, 5, C.redD), r(11, 7, 6, 1, C.redD),
+  ]);
+}
+
 function fileTile(body: string, bodyShadow: string, emblem: El, scale = 1): El {
   return svg(16, 16, [
     r(3, 15, 11, 1, C.black), r(13, 2, 1, 13, C.black),
@@ -913,6 +993,27 @@ export function TrayDownGlyph() {
     r(3, 4, 6, 1, C.black),
     r(4, 5, 4, 1, C.black),
     r(5, 6, 2, 1, C.black),
+  ]);
+}
+
+export function SpeakerOnGlyph() {
+  return svg(11, 9, [
+    r(1, 3, 2, 3, C.black),
+    r(3, 2, 1, 5, C.black),
+    r(4, 1, 1, 7, C.black),
+    r(5, 0, 1, 9, C.black),
+    r(7, 3, 1, 3, C.black),
+    r(9, 1, 1, 7, C.black),
+  ]);
+}
+export function SpeakerOffGlyph() {
+  return svg(11, 9, [
+    r(1, 3, 2, 3, C.black),
+    r(3, 2, 1, 5, C.black),
+    r(4, 1, 1, 7, C.black),
+    r(5, 0, 1, 9, C.black),
+    r(7, 2, 1, 1, C.black), r(8, 3, 1, 1, C.black), r(9, 4, 1, 1, C.black), r(10, 5, 1, 1, C.black),
+    r(10, 2, 1, 1, C.black), r(9, 3, 1, 1, C.black), r(8, 4, 1, 1, C.black), r(7, 5, 1, 1, C.black),
   ]);
 }
 

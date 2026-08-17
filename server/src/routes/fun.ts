@@ -5,12 +5,9 @@ import {
   dice,
   echo,
   fortune,
-  guru,
   hash,
   palette,
   status,
-  teapot,
-  time,
   uptime,
   whoami,
 } from "../controllers/funController.js";
@@ -30,11 +27,8 @@ funRouter.get("/", (_req, res) => {
       { method: "GET", path: "/api/fun/dice?d=20&n=2", desc: "roll dice" },
       { method: "GET", path: "/api/fun/coin?n=3", desc: "flip coins" },
       { method: "GET", path: "/api/fun/fortune", desc: "a fortune cookie" },
-      { method: "GET", path: "/api/fun/guru", desc: "fake Guru Meditation error" },
       { method: "GET", path: "/api/fun/palette?n=4", desc: "random colours + Workbench palette" },
-      { method: "GET", path: "/api/fun/time", desc: "now, including Amiga epoch seconds" },
       { method: "POST", path: "/api/fun/hash", desc: "md5/sha/base64/rot13 of { text }" },
-      { method: "GET", path: "/api/fun/teapot", desc: "418" },
     ],
   });
 });
@@ -47,8 +41,5 @@ funRouter.get("/delay/:ms", delay);
 funRouter.get("/dice", dice);
 funRouter.get("/coin", coin);
 funRouter.get("/fortune", fortune);
-funRouter.get("/guru", guru);
 funRouter.get("/palette", palette);
-funRouter.get("/time", time);
 funRouter.post("/hash", hash);
-funRouter.get("/teapot", teapot);

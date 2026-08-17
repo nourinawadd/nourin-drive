@@ -14,9 +14,14 @@ import {
 } from "@/lib/localStore";
 import { useWindowStore } from "@/context/windowStore";
 
-/** Stand width + left inset. Taskbar reads this so its chips start clear of us. */
+/**
+ * Stand width + left inset, and the vertical band it can occupy when expanded.
+ * MinimizedIcons reads these so its column stops clear of us instead of
+ * hard-coding a second copy of our geometry.
+ */
 export const STAND_WIDTH = 236;
 export const STAND_LEFT = 16;
+export const STAND_RESERVE = 220;
 
 const ODO_DIGITS = 6;
 

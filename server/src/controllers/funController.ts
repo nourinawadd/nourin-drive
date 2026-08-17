@@ -1,15 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
 import { createHash, randomInt } from "node:crypto";
 
-/** AmigaOS counts seconds from 1978-01-01, not 1970-01-01. */
-const AMIGA_EPOCH_MS = Date.UTC(1978, 0, 1);
 const BOOT_MS = Date.now();
 
 const FORTUNES = [
   "Only Amiga makes it possible.",
   "The right tool is the one already open.",
   "A program is never finished, only abandoned at a good stopping point.",
-  "Guru Meditation is just the machine taking a moment for itself.",
   "640K ought to be enough for anybody. (allegedly)",
   "Ship the ugly version. The pretty one never ships.",
   "Every bug was, at some point, a very reasonable idea.",
@@ -139,19 +136,6 @@ export function fortune(_req: Request, res: Response) {
   res.json({ fortune: FORTUNES[index], index, of: FORTUNES.length });
 }
 
-/** GET /api/fun/guru - a fake Amiga Guru Meditation, for the aesthetic. */
-export function guru(_req: Request, res: Response) {
-  const error = hex(randomInt(0x100000000), 8);
-  const task = hex(randomInt(0x100000000), 8);
-  res.json({
-    title: "Software Failure. Press left mouse button to continue.",
-    meditation: `Guru Meditation #${error}.${task}`,
-    errorCode: `0x${error}`,
-    taskAddress: `0x${task}`,
-    advice: "Reboot and pretend it never happened.",
-  });
-}
-
 /** GET /api/fun/palette?n=4 */
 export function palette(req: Request, res: Response) {
   const count = clampInt(req.query.n, 4, 1, 16);
@@ -166,22 +150,6 @@ export function palette(req: Request, res: Response) {
     };
   });
   res.json({ colors, workbench: WORKBENCH_PALETTE });
-}
-
-/** GET /api/fun/time */
-export function time(_req: Request, res: Response) {
-  const now = new Date();
-  const ms = now.getTime();
-  res.json({
-    iso: now.toISOString(),
-    unixSeconds: Math.floor(ms / 1000),
-    unixMillis: ms,
-    amigaSeconds: Math.floor((ms - AMIGA_EPOCH_MS) / 1000),
-    amigaEpoch: new Date(AMIGA_EPOCH_MS).toISOString(),
-    dayOfYear: Math.floor((ms - Date.UTC(now.getUTCFullYear(), 0, 0)) / 86_400_000),
-    weekday: now.toUTCString().slice(0, 3),
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-  });
 }
 
 /** POST /api/fun/hash  { "text": "..." } */
@@ -205,15 +173,6 @@ export function hash(req: Request, res: Response, next: NextFunction) {
       reversed: [...text].reverse().join(""),
     });
   } catch (err) { next(err); }
-}
-
-/** GET /api/fun/teapot */
-export function teapot(_req: Request, res: Response) {
-  res.status(418).json({
-    error: "I'm a teapot",
-    rfc: 2324,
-    note: "This server is short and stout.",
-  });
 }
 
 /* ---------- helpers ---------- */

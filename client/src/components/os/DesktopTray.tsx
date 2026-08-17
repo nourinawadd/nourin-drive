@@ -3,22 +3,22 @@
 import { useEffect, useRef, useState } from "react";
 import { Dock } from "@/components/os/Dock";
 import { GuestbookStand } from "@/components/os/GuestbookStand";
-import { Taskbar } from "@/components/os/Taskbar";
 import { TrayDownGlyph, TrayUpGlyph } from "@/components/os/icons";
 import { useWindowStore } from "@/context/windowStore";
 
 /**
- * The bottom tier of desktop furniture - guestbook stand, minimised-window
- * chips, dock - plus the pull-tab that hides and restores it.
+ * The bottom tier of desktop furniture - guestbook stand and dock - plus the
+ * pull-tab that hides and restores it. Minimised windows are not here: they
+ * iconify onto the desktop itself (see MinimizedIcons.tsx).
  *
  * A maximised window paints all the way to the bottom edge (see the comment in
- * WindowFrame.tsx), so those three float on top of its content and the last
- * lines of whatever you're reading disappear behind them. While anything is
- * maximised the whole tier drops off-screen and leaves a small tab; pulling it
- * up is a peek, not a mode, so it goes back down as soon as you use it.
+ * WindowFrame.tsx), so both float on top of its content and the last lines of
+ * whatever you're reading disappear behind them. While anything is maximised
+ * the whole tier drops off-screen and leaves a small tab; pulling it up is a
+ * peek, not a mode, so it goes back down as soon as you use it.
  *
  * The slide itself is CSS: this only toggles `.is-down`, which flips the
- * --wb-tray-shift custom property the three pieces add to their `bottom`.
+ * --wb-tray-shift custom property both pieces add to their `bottom`.
  */
 export function DesktopTray() {
   // Primitive result, so zustand's default Object.is equality is what we want.
@@ -71,7 +71,6 @@ export function DesktopTray() {
         onClick={onTrayClick}
       >
         <GuestbookStand />
-        <Taskbar />
         <Dock />
       </div>
 

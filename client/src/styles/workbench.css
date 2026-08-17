@@ -111,6 +111,26 @@ body {
 }
 .wb-menu-action:hover { background: var(--wb-black); color: var(--wb-white); }
 .wb-menu-sep { height: 1px; background: var(--wb-gray-2); margin: 3px 0; }
+.wb-menubar .wb-sound-toggle {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 14px;
+  padding: 0;
+  margin-right: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.wb-menubar .wb-sound-toggle svg { display: block; }
+.wb-menubar .wb-sound-toggle:hover { border-color: var(--wb-black); }
+.wb-menubar .wb-sound-toggle:active { background: var(--wb-gray-0); }
+.wb-menubar .wb-sound-toggle:focus-visible {
+  outline: 1px solid var(--wb-orange);
+  outline-offset: -2px;
+}
+.wb-menubar .wb-sound-toggle[aria-pressed="false"] { opacity: 0.6; }
+
 .wb-menubar .wb-mem {
   font-variant-numeric: tabular-nums;
   opacity: 0.85;
@@ -237,6 +257,60 @@ body {
   color: var(--wb-black);
 }
 
+/* ------- minimised windows (iconified onto the desktop) ------------- */
+/* A minimised window is not a taskbar entry, it is a Workbench icon: it lands
+   in a column down the LEFT edge, mirroring the drives on the right, and
+   double-clicking it restores the window. Same chassis as .wb-drive (fixed,
+   draggable, labelled) with the dock's 72px tile as the face, so it reads as
+   a smaller sibling of both. MinimizedIcons.tsx sets left/top inline. */
+.wb-minicon {
+  position: fixed;
+  z-index: 1;
+  width: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+.wb-minicon .wb-minicon-tile {
+  width: 72px;
+  height: 72px;
+  background: var(--wb-white);
+  border: 1px solid var(--wb-black);
+  display: grid;
+  place-items: center;
+  box-shadow: inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-2);
+}
+/* Same rule as .wb-drive-icon: the svg emits its own exact size. Sizing it
+   from CSS reintroduces fractional scaling and the art picks up seams. */
+.wb-minicon .wb-minicon-tile svg {
+  display: block;
+}
+.wb-minicon .wb-minicon-label {
+  max-width: 76px;
+  font-size: 13px;
+  color: var(--wb-white);
+  background: var(--wb-black);
+  padding: 1px 6px;
+  border: 1px solid var(--wb-white);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wb-minicon:hover .wb-minicon-tile {
+  background: var(--wb-orange);
+}
+.wb-minicon.is-selected .wb-minicon-label {
+  background: var(--wb-orange);
+  color: var(--wb-black);
+}
+.wb-minicon:focus-visible {
+  outline: 1px solid var(--wb-orange);
+  outline-offset: -2px;
+}
+
 /* ------- dock (bottom) ---------------------------------------------- */
 .wb-dock {
   position: fixed;
@@ -303,17 +377,17 @@ body {
 }
 .wb-dock-item:hover[data-label]::after { opacity: 1; }
 
-/* ------- desktop tray (dock + chips + stand, as one unit) ------------ */
-/* A maximised window paints all the way to the bottom edge, so the three
-   fixed pieces down there sit on top of its content and the last few lines
-   become unreadable. While anything is maximised the tray slides off-screen
-   and leaves a pull-tab; DesktopTray.tsx owns the state.
+/* ------- desktop tray (dock + stand, as one unit) -------------------- */
+/* A maximised window paints all the way to the bottom edge, so the two fixed
+   pieces down there sit on top of its content and the last few lines become
+   unreadable. While anything is maximised the tray slides off-screen and
+   leaves a pull-tab; DesktopTray.tsx owns the state.
 
    It slides `bottom`, not `transform`: .wb-dock's transform is spoken for by
    the pixel-snapping @supports block above, and the prefers-reduced-motion
    block at the end of this file zeroes `transform` on the animated elements.
-   One inherited custom property moves all three in unison, and every value
-   stays a whole pixel, so no icon seams. */
+   One inherited custom property moves both in unison, and every value stays a
+   whole pixel, so no icon seams. */
 
 .wb-tray {
   --wb-tray-shift: 0px;
@@ -329,13 +403,8 @@ body {
   visibility: hidden;
   transition: visibility 0s linear 220ms;
 }
-/* The chip row positions itself inline (Taskbar.tsx) apart from this - an
-   inline `bottom` would outrank the rule and never slide. */
-.wb-taskbar { bottom: calc(10px + var(--wb-tray-shift, 0px)); }
-
 .wb-dock,
-.wb-stand,
-.wb-taskbar {
+.wb-stand {
   transition: bottom 220ms ease-in-out;
 }
 
@@ -854,8 +923,7 @@ body {
   /* Deliberately a separate rule: the tray must keep its transform (that's
      what centres the dock) and only lose the slide, so it snaps into place. */
   .wb-dock,
-  .wb-stand,
-  .wb-taskbar {
+  .wb-stand {
     transition: none;
   }
 }
