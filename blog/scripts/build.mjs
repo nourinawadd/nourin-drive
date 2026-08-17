@@ -606,7 +606,7 @@ function startWatching(opts) {
     if (existsSync(dir)) watch(dir, { recursive: true }, rerun);
   }
   watch(join(ROOT, "blog.js"), rerun);
-  console.log("[blog] watching content/, templates/, styles/ — edits rebuild automatically");
+  console.log("[blog] watching content/, templates/, styles/ - edits rebuild automatically");
 }
 
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;

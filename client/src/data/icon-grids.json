@@ -1,13 +1,13 @@
 {
   "_readme": [
-    "Pixel-art icons as character grids — one character per pixel.",
+    "Pixel-art icons as character grids - one character per pixel.",
     "`var` is what the React renderer paints with; `hex` is what the linter",
-    "and its terminal preview use. Keep both in sync — this file is the only",
+    "and its terminal preview use. Keep both in sync - this file is the only",
     "place the icon palette is defined.",
     "Authoring guide: docs/icon-design-brief.md.  Validate: npm run lint:icons",
     "Optional per-grid key `field`: the palette char an illustration sits on",
     "(\"W\" on the drive units, whose art sits on the white face). Setting it",
-    "turns on the outline check — anything floating on that field has to be",
+    "turns on the outline check - anything floating on that field has to be",
     "K where it meets it, or the shape reads as having no edge."
   ],
 
@@ -42,7 +42,7 @@
       "h": 14,
       "scale": 1,
       "symmetric": true,
-      "note": "The Workbench close gadget — square with an inset hole. Pixel-for-pixel identical to the rects it replaced, so it doubles as the format reference and as proof the grid renderer matches the old output exactly.",
+      "note": "The Workbench close gadget - square with an inset hole. Pixel-for-pixel identical to the rects it replaced, so it doubles as the format reference and as proof the grid renderer matches the old output exactly.",
       "rows": [
         "..............",
         "..............",

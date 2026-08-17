@@ -5,7 +5,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { ABOUT, type Entry } from "@/data/about";
 import { exportCvPdf } from "@/components/apps/cv/exportPdf";
 
-// NOURIN-NET — a monochrome "social information network" profile screen (styled
+// NOURIN-NET - a monochrome "social information network" profile screen (styled
 // exactly after the NETLINK reference) rendered over the extended CV. The left
 // nav switches CV sections; the PROFILE tab is the dashboard (identity + stats +
 // featured projects + education). All content comes from @/data/about.

@@ -6,7 +6,7 @@
 ## TL;DR
 
 ```bash
-npm run add        # from the repo root — answer the prompts. Done.
+npm run add        # from the repo root - answer the prompts. Done.
 ```
 
 The wizard adds **two kinds of things**:
@@ -32,7 +32,7 @@ website section *and/or* the CV):
 | **Website** | File Explorer → **Websites** (opens it in the in-site Browser) | **Software Projects** |
 | **API**     | File Explorer → **APIs** (opens API Studio) | **Software Projects** |
 | **Game**    | **Games** app (opens in a new tab)       | **Game Projects** |
-| **Software**| *(nowhere — CV only)* — for robotics, libraries, tools | **Software Projects** |
+| **Software**| *(nowhere - CV only)* - for robotics, libraries, tools | **Software Projects** |
 | **Blog**    | File Explorer → **Blog**                 | *(not on the CV)* |
 
 “Show on CV?” is a yes/no override on top of that:
@@ -40,27 +40,27 @@ website section *and/or* the CV):
   answer **no** to “Show on CV?”.
 - Something that should **only** be on the CV (e.g. a robotics build) → type `software`.
 
-The second group is **CV / About window** entries — these only touch the About window:
+The second group is **CV / About window** entries - these only touch the About window:
 
 | Type               | Where on the CV         | Looks like |
 |--------------------|-------------------------|------------|
 | **Experience**     | About → **Experience**  | title · role · place/dates · bullets |
 | **Education**      | About → **Education**   | title · degree · place/dates · bullets |
 | **Extracurricular**| About → **Extracurriculars** | title · role · dates · bullets |
-| **Certification**  | About → **Certifications** | one line: `Name — Issuer` |
-| **Language**       | About → **Languages**   | one chip: `Language — Proficiency` |
+| **Certification**  | About → **Certifications** | one line: `Name - Issuer` |
+| **Language**       | About → **Languages**   | one chip: `Language - Proficiency` |
 
 New CV entries are **added to the end** of their section. To reposition one, open its
 file in `client/content/cv/` and set `order:` (lower = higher up; the existing entries
 are numbered `1, 2, 3…`).
 
-> The remaining CV bits — your name/title, links, bio, and the **Skills** chips — are
+> The remaining CV bits - your name/title, links, bio, and the **Skills** chips - are
 > still hand-edited in `client/src/data/about.ts`. Everything else there now comes from
 > content files.
 
 ### Not handled by the wizard (drop-and-go)
 
-These three never use `npm run add` — you just drop files in a folder and they appear:
+These three never use `npm run add` - you just drop files in a folder and they appear:
 
 - **Graphic design / Photography** → drop images in
   `client/public/gallery/<Category>/your image.jpg`
@@ -90,7 +90,7 @@ By default a **game** entry just opens its itch link in a new tab. To make it pl
    (Also accepts `thumbnail/thumb/screenshot.(png|jpg|jpeg|webp|gif|avif)` for the cover.)
 3. `npm run games` (or restart `npm run dev`).
 
-That's it — the Games app and the Explorer “Games” volume now open it in a window. If
+That's it - the Games app and the Explorer “Games” volume now open it in a window. If
 both a local build *and* an itch URL exist, the card plays locally and shows a small
 “view on itch ↗” link.
 
@@ -98,18 +98,18 @@ both a local build *and* an itch URL exist, the card plays locally and shows a s
 
 - **Godot 4.3:** export the Web preset with **“Thread Support” OFF**. Threaded exports
   need `SharedArrayBuffer`, which requires site-wide cross-origin isolation
-  (`COOP`/`COEP`) — that would break the in-site Browser app and external images, so
+  (`COOP`/`COEP`) - that would break the in-site Browser app and external images, so
   don’t. Single-threaded is fine for 2D.
-- **Unity WebGL** — mind the **compression setting** (Player Settings → Publishing
+- **Unity WebGL** - mind the **compression setting** (Player Settings → Publishing
   Settings). Unity ships the build compressed and its loader fetches the raw `.br`/`.gz`
   files, which only work if the browser decompresses them:
   - **Brotli** (`*.br`): the browser only decodes it over **HTTPS**. It works on
-    Vercel (prod) because `next.config.ts` tags `/games/**.br` with `Content-Encoding: br`
-    — but it **fails on `http://localhost`** no matter what (Chrome won't decode Brotli
+    Vercel (prod) because `next.config.ts` tags `/games/**.br` with `Content-Encoding: br`,
+    but it **fails on `http://localhost`** no matter what (Chrome won't decode Brotli
     over plain HTTP). That’s the *“Unable to parse ….br”* error.
-  - **Fix — pick one (in order of preference):**
+  - **Fix - pick one (in order of preference):**
     1. **Decompression Fallback = ON** (keeps compression; Unity decompresses in JS, so
-       it works on localhost, HTTP, and any host — most robust).
+       it works on localhost, HTTP, and any host - most robust).
     2. **Compression Format = Gzip** (the browser decodes gzip even over HTTP; the
        `next.config.ts` `Content-Encoding: gzip` rule then makes it work everywhere).
     3. **Compression Format = Disabled** (simplest, no headers needed, but biggest files).
@@ -121,15 +121,15 @@ both a local build *and* an itch URL exist, the card plays locally and shows a s
   committed and deployed. If the repo gets heavy, use Git LFS or host the build files
   elsewhere and fall back to the itch link.
 
-> Can’t/won’t self-host one? Just don’t add a `public/games/<slug>/` folder — that game
+> Can’t/won’t self-host one? Just don’t add a `public/games/<slug>/` folder - that game
 > keeps opening on itch in a new tab.
 
 ---
 
 ## Naming picture assets (gallery drag-and-drop)
 
-Images live in `client/public/gallery/`. The **filename and folder are the data** —
-there's no wizard — so name them right and they show up correctly. They appear on the
+Images live in `client/public/gallery/`. The **filename and folder are the data**
+(there's no wizard), so name them right and they show up correctly. They appear on the
 next `npm run dev` (or run `npm run gallery` to refresh without restarting).
 
 Supported file types: `.jpg .jpeg .png .webp .gif .avif .bmp .svg`.
@@ -176,12 +176,12 @@ client/public/gallery/Photography/02 - Old Cairo Rooftops (2023-08).jpg
 | You drop… | Category | Title | Order | Date |
 |-----------|----------|-------|-------|------|
 | `Posters/01 - Jazz Night (2024).png` | Posters | Jazz Night | 1 | 2024 |
-| `Photography/sunset_over_water.jpg` | Photography | sunset over water | — | — |
-| `Posters - Brand Mark.jpg` *(top level)* | Posters | Brand Mark | — | — |
-| `random.png` *(top level)* | Gallery | random | — | — |
+| `Photography/sunset_over_water.jpg` | Photography | sunset over water | - | - |
+| `Posters - Brand Mark.jpg` *(top level)* | Posters | Brand Mark | - | - |
+| `random.png` *(top level)* | Gallery | random | - | - |
 
 **Gotchas**
-- A title that *really* starts with a number (e.g. `2024 Recap.jpg`) — the leading
+- A title that *really* starts with a number (e.g. `2024 Recap.jpg`) - the leading
   number is taken as sort order and dropped from the title. Rename to avoid it
   (`Recap (2024).jpg`).
 - Filenames must be unique enough; identical category+title get a numeric suffix.
@@ -203,7 +203,7 @@ client/public/gallery/Photography/02 - Old Cairo Rooftops (2023-08).jpg
 | **Tech stack** | e.g. `Node · Mongo · React`. Shown in italics on the CV. | optional |
 | **Short blurb** | One line. Shown in the section card **and** as the CV subtitle. | optional |
 | **CV bullet points** | One per line, blank line to finish. The CV detail bullets. | optional |
-| **Show on CV?** | Whether it appears on the About window. Default **yes**. | — |
+| **Show on CV?** | Whether it appears on the About window. Default **yes**. | - |
 
 ### CV entries (experience / education / extracurricular)
 
@@ -220,7 +220,7 @@ client/public/gallery/Photography/02 - Old Cairo Rooftops (2023-08).jpg
 | Prompt | What it’s for | Optional? |
 |--------|---------------|-----------|
 | **Name / Language** | The thing itself. | required |
-| **Issuer / Proficiency** | Appended after a `—`. | optional |
+| **Issuer / Proficiency** | Appended after a ` - `. | optional |
 
 ---
 
@@ -228,7 +228,7 @@ client/public/gallery/Photography/02 - Old Cairo Rooftops (2023-08).jpg
 
 A **project** lands at `client/content/projects/<slug>.md`; a **CV entry** at
 `client/content/cv/<slug>.md` (slug derived from the name; a number is appended if it
-collides). You can also hand-edit or duplicate these files — same result as the wizard.
+collides). You can also hand-edit or duplicate these files - same result as the wizard.
 
 **Project** (`content/projects/`):
 
@@ -242,7 +242,7 @@ repo: https://github.com/nourinawadd/tether-note
 stack: Node.js · MongoDB · Express · React
 cv: true
 ---
-Time-delayed note delivery — send messages to your future self.
+Time-delayed note delivery - send messages to your future self.
 
 - Node cron jobs + MongoDB automate time-based delivery.
 - JWT session management with server-side middleware.
@@ -254,9 +254,9 @@ Time-delayed note delivery — send messages to your future self.
 ```markdown
 ---
 type: extracurricular            # or experience | education
-name: IEEE Mansoura Student Branch — Victoris 3.0
+name: IEEE Mansoura Student Branch - Victoris 3.0
 meta: Jun – Sep 2024             # the free-text place · dates line
-order: 1                         # optional — lower sorts higher
+order: 1                         # optional - lower sorts higher
 ---
 Technical Director               # first body line = subtitle (role / degree)
 
@@ -313,7 +313,7 @@ Separately, `scripts/gen-games.mjs` scans `public/games/<slug>/` and writes
 
 ## Troubleshooting
 
-- **It’s not showing up.** Check the `type` — projects use
+- **It’s not showing up.** Check the `type` - projects use
   `website/api/game/software/blog`; CV entries use
   `experience/education/extracurricular/certification/language`. Make sure the file is
   in the matching folder (`content/projects/` vs `content/cv/`), then run
@@ -322,6 +322,6 @@ Separately, `scripts/gen-games.mjs` scans `public/games/<slug>/` and writes
   (blog isn’t on the CV by design).
 - **Wrong order.** An explicit `order:` wins (lower first); otherwise it’s by `date`
   (newest first, `YYYY-MM`), then name. New CV entries have no `order`, so they land at
-  the end — give them an `order:` to move them.
-- **Two entries with the same name.** The second file becomes `<slug>-2.md` — that’s
+  the end - give them an `order:` to move them.
+- **Two entries with the same name.** The second file becomes `<slug>-2.md` - that’s
   expected, both still show.

@@ -5,7 +5,7 @@
 //   • Projects → content/projects/<slug>.md → a website section and/or the CV.
 //   • CV entries (experience, education, extracurriculars, certifications,
 //     languages) → content/cv/<slug>.md → the matching About-window section.
-// Graphic design / photography / songs stay drop-and-go — the wizard just points
+// Graphic design / photography / songs stay drop-and-go - the wizard just points
 // you at the right folder for those.
 
 import { writeFileSync, existsSync, mkdirSync, readdirSync } from "node:fs";
@@ -95,7 +95,7 @@ async function main() {
   // --- drop-and-go reminders ---
   if (type === "__gallery") {
     console.log(
-      "\n  Graphic design & photography are drop-and-go — no wizard needed.\n" +
+      "\n  Graphic design & photography are drop-and-go - no wizard needed.\n" +
         "  Drop image files into:\n" +
         "      client/public/gallery/<Category>/your image.jpg\n" +
         "  e.g. client/public/gallery/Posters/jazz night.png\n" +
@@ -106,7 +106,7 @@ async function main() {
   }
   if (type === "__music") {
     console.log(
-      "\n  Songs are drop-and-go — no wizard needed.\n" +
+      "\n  Songs are drop-and-go - no wizard needed.\n" +
         "  Drop audio files into:\n" +
         "      client/public/music/Artist - Title.mp3\n" +
         "  An image with the same base name becomes the cover art.\n" +
@@ -114,14 +114,14 @@ async function main() {
         "      client/public/music/01 - Late Night/Artist - Title.mp3\n" +
         "  The '01 - ' is optional and only pins the playlist's position.\n" +
         "  Loose files land in 'Singles'. See public/music/README.md.\n" +
-        "\n  They appear on the next `npm run dev` — or straight away, since\n" +
+        "\n  They appear on the next `npm run dev` - or straight away, since\n" +
         "  dev watches the folder.\n",
     );
     rl.close();
     return;
   }
 
-  // --- CV: certifications / languages (one-line "Name — detail" entries) ---
+  // --- CV: certifications / languages (one-line "Name - detail" entries) ---
   if (type === "certification" || type === "language") {
     const isCert = type === "certification";
     const name = await ask(isCert ? "Certification name" : "Language");
@@ -146,7 +146,7 @@ async function main() {
     const role = await ask(`${cfg.roleQ} (optional)`);
     const meta = await ask("Place · dates (e.g. Cairo, Egypt · Jun – Sep 2025)");
     const url = await ask("Link (optional)");
-    const bullets = await askBullets("Bullet points — one per line, blank line to finish:");
+    const bullets = await askBullets("Bullet points - one per line, blank line to finish:");
 
     const fm = [`type: ${type}`, `name: ${name}`];
     if (meta) fm.push(`meta: ${meta}`);
@@ -193,11 +193,11 @@ async function main() {
   let stack = "";
   if (type !== "blog") stack = await ask("Tech stack (optional, e.g. Node · Mongo · React)");
 
-  const blurb = await ask("Short blurb (one line — shown in the section and as the CV subtitle)");
+  const blurb = await ask("Short blurb (one line - shown in the section and as the CV subtitle)");
 
   let bullets = [];
   if (type !== "blog") {
-    bullets = await askBullets("CV bullet points — one per line, blank line to finish:");
+    bullets = await askBullets("CV bullet points - one per line, blank line to finish:");
   }
 
   const cv = type === "blog" ? false : await askYesNo("Show on CV?", true);

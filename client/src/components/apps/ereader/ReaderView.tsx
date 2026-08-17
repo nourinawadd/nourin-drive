@@ -6,7 +6,7 @@ import { isShortForm, type LibraryDoc } from "@/data/library";
 import { TextPane } from "./TextPane";
 import { downloadDoc, fetchBody, type InlineDoc, type ReadableDoc } from "./actions";
 
-// pdf.js lives in its own chunk — see pdfjs.ts for why. ssr:false because it
+// pdf.js lives in its own chunk - see pdfjs.ts for why. ssr:false because it
 // touches window/canvas on mount.
 const PdfPane = dynamic(() => import("./PdfPane").then((m) => m.PdfPane), {
   ssr: false,
@@ -17,7 +17,7 @@ const PdfPane = dynamic(() => import("./PdfPane").then((m) => m.PdfPane), {
   ),
 });
 
-// Below this the spread collapses to a single page — two columns in a 500px
+// Below this the spread collapses to a single page - two columns in a 500px
 // window gives you two very tall, very narrow strips of text.
 const SPREAD_MIN_WIDTH = 900;
 const ZOOM_STEPS = [0.8, 0.9, 1, 1.15, 1.3, 1.5, 1.75, 2];
@@ -92,7 +92,7 @@ export function ReaderView({
 
   // `page` means different things per format. For a PDF it is a page index, so
   // a spread advances by two. For text it is a scroll position in container
-  // widths — one width already IS the spread, so it always advances by one.
+  // widths - one width already IS the spread, so it always advances by one.
   const step = isPdf ? columns : 1;
   const lastPage = Math.max(0, pageCount - (isPdf ? columns : 1));
 
@@ -110,7 +110,7 @@ export function ReaderView({
   const shell = useRef<HTMLDivElement>(null);
 
   // Arrow keys are the natural way to turn a page, but the listener is scoped
-  // to this window rather than the document — two open books must not both
+  // to this window rather than the document - two open books must not both
   // respond to one keypress. That means it needs focus, so take it on open.
   useEffect(() => {
     shell.current?.focus({ preventScroll: true });
@@ -246,7 +246,7 @@ export function ReaderView({
       {/* ── status bar ──
           `page` counts PDF pages but text SCREENS, and a screen holds `columns`
           numbered pages. Convert here so the readout matches the folio printed
-          on the page — otherwise the corner says 3 while the page says 05. */}
+          on the page - otherwise the corner says 3 while the page says 05. */}
       <StatusBar
         paged={paged}
         first={isPdf ? page + 1 : page * columns + 1}

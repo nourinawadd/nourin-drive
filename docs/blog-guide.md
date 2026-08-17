@@ -18,7 +18,7 @@ While `npm run dev` is running the folder is watched, so a post you save
 rebuilds itself. Otherwise `npm run blog` from the repo root.
 
 The filename does two jobs: the `YYYY-MM-DD` prefix sets the date, and whatever
-follows it becomes the slug — which is the URL, permanently. Rename a published
+follows it becomes the slug - which is the URL, permanently. Rename a published
 post and you break its links, so pick the slug once.
 
 ## It is a separate site
@@ -33,7 +33,7 @@ breaks, and someone can read it having never found the desktop.
 
 Inside the desktop it shows up in three places, all pointing at the same real
 pages: the **Blog** drive icon and dock tile, the **Blog** folder in the File
-Explorer (one `.html` file per post — those are the files that actually ship),
+Explorer (one `.html` file per post - those are the files that actually ship),
 and `nourin.is-a.dev/?post=<slug>` as a deep link.
 
 ## The frontmatter
@@ -51,7 +51,7 @@ and `nourin.is-a.dev/?post=<slug>` as a deep link.
 | `slug` | no | Overrides the slug from the filename |
 
 Values are read as `key: value`, split on the **first** colon, so a value can
-contain colons. It is not YAML — don't expect nested keys or block syntax. A
+contain colons. It is not YAML - don't expect nested keys or block syntax. A
 value can wrap onto the next line as long as that line is indented:
 
 ```
@@ -77,13 +77,13 @@ of a caption to break out past the text column:
 ![the whole setup](desk.jpg "everything at once #wide")
 ```
 
-Sub-folders work — `![x](trips/kuwait.jpg)` ships as `/img/trips/kuwait.jpg`.
+Sub-folders work - `![x](trips/kuwait.jpg)` ships as `/img/trips/kuwait.jpg`.
 Alt text is for people using a screen reader; the caption is for everyone. They
 are allowed to say different things.
 
 ## Comments
 
-Anyone can comment, with a name or without one — blank shows as *anonymous*.
+Anyone can comment, with a name or without one - blank shows as *anonymous*.
 They're stored in your MongoDB next to the guestbook, and rate-limited to 5 per
 15 minutes per person.
 
@@ -97,7 +97,7 @@ curl -X PATCH http://localhost:5000/api/blog/comments/<id>/reply \
   -d '{"reply":"thank you for reading :)"}'
 ```
 
-To hide one (soft delete — the numbering stays intact):
+To hide one (soft delete - the numbering stays intact):
 
 ```bash
 curl -X DELETE http://localhost:5000/api/blog/comments/<id> \
@@ -111,8 +111,8 @@ Add `?purge=true` to remove it from the database entirely.
 `/feed.xml` (RSS 2.0) and `/atom.xml` (Atom) are rebuilt from the same markdown
 every time you build. You never touch them.
 
-A reader pastes that URL into a feed reader — Feedly, NetNewsWire, Thunderbird,
-a Discord bot — and your posts turn up there when you publish. No account, no
+A reader pastes that URL into a feed reader - Feedly, NetNewsWire, Thunderbird,
+a Discord bot - and your posts turn up there when you publish. No account, no
 email address handed to you, nothing to send. Every page also carries the
 autodiscovery `<link>` tag, so browser extensions offer "subscribe" on their
 own.
@@ -134,7 +134,7 @@ blog/out/
     styles/  img/  blog.js  favicon.svg
 ```
 
-Plus `client/src/data/blog.generated.ts` — the index the desktop's File Explorer
+Plus `client/src/data/blog.generated.ts` - the index the desktop's File Explorer
 reads. Never edit it; it's rewritten on every build.
 
 `out/` is wiped and rebuilt each time, so a post you delete or rename doesn't
@@ -166,7 +166,7 @@ comments". In production set `ALLOWED_ORIGINS` to both real origins.
 | Site title, tagline, URLs, API address | `blog/site.config.json` |
 | Markdown → HTML, feeds, the manifest | `blog/scripts/build.mjs` |
 
-Templates are plain HTML with `{{slot}}` placeholders — no template language to
+Templates are plain HTML with `{{slot}}` placeholders - no template language to
 learn. The palette is the same `--wb-*` set the desktop uses; `--wb-paper*` is
 the warm reading stock borrowed from the Ereader.
 
@@ -180,9 +180,9 @@ the warm reading stock borrowed from the Ereader.
 | Image is a broken icon | It isn't in `content/img/`, or the filename's case doesn't match (it matters once deployed, even though Windows ignores it locally). |
 | Caption shows `#wide` | The `#wide` must be at the very end of the caption. |
 | Comments say "server may be asleep" | The API isn't running, or `BLOG_URL` / `ALLOWED_ORIGINS` doesn't list the blog's origin. |
-| Read counter never appears | Same as above — it fails quietly on purpose rather than showing a broken number. |
+| Read counter never appears | Same as above - it fails quietly on purpose rather than showing a broken number. |
 | Explorer shows no Blog folder | No published posts yet, or `client/src/data/blog.generated.ts` was never generated. Run `npm run blog`. |
-| A tag page 404s | Tags are slugified — `Cold Peppers` lives at `/tags/cold-peppers.html`. |
+| A tag page 404s | Tags are slugified - `Cold Peppers` lives at `/tags/cold-peppers.html`. |
 
 ## Quick reference
 

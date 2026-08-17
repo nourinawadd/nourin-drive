@@ -7,10 +7,10 @@ import { loadPdfjs, renderPageToCanvas } from "./pdfjs";
 /**
  * Card art for a document, in three tiers:
  *   1. a real cover image, if one was dropped next to the file;
- *   2. for PDFs, page one rendered to a canvas — but only once the card is
+ *   2. for PDFs, page one rendered to a canvas - but only once the card is
  *      actually on screen, so opening the library doesn't pull the pdf.js
  *      chunk (and render fifty first pages) before you've asked for a book;
- *   3. otherwise a drawn placeholder — the title set on paper, which is what a
+ *   3. otherwise a drawn placeholder - the title set on paper, which is what a
  *      poem with no cover should look like anyway.
  */
 export function DocCover({ doc, width = 96 }: { doc: LibraryDoc; width?: number }) {
@@ -73,7 +73,7 @@ function PdfThumb({ doc, width, height }: { doc: LibraryDoc; width: number; heig
         if (!cancelled) setRendered(true);
       })
       .catch(() => {
-        // A book that won't open still gets a card — the placeholder stays.
+        // A book that won't open still gets a card - the placeholder stays.
       })
       .finally(() => {
         if (pdf) void pdf.destroy();
@@ -128,7 +128,7 @@ function countLines(words: string[], perLine: number): number {
  *
  * Two constraints: the longest word must sit on one line, so nothing is ever
  * split down the middle, and the wrapped result must fit the height. Nothing
- * is truncated either — the type shrinks until it fits. A fixed advance width
+ * is truncated either - the type shrinks until it fits. A fixed advance width
  * makes both computable, which is the one place the monospace page font earns
  * its keep outside the reader.
  */

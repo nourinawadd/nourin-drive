@@ -1,4 +1,4 @@
-/* Workbench chrome — pixel borders, gadgets, dithered fills.
+/* Workbench chrome - pixel borders, gadgets, dithered fills.
    Everything in this file is presentational; layout lives in components. */
 
 /* ------- font -------------------------------------------------------- */
@@ -34,7 +34,7 @@ body {
   border-color: var(--wb-black) var(--wb-white) var(--wb-white) var(--wb-black);
 }
 
-/* Hard black hairline outside a raised face — used on window frames */
+/* Hard black hairline outside a raised face - used on window frames */
 .wb-frame {
   background: var(--wb-gray);
   border: 1px solid var(--wb-black);
@@ -149,7 +149,7 @@ body {
   color: var(--wb-black);
 }
 
-/* Window controls — minimize / maximize / close. Windows behaviour, but the
+/* Window controls - minimize / maximize / close. Windows behaviour, but the
    look is native Workbench: square, raised grey gadgets with a pixel glyph. */
 .wb-winbtns {
   display: flex;
@@ -185,7 +185,7 @@ body {
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: center;   /* centered titles — Amiga style */
+  justify-content: center;   /* centered titles - Amiga style */
   padding: 0 8px;
   letter-spacing: 0.5px;
 }
@@ -214,11 +214,11 @@ body {
 }
 /* NEVER give the icon svg a width/height here. Pixel art is only crisp at
    integer scale, and the svg already emits its own exact size (source grid ×
-   an integer factor — see svg() in components/os/icons.tsx). Sizing it from
+   an integer factor - see svg() in components/os/icons.tsx). Sizing it from
    CSS reintroduces fractional scaling: seams, doubled 1px outlines, and
    moiré in the dithered areas. This box just reserves space and centres. */
 .wb-drive .wb-drive-icon {
-  width: 112px; height: 80px;   /* 56×40 @2× — exactly the icon, no scaling */
+  width: 112px; height: 80px;   /* 56×40 @2× - exactly the icon, no scaling */
   display: grid;
   place-items: center;
 }
@@ -258,7 +258,7 @@ body {
   z-index: 900;   /* floats above windows, stays below the menu bar (1000) */
 }
 /* `left: 50%` lands on a half pixel whenever the viewport width is odd, and
-   that offset is inherited by every rect in the icons — each one rounds to
+   that offset is inherited by every rect in the icons - each one rounds to
    device pixels independently under shape-rendering: crispEdges, opening 1px
    seams. They're invisible against the white tile and light up when :hover
    turns it orange. Snapping the centre to a whole pixel removes the cause. */
@@ -279,7 +279,7 @@ body {
   font-size: 18px;
   color: var(--wb-black);
 }
-/* Size comes from the svg itself. Do not set width/height here — see the
+/* Size comes from the svg itself. Do not set width/height here - see the
    note on .wb-drive-icon. New art is 22×22 @2× = 44×44 in this 64px tile. */
 .wb-dock-item svg {
   display: block;
@@ -329,7 +329,7 @@ body {
   visibility: hidden;
   transition: visibility 0s linear 220ms;
 }
-/* The chip row positions itself inline (Taskbar.tsx) apart from this — an
+/* The chip row positions itself inline (Taskbar.tsx) apart from this - an
    inline `bottom` would outrank the rule and never slide. */
 .wb-taskbar { bottom: calc(10px + var(--wb-tray-shift, 0px)); }
 
@@ -402,7 +402,7 @@ body {
 /* ------- ereader page ------------------------------------------------ */
 /* The reading surface. Everything else in the Ereader is Workbench grey; the
    page is warm paper in a serif face, because that is the whole point of it.
-   Font size is set inline from the reader's zoom control — these rules are
+   Font size is set inline from the reader's zoom control - these rules are
    all relative to it (em), so zoom scales the whole page, not just body text. */
 .wb-paper {
   background: var(--wb-paper);
@@ -414,7 +414,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   image-rendering: auto;
   /* No auto-hyphenation. Justified monospace sets with wide word gaps and
-     that IS the look — hyphenating to close them fights the fixed grid. */
+     that IS the look - hyphenating to close them fights the fixed grid. */
   hyphens: none;
 }
 .wb-paper h1, .wb-paper h2, .wb-paper h3, .wb-paper h4 {
@@ -425,7 +425,7 @@ body {
   break-after: avoid;
   page-break-after: avoid;
 }
-/* Headings stay close to body size — at a fixed pitch, weight does the work a
+/* Headings stay close to body size - at a fixed pitch, weight does the work a
    size jump does in a proportional face, and big mono headings look shouted. */
 .wb-paper h1 { font-size: 1.15em; }
 .wb-paper h2 { font-size: 1.08em; }
@@ -462,7 +462,7 @@ body {
   text-align: left;
 }
 
-/* Plain .txt — a poem's indentation and line breaks ARE the poem, so they are
+/* Plain .txt - a poem's indentation and line breaks ARE the poem, so they are
    preserved verbatim rather than reflowed. Justification is off for the same
    reason. */
 .wb-paper-verse {
@@ -476,7 +476,7 @@ body {
 
 /* Paginated long-form. A fixed-height multicol box spills into overflow
    columns to the right, so scrolling by exactly one container width turns
-   exactly one spread — the same trick ebook readers use. The scrollbar is
+   exactly one spread - the same trick ebook readers use. The scrollbar is
    hidden because pages are turned with the buttons and arrow keys; letting
    the user drag would strand them mid-spread. */
 .wb-paper-cols {
@@ -490,7 +490,7 @@ body {
 .wb-paper-cols::-webkit-scrollbar { display: none; }
 .wb-paper-cols > * { height: 100%; }
 
-/* Page furniture — running heads, folios and the spine. Drawn as fixed chrome
+/* Page furniture - running heads, folios and the spine. Drawn as fixed chrome
    around the text rather than inside it: put a running head in the flow and it
    scrolls away with the columns, which is exactly what it must not do. */
 .wb-paper-sheet {
@@ -594,9 +594,16 @@ body {
   place-items: center;
   z-index: 10001;
 }
-.wb-lock-card {
+.wb-req-overlay {
+  position: absolute; inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: var(--wb-white);
+}
+.wb-req-card {
   width: 360px;
-  max-width: calc(100vw - 32px);
+  max-width: calc(100% - 32px);
   background: var(--wb-gray);
   border: 2px solid var(--wb-black);
   box-shadow:
@@ -605,7 +612,7 @@ body {
     4px 4px 0 var(--wb-black);
   color: var(--wb-black);
 }
-.wb-lock-title {
+.wb-req-title {
   height: var(--wb-title-h);
   background: var(--wb-white);
   border-bottom: 1px solid var(--wb-black);
@@ -616,16 +623,21 @@ body {
   letter-spacing: 0.5px;
   user-select: none;
 }
-.wb-lock-body { padding: 18px; text-align: center; }
-.wb-lock-body p { margin: 4px 0; font-size: 13px; }
-.wb-lock-body .wb-lock-note { opacity: 0.7; font-size: 11px; margin-top: 12px; }
-.wb-lock-gadgets {
+.wb-req-body { padding: 18px; text-align: center; }
+.wb-req-body p { margin: 4px 0; font-size: 13px; }
+.wb-req-body .wb-req-host {
+  font-weight: bold;
+  word-break: break-all;
+}
+.wb-req-body .wb-req-note { opacity: 0.7; font-size: 11px; margin-top: 12px; }
+.wb-req-gadgets {
   display: flex;
   gap: 10px;
   justify-content: center;
   margin-top: 18px;
+  flex-wrap: wrap;
 }
-.wb-lock-gadget {
+.wb-req-gadget {
   padding: 6px 14px;
   font-family: var(--wb-font);
   font-size: 14px;
@@ -637,14 +649,18 @@ body {
   border-radius: 0;
   box-shadow: inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-2);
   cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
 }
-.wb-lock-gadget:active { box-shadow: inset -1px -1px 0 var(--wb-white), inset 1px 1px 0 var(--wb-gray-2); }
-.wb-lock-gadget:focus-visible { outline: 1px solid var(--wb-orange); outline-offset: -2px; }
+.wb-req-gadget.is-primary { background: var(--wb-orange); }
+.wb-req-gadget:active { box-shadow: inset -1px -1px 0 var(--wb-white), inset 1px 1px 0 var(--wb-gray-2); }
+.wb-req-gadget:focus-visible { outline: 1px solid var(--wb-orange); outline-offset: -2px; }
+.wb-req-card .wb-req-gadget.is-primary:focus-visible { outline-color: var(--wb-black); }
 
 /* ------- motion ------------------------------------------------------ */
 /* The first animations in the project. Kept here with everything else
    presentational, and all of them switched off under prefers-reduced-motion
-   at the bottom of this block — the guestbook nudges, it doesn't harass. */
+   at the bottom of this block - the guestbook nudges, it doesn't harass. */
 
 @keyframes wb-marquee {
   from { transform: translateX(0); }
@@ -685,7 +701,7 @@ body {
 .wb-pulse { animation: wb-pulse 2s ease-in-out infinite; }
 
 /* ------- guestbook stand (desktop widget) ---------------------------- */
-/* Dock/taskbar tier so it stays visible over windows — see GuestbookStand.tsx
+/* Dock/taskbar tier so it stays visible over windows - see GuestbookStand.tsx
    for why. Chrome mirrors .wb-window so it reads as desktop furniture. */
 
 .wb-stand {
@@ -777,7 +793,7 @@ body {
 .wb-stand-btn.is-signed { background: var(--wb-gray-0); box-shadow: inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-2); }
 
 /* ------- odometer ---------------------------------------------------- */
-/* Sunken bevel per digit — the mechanical counter every 90s homepage had. */
+/* Sunken bevel per digit - the mechanical counter every 90s homepage had. */
 
 .wb-odometer { display: flex; gap: 2px; }
 .wb-odo-digit {

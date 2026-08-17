@@ -1,6 +1,6 @@
 // The one place in the client that touches browser storage.
 //
-// The window and sticky stores are deliberately in-memory — windows and notes
+// The window and sticky stores are deliberately in-memory - windows and notes
 // are meant to vanish on refresh. Only a couple of guestbook flags and the music
 // player's settings need to outlive the tab, so this is a narrow helper rather
 // than `persist` middleware, which would drag whole stores into storage.
@@ -15,7 +15,7 @@ export const KEY_SIGNED = "wb:guestbook-signed";
 export const KEY_STAND_COLLAPSED = "wb:guestbook-collapsed";
 /** Hit counter already incremented for this tab session. */
 export const KEY_VISIT_COUNTED = "wb:guestbook-counted";
-/** Music player settings that should outlive the tab — volume, shuffle, repeat,
+/** Music player settings that should outlive the tab - volume, shuffle, repeat,
  *  and the last track, so the player comes back how you left it. */
 export const KEY_PLAYER = "wb:player";
 export const KEY_SESSION = "wb:session";
@@ -44,14 +44,14 @@ export function writeFlag(key: string, value: boolean): void {
     if (value) s.setItem(key, "1");
     else s.removeItem(key);
   } catch {
-    /* storage full or blocked — the flag is a nicety, not worth throwing over */
+    /* storage full or blocked - the flag is a nicety, not worth throwing over */
   }
 }
 
 /**
  * The one non-boolean pair, for the music player's settings blob. Anything
  * unparseable (hand-edited, or written by an older version of the shape) is
- * treated as absent rather than thrown — the caller's defaults are always fine.
+ * treated as absent rather than thrown - the caller's defaults are always fine.
  */
 export function readJson<T>(key: string): T | null {
   try {

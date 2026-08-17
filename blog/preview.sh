@@ -10,7 +10,7 @@ echo "building…"
 node scripts/build.mjs
 
 if [ ! -f out/index.html ]; then
-  echo "out/index.html missing — build produced nothing" >&2
+  echo "out/index.html missing - build produced nothing" >&2
   exit 1
 fi
 
@@ -26,7 +26,7 @@ touch "$work/.nojekyll"
 
 git -C "$work" add -A
 if git -C "$work" diff --cached --quiet; then
-  echo "nothing changed — preview is already current"
+  echo "nothing changed - preview is already current"
   exit 0
 fi
 
@@ -34,4 +34,4 @@ git -C "$work" commit -m "preview: $(date -u '+%Y-%m-%d %H:%MZ')"
 git -C "$work" branch -M main
 git -C "$work" push -u origin main
 
-echo "done — https://nourinawadd.github.io/"
+echo "done - https://nourinawadd.github.io/"

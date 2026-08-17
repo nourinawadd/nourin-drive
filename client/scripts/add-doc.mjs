@@ -1,5 +1,5 @@
 // Interactive "add something to read" wizard.  Run:  npm run add:doc
-// (or pick "Poem / Writing / Book" from the `npm run add` menu — same code).
+// (or pick "Poem / Writing / Book" from the `npm run add` menu - same code).
 //
 // Copies a .pdf / .md / .txt into client/public/library/<Shelf>/, writes the
 // metadata the Ereader needs, and regenerates library.generated.ts. For poems
@@ -29,7 +29,7 @@ const SHELF_CHOICES = [
   { shelf: null, label: "Other shelf     → name your own", mine: true },
 ];
 
-/** Strip surrounding quotes — Windows "Copy as path" wraps them. */
+/** Strip surrounding quotes - Windows "Copy as path" wraps them. */
 function cleanPath(raw) {
   return raw.trim().replace(/^["']|["']$/g, "");
 }
@@ -103,7 +103,7 @@ export async function addDoc(ask, askYesNo) {
   const isBook = shelf === "Books";
   const prompt = isBook
     ? "Path to the PDF (drag it into the terminal)"
-    : "Path to the file (.md/.txt/.pdf) — or blank to start a new empty .md";
+    : "Path to the file (.md/.txt/.pdf) - or blank to start a new empty .md";
   const sourceRaw = cleanPath(await ask(prompt));
 
   let ext;
@@ -116,7 +116,7 @@ export async function addDoc(ask, askYesNo) {
     }
     ext = parse(source).ext.toLowerCase();
     if (!ALLOWED_EXT.has(ext)) {
-      console.log(`  ${ext || "(no extension)"} isn't readable here — use .pdf, .md or .txt. Aborting.`);
+      console.log(`  ${ext || "(no extension)"} isn't readable here - use .pdf, .md or .txt. Aborting.`);
       return;
     }
   } else {
@@ -133,7 +133,7 @@ export async function addDoc(ask, askYesNo) {
   if (isBook) {
     author = await ask("Author (whose book this actually is)");
     if (!author) {
-      console.log("  ! No author recorded. It's someone else's book — worth filling in.");
+      console.log("  ! No author recorded. It's someone else's book - worth filling in.");
     }
   } else if (await askYesNo("Is this yours?", true)) {
     author = "";
@@ -150,7 +150,7 @@ export async function addDoc(ask, askYesNo) {
   }
 
   const blurb = await ask("One-line blurb for the card (optional)");
-  const note = await ask("Note — edition, source, anything worth recording (optional)");
+  const note = await ask("Note - edition, source, anything worth recording (optional)");
 
   // ── write it ────────────────────────────────────────────────────────
   mkdirSync(shelfDir, { recursive: true });

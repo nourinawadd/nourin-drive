@@ -4,7 +4,7 @@
 // pdf.js runs its parser in a Web Worker and refuses to load one from a
 // different origin. Bundling it through Next is more trouble than it's worth
 // (the worker is a self-contained script, not a module Next should trace), so
-// we copy it to /vendor/ and load it from there — same trick as the Unity
+// we copy it to /vendor/ and load it from there - same trick as the Unity
 // loader patch. Runs as part of `npm run gen`, so it stays in sync with
 // whatever pdfjs-dist version is installed.
 
@@ -40,13 +40,13 @@ function findPackage(name) {
 
 const PKG_DIR = findPackage("pdfjs-dist");
 if (!PKG_DIR) {
-  console.warn("[copy-pdf-worker] pdfjs-dist not installed — skipping");
+  console.warn("[copy-pdf-worker] pdfjs-dist not installed - skipping");
   process.exit(0);
 }
 
 const hit = CANDIDATES.map((rel) => join(PKG_DIR, rel)).find((abs) => existsSync(abs));
 if (!hit) {
-  console.warn(`[copy-pdf-worker] no worker build found in ${PKG_DIR} — skipping`);
+  console.warn(`[copy-pdf-worker] no worker build found in ${PKG_DIR} - skipping`);
   process.exit(0);
 }
 

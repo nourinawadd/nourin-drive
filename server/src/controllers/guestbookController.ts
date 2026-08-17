@@ -19,7 +19,7 @@ export async function createEntry(req: Request, res: Response, next: NextFunctio
       return res.status(400).json({ error: "name and message are required strings" });
     }
     // Allocated before the write so every signature gets a distinct number even
-    // when two people sign at once. A failed create burns a number — a gap in
+    // when two people sign at once. A failed create burns a number - a gap in
     // the sequence is cosmetic, a duplicate number would not be.
     const seq = await bump(SEQ_KEY);
     const entry = await GuestbookEntry.create({ name, message, emoji, seq });
@@ -27,7 +27,7 @@ export async function createEntry(req: Request, res: Response, next: NextFunctio
   } catch (err) { next(err); }
 }
 
-// The hit counter. Read-only — POST /visit is what moves it, so opening the
+// The hit counter. Read-only - POST /visit is what moves it, so opening the
 // guestbook app doesn't inflate the count.
 export async function stats(_req: Request, res: Response, next: NextFunction) {
   try {

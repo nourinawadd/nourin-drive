@@ -4,14 +4,14 @@
 //
 // pdfjs-dist is about a megabyte. AppRouter imports every app statically, so a
 // top-level `import "pdfjs-dist"` anywhere in the Ereader would land the whole
-// parser in the desktop's initial bundle — paid for by every visitor, including
+// parser in the desktop's initial bundle - paid for by every visitor, including
 // the ones who never open a book. Going through a dynamic import() puts it in
 // its own chunk that only loads when a PDF is actually opened (or when a PDF
 // card without cover art scrolls into view and wants a page-1 thumbnail).
 //
 // The worker is copied to /vendor/ by scripts/copy-pdf-worker.mjs. pdf.js
 // refuses to start a worker from another origin, and letting the bundler trace
-// it is more trouble than it's worth — it's a standalone script, not a module.
+// it is more trouble than it's worth - it's a standalone script, not a module.
 
 type PdfjsModule = typeof import("pdfjs-dist");
 
@@ -31,7 +31,7 @@ export function loadPdfjs(): Promise<PdfjsModule> {
  * Render one page into a canvas at the requested CSS width.
  *
  * Backing store is sized to the device pixel ratio so pages stay sharp on a
- * HiDPI screen, while the CSS box stays at `cssWidth` — otherwise the canvas
+ * HiDPI screen, while the CSS box stays at `cssWidth` - otherwise the canvas
  * would double in size on those displays.
  */
 export async function renderPageToCanvas(

@@ -7,7 +7,7 @@ import { currentTrack, usePlayerStore } from "@/context/playerStore";
  * The desktop's one and only <audio> element.
  *
  * Mounted on the desktop rather than inside the Music window, because
- * WindowFrame unmounts a minimized window — which used to kill playback mid-song
+ * WindowFrame unmounts a minimized window - which used to kill playback mid-song
  * every time you minimized the player. Nothing is rendered; this is the bridge
  * between the element's imperative API and the store's declarative state.
  */
@@ -27,7 +27,7 @@ export function AudioEngine() {
   const reportEnded = usePlayerStore((s) => s.reportEnded);
 
   // Storage is read here, in an effect, so the server pass and the first client
-  // pass agree — same rule the guestbook stand follows.
+  // pass agree - same rule the guestbook stand follows.
   useEffect(() => hydrate(), [hydrate]);
 
   // Drive play/pause from state. `playing` also flips in response to the
@@ -84,7 +84,7 @@ export function AudioEngine() {
       try {
         navigator.mediaSession.setActionHandler(action, handler);
       } catch {
-        /* nothing to do — the key just won't work in this browser */
+        /* nothing to do - the key just won't work in this browser */
       }
     }
     return () => {

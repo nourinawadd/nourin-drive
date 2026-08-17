@@ -26,7 +26,7 @@
 
   function errorFrom(res, data, fallback) {
     if (data && data.error) return data.error;
-    if (res && res.status === 429) return "Slow down a moment — try again in a bit.";
+    if (res && res.status === 429) return "Slow down a moment, try again in a bit.";
     return fallback;
   }
 
@@ -119,7 +119,7 @@
       .then(function (data) { paint(list, data || []); })
       .catch(function () {
         list.textContent = "";
-        list.appendChild(el("p", "note", "Couldn't load the comments — the server may be asleep."));
+        list.appendChild(el("p", "note", "Couldn't load the comments. The server may be asleep."));
       });
 
     try {

@@ -33,7 +33,7 @@ export type MusicPayload = {
  *
  * Playback itself lives in playerStore + AudioEngine on the desktop, so this
  * component can be unmounted (minimized, closed) without stopping the music.
- * View state lives in the window payload for the same reason — the Ereader and
+ * View state lives in the window payload for the same reason - the Ereader and
  * Explorer both do this, and it's what makes minimize/restore lossless.
  */
 export function Music({ winId, payload }: { winId: string; payload: unknown }) {
@@ -53,7 +53,7 @@ export function Music({ winId, payload }: { winId: string; payload: unknown }) {
   const sortAsc = saved.sortAsc ?? true;
   const mini = saved.mini ?? false;
 
-  // Search is deliberately NOT persisted — a filter you can't see the cause of
+  // Search is deliberately NOT persisted - a filter you can't see the cause of
   // after restoring a window is worse than losing a half-typed query.
   const [query, setQuery] = useState("");
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
@@ -171,8 +171,8 @@ export function Music({ winId, payload }: { winId: string; payload: unknown }) {
   if (TRACKS.length === 0) {
     return (
       <div style={empty}>
-        No tracks yet. Drop audio files into <code>client/public/music/</code> — a folder in there
-        becomes a playlist — then run <code>npm run tracks</code> (or restart the dev server) and
+        No tracks yet. Drop audio files into <code>client/public/music/</code>, where a folder
+        becomes a playlist, then run <code>npm run tracks</code> (or restart the dev server) and
         reload.
       </div>
     );

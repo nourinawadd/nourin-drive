@@ -1,4 +1,4 @@
-# claude.ai Project setup — Workbench Icon Foundry
+# claude.ai Project setup - Workbench Icon Foundry
 
 Exactly what to put in each section when creating the Project at
 claude.ai/projects → "+ New Project".
@@ -18,7 +18,7 @@ Pixel-art icon design for an Amiga Workbench 3.1 styled portfolio desktop.
 Output is character grids for client/src/data/icon-grids.json.
 ```
 
-**Claude does not read the name or description** — they're only labels for you
+**Claude does not read the name or description** - they're only labels for you
 in the sidebar. Never put working context here; it goes in Instructions.
 
 ---
@@ -39,7 +39,7 @@ ICON-DESIGN-BRIEF file in project knowledge. Read it before drawing anything.
 - rows is an array of equal-length strings, one character per pixel.
 - Use ONLY the palette characters defined in the brief.
 
-## Working method — follow in this order
+## Working method - follow in this order
 1. Draw the shared drive-unit shell first (empty chassis + label band). Stop
    and show me. Do not start individual icons until I approve it.
 2. Then one icon at a time, dropped into the approved shell.
@@ -69,7 +69,7 @@ ICON-DESIGN-BRIEF file in project knowledge. Read it before drawing anything.
   is 0, else colour B. A dithered row reads AABBAABB and the row below it is
   identical; the phase only flips every second row. A 1px ABAB checker is
   wrong. See the brief for the worked pattern.
-- Outlines are closed — no gaps in the silhouette.
+- Outlines are closed - no gaps in the silhouette.
 - The icon must be identifiable at 1x. Remove detail rather than adding it.
 
 ## Do NOT
@@ -98,30 +98,30 @@ Upload these files:
 | `docs/icon-design-brief.md` | palette table, grid sizes, icon inventory, format example |
 | `client/src/styles/tokens.css` | the palette at its source, so hexes can't drift |
 | `client/src/data/icon-grids.json` | current state, incl. the known-good `GLYPH_CLOSE` |
-| `workbench-reference.pdf` | **the Workbench 3.1 screenshots — as a PDF, see below** |
+| `workbench-reference.pdf` | **the Workbench 3.1 screenshots - as a PDF, see below** |
 
 ### The screenshots must be a PDF, not loose images
 
 This is the part that trips people up. For **non-PDF** files in project
-knowledge, Claude extracts **text only** — drop in `workbench.png` and it
+knowledge, Claude extracts **text only** - drop in `workbench.png` and it
 contributes nothing. PDFs under 100 pages are the exception: those are analysed
 visually, including in projects.
 
 So combine your 3–5 reference screenshots into **one PDF** (any "images to PDF"
 tool, or print-to-PDF from an image viewer) and upload that. One page per
-screenshot, at native resolution — do not upscale.
+screenshot, at native resolution - do not upscale.
 
 Two things that have already bitten this project:
 
 - **Source PNG, never JPEG.** JPEG smears hard pixel edges into phantom
   intermediate colours. Asked to sample a disk icon from JPEG references,
-  Claude found `#84827f` and `#617991` — compression ringing, not palette
+  Claude found `#84827f` and `#617991` - compression ringing, not palette
   entries. It correctly identified them as artefacts, but a less careful pass
   would reproduce them as shading. Pixel-art reference must be lossless.
 - **Check the era before uploading.** Image search for "Amiga Workbench" is
   dominated by 1.0/1.3 shots, which are a flat 4-colour look: 1px black
   outline plus a 1px white highlight, no grey ramp. This project targets
-  **3.1/3.31** — grey chassis, multi-step L/G/D/S bevel, dithered faces.
+  **3.1/3.31** - grey chassis, multi-step L/G/D/S bevel, dithered faces.
   Search "workbench 3.1 screenshot" explicitly and confirm what you've got
   shows grey icon bodies, not flat white ones.
 - Confirm the file really is a PDF. A bundle exported as `.pdf` that is
@@ -129,7 +129,7 @@ Two things that have already bitten this project:
 
 Verify it worked before doing any design. First message in the project:
 
-> Describe what you can see in the Workbench reference PDF — the disk icon
+> Describe what you can see in the Workbench reference PDF - the disk icon
 > construction, bevel treatment, and how dithering is used.
 
 A concrete answer means vision is working. A vague or generic one means it

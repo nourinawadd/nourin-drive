@@ -26,7 +26,7 @@ up without a second command. Otherwise `npm run tracks` from `client/`.
 ## The folder name is the playlist
 
 Same idea as the Ereader's shelves. Make a new folder and you have a new
-playlist — no code change, nothing to register.
+playlist - no code change, nothing to register.
 
 | Folder | Playlist | Position |
 | --- | --- | --- |
@@ -40,7 +40,7 @@ sets order, exactly like the `04 - ` on a track filename sets play order.
 
 Two things worth knowing:
 
-- **A song lives in exactly one playlist** — whichever folder it's in. This is
+- **A song lives in exactly one playlist** - whichever folder it's in. This is
   the trade-off of using folders instead of a playlist file. If you want the same
   song in two playlists, you need two copies of the file.
 - **`covers/` is reserved.** It's where embedded album art gets extracted, and
@@ -48,7 +48,7 @@ Two things worth knowing:
   Windows won't distinguish `Covers` from `covers`).
 
 Nesting deeper than one level is allowed but the *top* folder still decides the
-playlist — `music/Late Night/2019/song.mp3` is still in "Late Night".
+playlist - `music/Late Night/2019/song.mp3` is still in "Late Night".
 
 ## Playlist cover art
 
@@ -81,14 +81,14 @@ artist "Simon" and title "Garfunkel - The Boxer". Rename it or fix the tags.
 
 - Opens in **grid** view. `▦ Grid` / `▤ List` in the toolbar switches, and the
   choice is remembered per window (right-click works too).
-- **List** view sorts by any column — click a header, click again to reverse.
+- **List** view sorts by any column - click a header, click again to reverse.
 - **Playlists** in the toolbar is the picker; the chips under it filter in place.
 - Search covers title, artist, album and playlist name.
 - Keyboard: `space` play/pause, `←`/`→` seek 5s, `↑`/`↓` move, `Enter` play,
   `N`/`P` next/prev, `S` shuffle, `R` repeat.
 - Volume, shuffle, repeat and the last track are remembered between visits. The
   last track is *cued*, never auto-played.
-- **Playback is not tied to the window.** Minimize it, bury it, close it — the
+- **Playback is not tied to the window.** Minimize it, bury it, close it - the
   music keeps going, because the audio lives on the desktop rather than inside
   the window. Reopen from the dock to get back to it.
 - Media keys and headphone buttons work, and the OS media popup shows the cover.
@@ -101,10 +101,10 @@ artist "Simon" and title "Garfunkel - The Boxer". Rename it or fix the tags.
 | Folder ignored, songs in "Singles" | The folder is named `covers` (reserved), or starts with a `.` |
 | Playlists all in the wrong order | Only some folders are numbered. Numbered ones always come first. |
 | **Time** shows `--:--` | The file has no duration tag. Re-tag it, or ignore it. |
-| Year looks wrong / missing | A bare `1970` with no date frame is treated as "no year" — it's the epoch placeholder plenty of taggers write. See `plausibleYear()` in `gen-tracks.mjs`. |
+| Year looks wrong / missing | A bare `1970` with no date frame is treated as "no year" - it's the epoch placeholder plenty of taggers write. See `plausibleYear()` in `gen-tracks.mjs`. |
 | Album shows the song title | That's what the file's tags say. Fix the tags. |
 | Cover is a coloured square | No sidecar image and no embedded art. |
-| Two songs collapse into one | Identical artist + title generate the same id; the second gets a numeric suffix, so this shouldn't happen — if it does, check for duplicate files. |
+| Two songs collapse into one | Identical artist + title generate the same id; the second gets a numeric suffix, so this shouldn't happen - if it does, check for duplicate files. |
 
 ## Quick reference
 

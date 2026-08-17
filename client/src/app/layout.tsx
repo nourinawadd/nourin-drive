@@ -10,8 +10,8 @@ const wbFont = VT323({
   display: "swap",
 });
 
-// Reading face for the Ereader's page. VT323 is a pixel font — right for window
-// chrome, punishing for a chapter — so the page gets a real monospace instead.
+// Reading face for the Ereader's page. VT323 is a pixel font - right for window
+// chrome, punishing for a chapter - so the page gets a real monospace instead.
 // Mono rather than serif because a fixed grid is what makes a justified page
 // read like a printed one. Self-hosted by next/font, so no runtime request.
 const paperFont = IBM_Plex_Mono({

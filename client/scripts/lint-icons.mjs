@@ -2,14 +2,14 @@
 // prints each grid to the terminal in colour, so you can check a new icon
 // without starting the app. Run: npm run lint:icons
 //
-// Pixel art fails in quiet, specific ways — a row one character short, a
+// Pixel art fails in quiet, specific ways - a row one character short, a
 // stray colour that isn't in the Workbench palette, a mirrored shape that
 // isn't quite mirrored, a lone pixel floating in space. Every one of those
 // reads as "the icon looks a bit off" and none of them are obvious in a diff.
 // This catches them before they ship.
 //
-// ERRORS (exit 1)  — malformed grid: bad dimensions, unknown palette char.
-// WARNINGS (exit 0) — suspicious but sometimes deliberate: asymmetry on a
+// ERRORS (exit 1) - malformed grid: bad dimensions, unknown palette char.
+// WARNINGS (exit 0) - suspicious but sometimes deliberate: asymmetry on a
 //                     grid marked "symmetric", orphan pixels, corner-only
 //                     strokes, an object sitting on the field with no outline.
 //
@@ -122,8 +122,8 @@ function lint(name, grid) {
     }
   });
 
-  // Bail before the pixel-level checks if the shape itself is wrong —
-  // otherwise they produce noise derived from the same root cause.
+  // Bail before the pixel-level checks if the shape itself is wrong.
+  // Otherwise they produce noise derived from the same root cause.
   if (errors.length) return { errors, warnings, colors: [] };
 
   if (symmetric) {
@@ -150,7 +150,7 @@ function lint(name, grid) {
   }
   if (orphans > 0) {
     warnings.push(
-      `${orphans} orphan pixel${orphans > 1 ? "s" : ""} (no solid neighbour on any side) — deliberate highlight, or a mistake?`,
+      `${orphans} orphan pixel${orphans > 1 ? "s" : ""} (no solid neighbour on any side) - deliberate highlight, or a mistake?`,
     );
   }
 
@@ -158,7 +158,7 @@ function lint(name, grid) {
   // diagonally looks like a line at 8× and like scattered dots at 1×, which
   // is the size that actually ships. Split each colour into 8-connected
   // blobs, then see whether a blob falls apart under 4-connectivity.
-  // Dither is the legitimate exception — its tiles are meant to be separate,
+  // Dither is the legitimate exception - its tiles are meant to be separate,
   // so a blob made entirely of 2×2 tiles is left alone.
   const byColor = new Map();
   for (let y = 0; y < rows.length; y++) {
@@ -177,14 +177,14 @@ function lint(name, grid) {
       if (pieces.every(isDitherTile)) continue;
       const [x, y] = anchor(blob);
       warnings.push(
-        `'${ch}' stroke near x${x},y${y} joins only at corners — ${pieces.length} pieces that never share an edge. Reads as loose dots at 1×; thicken it or shift a pixel so the run connects.`,
+        `'${ch}' stroke near x${x},y${y} joins only at corners - ${pieces.length} pieces that never share an edge. Reads as loose dots at 1×; thicken it or shift a pixel so the run connects.`,
       );
     }
   }
 
   // Open outlines against the illustration field. Only meaningful for grids
   // that declare one (`"field": "W"` on the drive units, whose art sits on a
-  // white face) — everything else skips this.
+  // white face) - everything else skips this.
   //
   // The field is its largest 4-connected patch, so a highlight drawn IN the
   // field colour inside an object doesn't count as background. Anything that
@@ -209,7 +209,7 @@ function lint(name, grid) {
 
     for (const obj of components(objectPixels, N8)) {
       if (obj.some((k) => { const [x, y] = xy(k); return N4.some(([dx, dy]) => clear(x + dx, y + dy)); })) {
-        continue; // reaches the outside — it's the chassis, not a floating object
+        continue; // reaches the outside - it's the chassis, not a floating object
       }
       const open = obj.filter((k) => {
         const [x, y] = xy(k);
@@ -220,7 +220,7 @@ function lint(name, grid) {
       const [x, y] = anchor(open);
       const shades = [...new Set(open.map((k) => { const [a, b] = xy(k); return rows[b][a]; }))].sort();
       warnings.push(
-        `${open.length} pixel(s) meet the '${field}' field with no K outline (${shades.join(" ")}), first at x${x},y${y} — the silhouette is open there.`,
+        `${open.length} pixel(s) meet the '${field}' field with no K outline (${shades.join(" ")}), first at x${x},y${y} - the silhouette is open there.`,
       );
     }
   }
@@ -235,7 +235,7 @@ const names = Object.keys(grids);
 let totalErrors = 0;
 let totalWarnings = 0;
 
-console.log(`\n${BOLD}icon-grids.json${RESET} ${DIM}— ${names.length} grid(s)${RESET}\n`);
+console.log(`\n${BOLD}icon-grids.json${RESET} ${DIM} - ${names.length} grid(s)${RESET}\n`);
 
 for (const name of names) {
   const grid = grids[name];

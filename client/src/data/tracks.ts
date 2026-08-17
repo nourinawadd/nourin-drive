@@ -6,7 +6,7 @@
 // without restarting). While `npm run dev` is up, a watcher regenerates on
 // every drop, so a song you drag in appears without a second command.
 //
-// A FOLDER IS A PLAYLIST — the same idea as the Ereader's shelves:
+// A FOLDER IS A PLAYLIST - the same idea as the Ereader's shelves:
 //   public/music/01 - Late Night/Song.mp3   →  playlist "Late Night", pinned 1st
 //   public/music/Covers Night/Song.mp3      →  playlist "Covers Night"
 //   public/music/loose-track.mp3            →  playlist "Singles"
@@ -70,7 +70,7 @@ export function searchTracks(tracks: Track[], query: string): Track[] {
 
 /**
  * Art to represent a playlist: its own cover if it has one, otherwise the first
- * few track covers to stack — the same treatment the Ereader gives a shelf.
+ * few track covers to stack - the same treatment the Ereader gives a shelf.
  */
 export function playlistArt(playlist: string, max = 3): string[] {
   const own = PLAYLISTS.find((p) => p.name === playlist)?.cover;

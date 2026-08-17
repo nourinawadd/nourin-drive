@@ -3,7 +3,7 @@
 How to get a poem, an essay or a book into the Ereader app.
 
 Everything on the shelves is a real file in `client/public/library/`. There is no
-database and no upload form — you put a file in a folder, run one command, and it
+database and no upload form - you put a file in a folder, run one command, and it
 appears. That means adding something is a commit, and removing something is
 deleting a file.
 
@@ -46,12 +46,12 @@ menu you already have open.
    4) Other shelf     → name your own
 
 Choice number: 1
-Path to the file (.md/.txt/.pdf) — or blank to start a new empty .md: C:\Users\e\Desktop\on leaving.md
+Path to the file (.md/.txt/.pdf) - or blank to start a new empty .md: C:\Users\e\Desktop\on leaving.md
 Title (on leaving): On Leaving
 Is this yours? (Y/n): y
 Date (YYYY-MM, or blank) (2026-07):
 One-line blurb for the card (optional): Written on a train, mostly.
-Note — edition, source, anything worth recording (optional):
+Note - edition, source, anything worth recording (optional):
 
   ✓ copied public/library/Poems/On Leaving.md
 [gen-library] wrote 6 document(s) to library.generated.ts (5 inlined)
@@ -59,7 +59,7 @@ Note — edition, source, anything worth recording (optional):
   Run `npm run dev` (or refresh if it's already running) to see it.
 ```
 
-The file is **copied**, not moved — your original stays where it was.
+The file is **copied**, not moved - your original stays where it was.
 
 ### Starting a poem from nothing
 
@@ -67,7 +67,7 @@ Leave the path blank. It writes an empty `.md` with the frontmatter filled in
 and tells you where to type:
 
 ```
-Path to the file (.md/.txt/.pdf) — or blank to start a new empty .md:
+Path to the file (.md/.txt/.pdf) - or blank to start a new empty .md:
 Title: The Long Way Round
 ...
   ✓ created public/library/Poems/The Long Way Round.md
@@ -83,14 +83,14 @@ Title (meditations): Meditations
 Author (whose book this actually is): Marcus Aurelius
 Date (YYYY-MM, or blank) (2026-07): 2024
 One-line blurb for the card (optional): Stoic notes, public domain.
-Note — edition, source, anything worth recording (optional): Project Gutenberg edition
+Note - edition, source, anything worth recording (optional): Project Gutenberg edition
 
   ✓ copied public/library/Books/Marcus Aurelius - Meditations.pdf
   ✓ wrote public/library/Books/Marcus Aurelius - Meditations.meta.md (title/author live in the filename)
 ```
 
 You can drag a file into the terminal instead of typing the path. Quotes around
-it are fine — Windows "Copy as path" adds them and the wizard strips them.
+it are fine - Windows "Copy as path" adds them and the wizard strips them.
 
 Books ask for the author outright, and warn you if you skip it. They're not your
 work; the card should say whose they are.
@@ -124,7 +124,7 @@ npm run library
 ```
 
 This matters because `.md` and `.txt` bodies are copied into
-`src/data/library.generated.ts` — that copy is what the site reads, not your
+`src/data/library.generated.ts` - that copy is what the site reads, not your
 file. It's why editing used to look like it did nothing.
 
 You can't ship a stale version by accident: `npm run build` regenerates first, so
@@ -144,7 +144,7 @@ client/public/library/
 ```
 
 **The folder name is the shelf.** It becomes a filter chip in the Ereader and a
-folder in the File Explorer. Make a new folder and you have a new shelf — no code
+folder in the File Explorer. Make a new folder and you have a new shelf - no code
 change. A file sitting loose at the top level of `library/` lands on a shelf
 called "Library".
 
@@ -160,10 +160,10 @@ ignored.
 | | Title | Author | Everything else |
 |---|---|---|---|
 | `.md` | frontmatter, else filename | frontmatter | frontmatter |
-| `.txt` | the filename | — | sidecar (§5) |
+| `.txt` | the filename | - | sidecar (§5) |
 | `.pdf` | filename after `" - "` | filename before `" - "` | sidecar (§5) |
 
-### `.md` — frontmatter
+### `.md` - frontmatter
 
 The richest option, and the right one for anything you wrote yourself.
 
@@ -175,7 +175,7 @@ blurb: Written on a train, mostly.
 ---
 
 The station clock has been wrong for a year
-and nobody has agreed to fix it —
+and nobody has agreed to fix it
 ```
 
 | Key | Notes |
@@ -187,9 +187,9 @@ and nobody has agreed to fix it —
 | `note` | Edition, source, provenance. Shown in italics under the blurb |
 | `order` | Pins position within the shelf (lower first), beating the date |
 
-Frontmatter must be the very first thing in the file — `---`, keys, `---`.
+Frontmatter must be the very first thing in the file - `---`, keys, `---`.
 
-### `.pdf` — the filename
+### `.pdf` - the filename
 
 There's nowhere inside a PDF for this to live, so the filename carries it:
 
@@ -202,9 +202,9 @@ The split is on the **first `" - "`** (spaced hyphen). No `" - "` means the whol
 filename is the title.
 
 > This convention is **PDF-only**. A file called `Kafka - The Trial.txt` gets the
-> title "Kafka - The Trial" — no author extracted. Use a sidecar for `.txt`.
+> title "Kafka - The Trial" - no author extracted. Use a sidecar for `.txt`.
 
-### `.txt` — the filename
+### `.txt` - the filename
 
 The filename is the title, and that's all a `.txt` can say on its own. Use `.md`
 instead if you want a blurb or an author, or add a sidecar.
@@ -228,7 +228,7 @@ newest date, then filename.
 
 ---
 
-## 5. Sidecars — metadata for PDFs and text files
+## 5. Sidecars - metadata for PDFs and text files
 
 A file named `<same base name>.meta.md` describes its neighbour. Frontmatter
 only, no body:
@@ -250,7 +250,7 @@ Sidecar values **override** everything derived from the filename, so you can als
 use one to correct a title without renaming the file. The wizard writes one
 automatically whenever you give it more than the filename can hold.
 
-Sidecars are not themselves documents — they won't appear on a shelf.
+Sidecars are not themselves documents - they won't appear on a shelf.
 
 ---
 
@@ -264,7 +264,7 @@ Books/Franz Kafka - The Trial.cover.png
 ```
 
 `.png`, `.jpg`, `.jpeg`, `.webp`, `.gif` and `.avif` all work. Roughly 3:4
-portrait looks best — cards render at 84×119.
+portrait looks best - cards render at 84×119.
 
 Without one:
 
@@ -272,7 +272,7 @@ Without one:
   scrolls into view. Usually good enough that you never need a cover.
 - **Everything else** gets the title set on paper with a coloured spine.
 
-The wizard doesn't ask about covers — add them by hand and re-run
+The wizard doesn't ask about covers - add them by hand and re-run
 `npm run library`.
 
 ---
@@ -284,15 +284,15 @@ Worth knowing, because it explains why a poem doesn't paginate:
 | | Behaviour |
 |---|---|
 | Anything on **Poems** | One continuous column, scrolls. Always |
-| Text under ~900 characters | Same — a "page" would be mostly empty |
+| Text under ~900 characters | Same - a "page" would be mostly empty |
 | Longer prose | Paginated into columns; two-page spread once wide enough |
 | PDFs | Page by page; two-page spread once wide enough |
 
-"Wide enough" is 900px of *reading pane*, which is roughly a 1000px window — the
+"Wide enough" is 900px of *reading pane*, which is roughly a 1000px window - the
 left rail takes its share. Below that it drops to a single page on its own, and
 the Spread button greys out. Narrow the window and it follows.
 
-`.txt` keeps your line breaks and indentation exactly as typed — a poem's shape
+`.txt` keeps your line breaks and indentation exactly as typed - a poem's shape
 survives. Markdown gets reflowed and justified.
 
 Text files under 256 KB are baked into the build so they open instantly. Larger
@@ -313,7 +313,7 @@ The id comes from the **shelf and title**, so:
 - Two documents with the same title on the same shelf will collide and get an
   ugly suffix. Keep titles unique per shelf.
 
-The same title on *different* shelves is fine — `poems/echo` and `writings/echo`
+The same title on *different* shelves is fine - `poems/echo` and `writings/echo`
 coexist happily.
 
 ---
@@ -323,14 +323,14 @@ coexist happily.
 | Symptom | Cause |
 |---|---|
 | File doesn't appear | Not `.pdf`/`.md`/`.txt`, or you didn't run `npm run library` |
-| Edits to a poem don't show | Dev server not running, so nothing is watching — run `npm run library`. The site reads the generated copy, not your file |
+| Edits to a poem don't show | Dev server not running, so nothing is watching - run `npm run library`. The site reads the generated copy, not your file |
 | Title is the whole filename | PDF with no `" - "`, or you used the `Author - Title` form on a `.txt` |
-| Card says "Nourin Awad" but it isn't yours | No `author` set — add it to the frontmatter or a sidecar |
+| Card says "Nourin Awad" but it isn't yours | No `author` set - add it to the frontmatter or a sidecar |
 | Blurb repeats the title | Give it an explicit `blurb`; otherwise it uses the first body line |
 | Frontmatter shows up as text | The `---` block isn't at the very top of the file |
 | Sidecar ignored | Base name must match exactly, including spaces and case |
 | Cover ignored | Needs `.cover` before the extension, matching base name |
-| Poem won't paginate | Working as intended — see §7 |
+| Poem won't paginate | Working as intended - see §7 |
 | Everything vanished | `library.generated.ts` is rebuilt from the folder. If the folder is empty, the shelf is empty |
 
 `npm run library` prints what it found. If the count is wrong, that's the fastest
@@ -346,7 +346,7 @@ npm run add          # same wizard, inside the general "add to site" menu
 cd client && npm run library   # reindex by hand (only needed if dev isn't running)
 ```
 
-`npm run dev` watches `public/library/` — while it's up, saving a file is all
+`npm run dev` watches `public/library/` - while it's up, saving a file is all
 you need to do.
 
 ```

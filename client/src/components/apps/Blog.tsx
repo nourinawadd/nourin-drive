@@ -89,7 +89,7 @@ function OfflinePanel({ url }: { url: string }) {
         <p style={{ margin: "8px 0 12px", fontSize: 13 }}>
           {post ? `“${post.title}” lives at ` : "It lives at "}
           <code>{url}</code>
-          {" — it&apos;s a separate site, so it may be down, or not running locally yet."}
+          {". It&apos;s a separate site, so it may be down, or not running locally yet."}
         </p>
         <a href={url} target="_blank" rel="noopener noreferrer" style={openTabBtn}>
           Try it in a new tab ↗

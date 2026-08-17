@@ -26,7 +26,7 @@ import {
 // payload, and `easter-egg` would stop being one.
 //
 // `appId` opens an app window; a drive without one (Notes) runs a custom
-// action on open instead — handled in the double-click below.
+// action on open instead - handled in the double-click below.
 const DRIVES: { id: string; label: string; appId?: AppId; Icon: ComponentType }[] = [
   { id: "work",      label: "User:",      appId: "profile",   Icon: IconFloppyUser },
   { id: "about",     label: "About:",     appId: "about",     Icon: IconFloppySystem },
@@ -45,9 +45,9 @@ const DRIVES: { id: string; label: string; appId?: AppId; Icon: ComponentType }[
 
 type Pos = { x: number; y: number };
 
-// Starting layout — a column down the RIGHT edge. x depends on viewport
+// Starting layout - a column down the RIGHT edge. x depends on viewport
 // width, so render with an SSR-safe fallback and snap to the real edge in an
-// effect (unconditional render — never gated, so icons can't disappear).
+// effect (unconditional render - never gated, so icons can't disappear).
 const ICON_W = 120;          // matches .wb-drive width
 const COL_GAP = 8;
 const RIGHT_MARGIN = 16;

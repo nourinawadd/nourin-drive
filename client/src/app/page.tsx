@@ -14,7 +14,7 @@ import { useWindowStore } from "@/context/windowStore";
 import { findPost } from "@/data/blog";
 
 /**
- * `?doc=<id>` opens the Ereader on that document — the link the reader's Share
+ * `?doc=<id>` opens the Ereader on that document - the link the reader's Share
  * button hands out. `?post=<slug>` does the same for a blog post. The param is
  * stripped afterwards so a reload doesn't reopen the window (and so the URL
  * stays clean once you're in the desktop).

@@ -1,4 +1,4 @@
-// Builds the CV as a real vector PDF in the browser and downloads it directly —
+// Builds the CV as a real vector PDF in the browser and downloads it directly:
 // no print dialog, selectable text (not an image). @react-pdf/renderer and the
 // document are dynamically imported so they stay out of the initial bundle and
 // only load when the user actually clicks Export.

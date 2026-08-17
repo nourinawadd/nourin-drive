@@ -1,9 +1,9 @@
-// Edit this file to update the top of the About Me window — profile, links,
+// Edit this file to update the top of the About Me window - profile, links,
 // bio, and skills. No component changes needed.
 //
 // Exception: every list section below (education, experience, projects, games,
 // extracurriculars, certifications, languages) is generated from content files
-// via `npm run add` — see the CV_* imports. Edit those by adding/editing
+// via `npm run add` - see the CV_* imports. Edit those by adding/editing
 // content/projects/*.md (projects/games) or content/cv/*.md (everything else),
 // not by hand here.
 

@@ -1,6 +1,6 @@
 // Virtual filesystem backing the Explorer.
 //
-// Nothing here is hand-maintained — the tree is derived from PROJECTS and
+// Nothing here is hand-maintained - the tree is derived from PROJECTS and
 // PHOTOS at module load, so it grows as you add content. Photos already nest
 // for real (public/gallery/<Category>/...), and projects get grouped into year
 // sub-folders so the tree has somewhere to go past depth 2.
@@ -139,7 +139,7 @@ function photoFile(
 }
 
 /**
- * Library documents keep their real filename and extension — unlike the
+ * Library documents keep their real filename and extension - unlike the
  * synthetic ones above, these are actual files sitting in public/library/, and
  * pretending otherwise would break the download the Ereader offers.
  */
@@ -179,11 +179,11 @@ function postFile(post: BlogPostMeta, path: string): FsFile {
 }
 
 const byNameAsc = (a: FsNode, b: FsNode) => a.name.localeCompare(b.name);
-// Newest first, undated last — matches how the old flat list was ordered.
+// Newest first, undated last - matches how the old flat list was ordered.
 const byDateDesc = (a: FsFile, b: FsFile) => (b.date ?? "").localeCompare(a.date ?? "");
 
 /**
- * Group a category's files into year sub-folders — but only when there is more
+ * Group a category's files into year sub-folders - but only when there is more
  * than one year to show. A single "2025" folder wrapping everything is just an
  * extra click, so in that case the files sit directly in the category.
  */
@@ -260,7 +260,7 @@ function build(): FsFolder {
     };
   });
 
-  // Reading library — one folder per shelf, derived the same way the photo
+  // Reading library - one folder per shelf, derived the same way the photo
   // volumes are. These are real files on disk, and double-clicking one opens
   // the Ereader.
   const shelves = Array.from(new Set(LIBRARY.map((d) => d.shelf)));

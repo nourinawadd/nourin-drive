@@ -3,7 +3,7 @@ import { APP_REGISTRY } from "@/data/appRegistry";
 import type { AppId, WindowInstance } from "@/types/window";
 
 // Default page for a fresh browser tab. Lives here (not in Browser.tsx) so the
-// store can seed tabs without importing the component — avoids a circular import.
+// store can seed tabs without importing the component - avoids a circular import.
 export const BROWSER_HOME = "https://en.wikipedia.org/wiki/Amiga";
 
 export type BrowserTab = { id: string; url: string };

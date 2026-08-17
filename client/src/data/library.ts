@@ -1,4 +1,4 @@
-// Reading library for the Ereader app — poems, longer writing, and the
+// Reading library for the Ereader app - poems, longer writing, and the
 // open-source books worth keeping around.
 //
 // You don't edit this list by hand. Drop files into client/public/library/ and
@@ -14,7 +14,7 @@ import { GENERATED_LIBRARY } from "./library.generated";
 export type DocFormat = "pdf" | "md" | "txt";
 
 export type LibraryDoc = {
-  id: string;        // "poems/on-leaving" — stable, used in share links
+  id: string;        // "poems/on-leaving" - stable, used in share links
   shelf: string;     // "Poems" | "Writings" | "Books" | any folder you make
   title: string;
   author?: string;   // absent means it's yours
@@ -39,7 +39,7 @@ export function docById(id: string): LibraryDoc | undefined {
 }
 
 /**
- * Poems are read as a whole, not paged — a fourteen-line poem split across a
+ * Poems are read as a whole, not paged - a fourteen-line poem split across a
  * two-page spread reads as broken. Everything else paginates, apart from
  * pieces so short that a "page" would be mostly empty.
  */

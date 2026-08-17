@@ -1,7 +1,7 @@
 // Shared terminal prompting for the `npm run add` / `npm run add:doc` wizards.
 //
 // Buffered line reader: works whether stdin is an interactive TTY (lines arrive
-// one Enter at a time) or a pipe/file (all lines arrive at once) — readline's
+// one Enter at a time) or a pipe/file (all lines arrive at once) - readline's
 // own question() drops piped lines, so we queue them ourselves.
 
 import { createInterface } from "node:readline/promises";

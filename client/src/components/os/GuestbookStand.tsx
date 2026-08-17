@@ -23,7 +23,7 @@ const ODO_DIGITS = 6;
 /**
  * The always-there invitation to sign the guestbook.
  *
- * Lives at z-index 900 — the dock/taskbar tier — rather than down at z1 with
+ * Lives at z-index 900 - the dock/taskbar tier - rather than down at z1 with
  * the drive icons and stickies. At z1 the first window a visitor opens buries
  * it, which defeats the entire point of a standing invitation.
  *
@@ -35,7 +35,7 @@ const ODO_DIGITS = 6;
 export function GuestbookStand() {
   const openApp = useWindowStore((s) => s.openApp);
 
-  // Storage is read in an effect, never during render — reading it inline would
+  // Storage is read in an effect, never during render - reading it inline would
   // make the server pass and the first client pass disagree and blow up
   // hydration. The un-nudged, expanded state is what the server renders.
   const [collapsed, setCollapsed] = useState(false);
@@ -122,7 +122,7 @@ export function GuestbookStand() {
             className={`wb-stand-btn${signed ? " is-signed" : " wb-pulse"}`}
             onClick={() => openApp("guestbook")}
           >
-            {signed ? "✓ you signed it — read the book" : "✎ SIGN THE BOOK"}
+            {signed ? "✓ you signed it, read the book" : "✎ SIGN THE BOOK"}
           </button>
         </div>
       )}
@@ -149,7 +149,7 @@ function Odometer({ value }: { value: number | undefined }) {
     }
     tickedRef.current = true;
 
-    // Nothing to roll from on an empty counter — just show it.
+    // Nothing to roll from on an empty counter - just show it.
     if (value <= 0) {
       setShown(value);
       return;
@@ -165,7 +165,7 @@ function Odometer({ value }: { value: number | undefined }) {
     };
   }, [value]);
 
-  // Server unreachable, or stats still in flight — the button is the point, so
+  // Server unreachable, or stats still in flight - the button is the point, so
   // drop the counter rather than putting an error box on someone's desktop.
   if (shown == null) return null;
 

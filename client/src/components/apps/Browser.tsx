@@ -9,10 +9,38 @@ import {
   type BrowserTab,
 } from "@/context/windowStore";
 
-// Some sites refuse to embed (X-Frame-Options / frame-ancestors CSP).
-// We can't detect those reliably from JS, so we race the iframe's onLoad
-// against a timer and assume blocked if onLoad never fires.
-const LOAD_TIMEOUT_MS = 2000;
+const SLOW_LOAD_MS = 10000;
+
+const FRAMING_BLOCKED_HOSTS = [
+  "github.com",
+  "linkedin.com",
+  "instagram.com",
+  "facebook.com",
+  "x.com",
+  "twitter.com",
+  "reddit.com",
+  "stackoverflow.com",
+  "google.com",
+  "youtube.com",
+];
+
+type BlockReason = "framing" | "insecure" | "slow";
+
+function blockReason(url: string): BlockReason | null {
+  let u: URL;
+  try {
+    u = new URL(url);
+  } catch {
+    return null;
+  }
+  if (typeof window !== "undefined" && window.location.protocol === "https:" && u.protocol === "http:") {
+    return "insecure";
+  }
+  if (u.pathname.startsWith("/embed/")) return null;
+  const host = u.hostname.replace(/^www\./, "");
+  const blocked = FRAMING_BLOCKED_HOSTS.some((h) => host === h || host.endsWith(`.${h}`));
+  return blocked ? "framing" : null;
+}
 
 type Bookmark = { label: string; url: string; group: "pinned" | "dev" };
 
@@ -29,7 +57,6 @@ const BOOKMARKS: Bookmark[] = [
   { label: "Pollock",         url: "https://jacksonpollock.org",                group: "dev" },
   { label: "Christmas?",      url: "https://isitchristmas.com",                 group: "dev" },
   { label: "Hacker Typer",    url: "https://hackertyper.net",                   group: "dev" },
-  { label: "CERN '91",        url: "http://info.cern.ch",                       group: "dev" },
   { label: "MF Website",      url: "https://motherfuckingwebsite.com",          group: "dev" },
 ];
 
@@ -155,6 +182,15 @@ export function Browser({ winId, payload }: { winId: string; payload?: unknown }
           spellCheck={false}
         />
         <ChromeButton onClick={() => go(input)} title="Go">Go</ChromeButton>
+        <a
+          href={activeUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open this page in a real browser tab"
+          style={chromeLinkStyle}
+        >
+          ↗
+        </a>
       </div>
 
       {/* bookmarks */}
@@ -174,10 +210,15 @@ export function Browser({ winId, payload }: { winId: string; payload?: unknown }
         ))}
       </div>
 
-      {/* viewport — every tab stays mounted so switching keeps its page state */}
+      {/* viewport - every tab stays mounted so switching keeps its page state */}
       <div style={viewportWrap}>
         {tabs.map((t) => (
-          <TabFrame key={t.id} url={t.url} active={t.id === activeId} />
+          <TabFrame
+            key={t.id}
+            url={t.url}
+            active={t.id === activeId}
+            onGoHome={() => go(BROWSER_HOME)}
+          />
         ))}
       </div>
     </div>
@@ -186,18 +227,38 @@ export function Browser({ winId, payload }: { winId: string; payload?: unknown }
 
 // One iframe per tab. Kept mounted (hidden when inactive) so a tab preserves its
 // loaded page when you switch away and back. Owns its own load/blocked state.
-function TabFrame({ url, active }: { url: string; active: boolean }) {
-  const [status, setStatus] = useState<"loading" | "ok" | "blocked">("loading");
+function TabFrame({
+  url,
+  active,
+  onGoHome,
+}: {
+  url: string;
+  active: boolean;
+  onGoHome: () => void;
+}) {
+  const refused = blockReason(url);
+  const [loaded, setLoaded] = useState(false);
+  const [slow, setSlow] = useState(false);
   const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setStatus("loading");
-    const t = window.setTimeout(() => setStatus("blocked"), LOAD_TIMEOUT_MS);
+    if (refused) return;
+    setLoaded(false);
+    setSlow(false);
+    const t = window.setTimeout(() => setSlow(true), SLOW_LOAD_MS);
     timerRef.current = t;
     return () => {
       if (timerRef.current) window.clearTimeout(timerRef.current);
     };
-  }, [url]);
+  }, [url, refused]);
+
+  if (refused) {
+    return (
+      <div style={{ ...frameLayer, display: active ? "block" : "none" }}>
+        <BlockedRequester url={url} reason={refused} onGoHome={onGoHome} />
+      </div>
+    );
+  }
 
   return (
     <div style={{ ...frameLayer, display: active ? "block" : "none" }}>
@@ -212,7 +273,7 @@ function TabFrame({ url, active }: { url: string; active: boolean }) {
             window.clearTimeout(timerRef.current);
             timerRef.current = null;
           }
-          setStatus("ok");
+          setLoaded(true);
         }}
         style={{
           width: "100%",
@@ -221,8 +282,8 @@ function TabFrame({ url, active }: { url: string; active: boolean }) {
           background: "var(--wb-white)",
         }}
       />
-      {active && status === "blocked" && <BlockedPanel url={url} />}
-      {active && status === "loading" && <LoadingPanel />}
+      {active && !loaded && slow && <BlockedRequester url={url} reason="slow" onGoHome={onGoHome} />}
+      {active && !loaded && !slow && <LoadingPanel />}
     </div>
   );
 }
@@ -235,23 +296,55 @@ function ChromeButton({ children, onClick, title }: { children: React.ReactNode;
   );
 }
 
-function BlockedPanel({ url }: { url: string }) {
+const REFUSAL_COPY: Record<BlockReason, { line: string; note: string }> = {
+  framing: {
+    line: "will not open in this window.",
+    note: "Some sites only allow themselves to be opened in a window of their own.",
+  },
+  insecure: {
+    line: "will not open in this window.",
+    note: "It is served over plain http, and this page is https. Your browser blocks the mix.",
+  },
+  slow: {
+    line: "is taking a long time.",
+    note: "It may be refusing to open in a frame, or it may just be slow.",
+  },
+};
+
+function BlockedRequester({
+  url,
+  reason,
+  onGoHome,
+}: {
+  url: string;
+  reason: BlockReason;
+  onGoHome: () => void;
+}) {
+  const copy = REFUSAL_COPY[reason];
   return (
-    <div style={overlay}>
-      <div style={panel}>
-        <strong>This site refused to embed.</strong>
-        <p style={{ margin: "8px 0 12px", fontSize: 13 }}>
-          Modern sites usually block <code>&lt;iframe&gt;</code> via{" "}
-          <code>X-Frame-Options</code> or CSP. Open it in a real tab instead.
-        </p>
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={openTabBtn}
-        >
-          Open in new tab ↗
-        </a>
+    <div className="wb-req-overlay" role="alertdialog" aria-label="System Request">
+      <div className="wb-req-card">
+        <div className="wb-req-title">System Request</div>
+        <div className="wb-req-body">
+          <p className="wb-req-host">{tabLabel(url)}</p>
+          <p>{copy.line}</p>
+          <p className="wb-req-note">{copy.note}</p>
+          <div className="wb-req-gadgets">
+            <a
+              className="wb-req-gadget is-primary"
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open in New Tab
+            </a>
+            {url !== BROWSER_HOME && (
+              <button type="button" className="wb-req-gadget" onClick={onGoHome}>
+                Start Page
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -338,6 +431,13 @@ const chromeBtnStyle: React.CSSProperties = {
   color: "var(--wb-black)",
 };
 
+const chromeLinkStyle: React.CSSProperties = {
+  ...chromeBtnStyle,
+  display: "flex",
+  alignItems: "center",
+  textDecoration: "none",
+};
+
 const bookmarkRow: React.CSSProperties = {
   display: "flex",
   gap: 4,
@@ -382,14 +482,4 @@ const panel: React.CSSProperties = {
   padding: 14,
   textAlign: "center",
   boxShadow: "4px 4px 0 var(--wb-black)",
-};
-
-const openTabBtn: React.CSSProperties = {
-  display: "inline-block",
-  padding: "4px 10px",
-  background: "var(--wb-orange)",
-  border: "1px solid var(--wb-black)",
-  color: "var(--wb-black)",
-  textDecoration: "none",
-  fontSize: 13,
 };

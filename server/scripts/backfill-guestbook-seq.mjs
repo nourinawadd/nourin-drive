@@ -4,7 +4,7 @@
 //
 //   node scripts/backfill-guestbook-seq.mjs
 //
-// Idempotent — entries that already have a seq are left alone, so re-running it
+// Idempotent - entries that already have a seq are left alone, so re-running it
 // is harmless. Safe to run late: until it does, the client numbers unstamped
 // entries by counting backwards from the total.
 
@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 
 const uri = process.env.MONGO_URI;
 if (!uri) {
-  console.error("[backfill] MONGO_URI not set — nothing to do.");
+  console.error("[backfill] MONGO_URI not set - nothing to do.");
   process.exit(1);
 }
 

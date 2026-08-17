@@ -3,13 +3,13 @@ import type { AppDef, AppId } from "@/types/window";
 // Defaults per app. Window manager uses singleton flag to decide whether
 // opening an app twice spawns a new window or focuses the existing one.
 //
-// Windows open at a uniform size — small defaults looked cramped on a large
+// Windows open at a uniform size - small defaults looked cramped on a large
 // display. Change WINDOW_W/H to resize every app at once; per-app minWidth /
 // minHeight still constrain how far the user can shrink them.
 const WINDOW_W = 940;
 const WINDOW_H = 560;
 // Uniform spawn point too. Every window is the same size now, so a per-app
-// origin would only push the wider ones off the right edge — openApp already
+// origin would only push the wider ones off the right edge - openApp already
 // cascades stacked opens by 20px each.
 const WINDOW_X = 96;
 const WINDOW_Y = 46;

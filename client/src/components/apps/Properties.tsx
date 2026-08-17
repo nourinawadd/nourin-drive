@@ -24,7 +24,7 @@ export function Properties({ winId, payload }: { winId: string; payload: unknown
 
   return (
     <div style={shell}>
-      {/* single-tab strip — the tab is decorative, but the shape is the point */}
+      {/* single-tab strip - the tab is decorative, but the shape is the point */}
       <div style={tabStrip}>
         <div style={tab}>General</div>
       </div>

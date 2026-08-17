@@ -8,7 +8,7 @@ export type TextPaneProps = {
   body: string;
   /** Markdown gets rendered; plain text keeps its own line breaks. */
   markdown: boolean;
-  /** Short pieces scroll as one column — see isShortForm() in data/library. */
+  /** Short pieces scroll as one column - see isShortForm() in data/library. */
   shortForm: boolean;
   /** 1 = the page's natural size; the reader's zoom control drives this. */
   zoom: number;
@@ -47,7 +47,7 @@ export function TextPane({
   // ── short form: one column, plain vertical scroll ────────────────────
   // Progress is reported as a percentage instead of pages, so the status bar
   // still has something true to say. Deliberately NOT written to the window
-  // payload — that would put a store write on every scroll frame.
+  // payload - that would put a store write on every scroll frame.
   const reportScrollProgress = useCallback(() => {
     const el = scroller.current;
     if (!el) return;
@@ -103,7 +103,7 @@ export function TextPane({
   }, [page, pageCount, shortForm, zoom, columns]);
 
   if (shortForm) {
-    // Same page furniture as a spread, minus the folio — there are no pages to
+    // Same page furniture as a spread, minus the folio - there are no pages to
     // number here. A poem still wants to look like it's printed on something.
     return (
       <div
@@ -134,7 +134,7 @@ export function TextPane({
       style={{ ...surface, overflow: "hidden", fontSize }}
     >
       <div className="wb-paper-run" style={{ padding: "1.5em 2.6em 1.1em" }}>
-        {/* Verso carries the author, recto the title — the convention a printed
+        {/* Verso carries the author, recto the title - the convention a printed
             book uses. Your own work has no author, so the verso sits empty. */}
         {columns === 2 ? (
           <>

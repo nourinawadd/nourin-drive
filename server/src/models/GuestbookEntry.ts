@@ -10,7 +10,7 @@ const guestbookSchema = new Schema(
     // counter at sign time. Permanent: deleting entry #7 leaves a gap rather
     // than renumbering everyone after it, exactly like the CGI guestbooks this
     // is imitating. Optional because entries written before this field existed
-    // have none until the backfill script runs — the client falls back to
+    // have none until the backfill script runs - the client falls back to
     // counting backwards from the total for those.
     seq: { type: Number, index: true },
 

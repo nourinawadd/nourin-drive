@@ -77,7 +77,7 @@ export function RecycleBin() {
   const [selected, setSelected] = useState<string | null>(null);
   const openApp = useWindowStore((s) => s.openApp);
 
-  // Reading, not editing — so it opens in the Ereader like every other text
+  // Reading, not editing - so it opens in the Ereader like every other text
   // on the desktop. There's no file behind these, hence the inline payload.
   function open(f: Junk) {
     openApp("ereader", {

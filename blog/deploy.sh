@@ -11,7 +11,7 @@ echo "building…"
 node scripts/build.mjs
 
 if [ ! -f out/index.html ]; then
-  echo "out/index.html missing — build produced nothing" >&2
+  echo "out/index.html missing - build produced nothing" >&2
   exit 1
 fi
 
@@ -33,4 +33,4 @@ ssh -t "$HOST" "
   rm -rf /tmp/blog-new /tmp/blog-out.tgz
 "
 
-echo "done — https://blog.nourin.is-a.dev"
+echo "done - https://blog.nourin.is-a.dev"

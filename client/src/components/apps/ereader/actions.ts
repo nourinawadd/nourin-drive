@@ -2,7 +2,7 @@
 
 import type { LibraryDoc } from "@/data/library";
 
-/** A document that only exists in memory — the Recycle Bin's deleted text. */
+/** A document that only exists in memory - the Recycle Bin's deleted text. */
 export type InlineDoc = {
   title: string;
   format: LibraryDoc["format"];
@@ -26,14 +26,14 @@ function triggerDownload(href: string, fileName: string) {
 /** Characters Windows and macOS refuse in a filename. */
 const ILLEGAL = /[\\/:*?"<>|]/g;
 
-/** A trailing ".txt" / ".jpg" / ".mp4" — a letter then up to four more. */
+/** A trailing ".txt" / ".jpg" / ".mp4" - a letter then up to four more. */
 const HAS_EXTENSION = /\.[A-Za-z][A-Za-z0-9]{0,4}$/;
 
 /**
  * Filename for a document that only exists in memory.
  *
- * The title is often already a filename — the Recycle Bin's entries are called
- * things like "passwords.txt" — so appending the format unconditionally saved
+ * The title is often already a filename - the Recycle Bin's entries are called
+ * things like "passwords.txt" - so appending the format unconditionally saved
  * them as "passwords.txt.txt". Only add an extension when the name doesn't
  * already end in one, and keep whatever extension is there: an entry called
  * "ex.jpg" should save as "ex.jpg", matching what the window said it was.
@@ -44,7 +44,7 @@ function inlineFileName(doc: InlineDoc): string {
 }
 
 /**
- * Save the original file, byte for byte — the PDF you found, the .md you wrote.
+ * Save the original file, byte for byte - the PDF you found, the .md you wrote.
  * Inline documents have no file behind them, so they're packaged into a Blob on
  * the way out.
  */
@@ -57,7 +57,7 @@ export function downloadDoc(item: ReadableDoc): void {
   const blob = new Blob([item.doc.body], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   triggerDownload(url, inlineFileName(item.doc));
-  // Revoke on the next frame — revoking synchronously can race the download in
+  // Revoke on the next frame - revoking synchronously can race the download in
   // Firefox and leave the user with a zero-byte file.
   requestAnimationFrame(() => URL.revokeObjectURL(url));
 }

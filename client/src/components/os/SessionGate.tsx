@@ -11,20 +11,20 @@ function SessionLockScreen({
 }) {
   return (
     <div className="wb-lock wb-desktop-bg" role="alertdialog" aria-modal="true" aria-labelledby="wb-lock-title">
-      <div className="wb-lock-card">
-        <div className="wb-lock-title" id="wb-lock-title">
+      <div className="wb-req-card">
+        <div className="wb-req-title" id="wb-lock-title">
           System Request
         </div>
-        <div className="wb-lock-body">
+        <div className="wb-req-body">
           <div className="wb-disk" aria-hidden />
           <p>Workbench is already running</p>
           <p>in another window.</p>
-          <p className="wb-lock-note">Only one session may run at a time.</p>
-          <div className="wb-lock-gadgets">
-            <button type="button" className="wb-lock-gadget" onClick={onTakeOver} autoFocus>
+          <p className="wb-req-note">Only one session may run at a time.</p>
+          <div className="wb-req-gadgets">
+            <button type="button" className="wb-req-gadget" onClick={onTakeOver} autoFocus>
               Use This Tab
             </button>
-            <button type="button" className="wb-lock-gadget" onClick={onRetry}>
+            <button type="button" className="wb-req-gadget" onClick={onRetry}>
               Retry
             </button>
           </div>

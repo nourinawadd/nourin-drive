@@ -4,7 +4,7 @@ import { useState } from "react";
 
 // Plays a self-hosted HTML5 game build (Godot/Unity WebGL export under
 // /public/games/<slug>/) inside a window. The build is first-party and
-// same-origin, so we don't sandbox it — that would block fullscreen, pointer
+// same-origin, so we don't sandbox it - that would block fullscreen, pointer
 // lock and IndexedDB caching that the engines rely on.
 
 type GamePayload = { src?: string; name?: string };

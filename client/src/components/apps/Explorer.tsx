@@ -574,7 +574,7 @@ function ToolButton({
   );
 }
 
-/** Folders first, then the chosen key — the ordering Explorer has always used. */
+/** Folders first, then the chosen key - the ordering Explorer has always used. */
 function sortNodes(nodes: FsNode[], key: SortKey, asc: boolean): FsNode[] {
   const dir = asc ? 1 : -1;
   return [...nodes].sort((a, b) => {

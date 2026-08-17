@@ -43,7 +43,7 @@ createServer(async (req, res) => {
       res.end(body);
     } catch {
       res.writeHead(404, { "Content-Type": "text/plain" });
-      res.end("not found — run `npm run blog` first");
+      res.end("not found. run `npm run blog` first");
     }
   }
 }).listen(PORT, () => {

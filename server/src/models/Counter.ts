@@ -1,8 +1,8 @@
 import { Schema, model } from "mongoose";
 
 // Keyed monotonic counters. Two keys are in use:
-//   "visits"        — the guestbook hit counter shown on the desktop stand
-//   "guestbook-seq" — the permanent entry number stamped on each signature
+//   "visits" - the guestbook hit counter shown on the desktop stand
+//   "guestbook-seq" - the permanent entry number stamped on each signature
 //
 // Always mutate through `bump()`. A read-then-write would lose increments when
 // two visitors land at the same moment; `$inc` with `upsert` is atomic in the

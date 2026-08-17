@@ -1,6 +1,6 @@
 // Vector (selectable-text) PDF of the full CV, built with @react-pdf/renderer.
 // These are react-pdf primitives (Document/Page/View/Text), NOT DOM elements.
-// Rendered to a Blob and downloaded by ./exportPdf.tsx — never mounted in the DOM.
+// Rendered to a Blob and downloaded by ./exportPdf.tsx - never mounted in the DOM.
 // All content comes from @/data/about; nothing is invented here.
 import {
   Document,

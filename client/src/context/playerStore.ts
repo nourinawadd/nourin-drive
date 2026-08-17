@@ -4,7 +4,7 @@
 // while playback lived in the Music component, minimizing the player destroyed
 // its <audio> element mid-song and reset the track, position, volume and modes.
 // The state lives here and the element lives in <AudioEngine>, mounted on the
-// desktop itself — so the music keeps going whether the window is minimized,
+// desktop itself - so the music keeps going whether the window is minimized,
 // buried, or closed outright.
 //
 // The queue is an explicit list of track IDs rather than an index into TRACKS.
@@ -17,7 +17,7 @@ import { KEY_PLAYER, readJson, writeJson } from "@/lib/localStore";
 
 export type RepeatMode = "off" | "all" | "one";
 
-/** The slice of state worth surviving a reload. Not the position — resuming a
+/** The slice of state worth surviving a reload. Not the position - resuming a
  *  song 2:41 in without asking is startling rather than helpful. */
 type Saved = {
   volume: number;
@@ -114,7 +114,7 @@ export const usePlayerStore = create<State & Actions>((set, get) => {
     seekRequest: null,
     hydrated: false,
 
-    // Read in an effect, never during render — reading storage inline would make
+    // Read in an effect, never during render - reading storage inline would make
     // the server pass and the first client pass disagree and break hydration.
     hydrate: () => {
       if (get().hydrated) return;

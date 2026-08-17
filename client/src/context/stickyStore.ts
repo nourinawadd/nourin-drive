@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 // Sticky notes that live loose on the desktop. State is in-memory only (no
-// persistence middleware), so every note — the seeded ones and any the user
-// adds — is wiped on refresh. That's intentional: notes are a scratch surface.
+// persistence middleware), so every note - the seeded ones and any the user
+// adds - is wiped on refresh. That's intentional: notes are a scratch surface.
 
 export type StickyNote = {
   id: string;
@@ -13,7 +13,7 @@ export type StickyNote = {
   rotate: number;  // slight tilt for the "stuck on" look
 };
 
-// Paper tints — soft enough to read as sticky notes, still framed by the hard
+// Paper tints - soft enough to read as sticky notes, still framed by the hard
 // black border + pixel shadow that keeps them on-theme.
 const COLORS = ["#ffe27a", "#9ad3c8", "#f6a96b", "#c7a6f0"];
 

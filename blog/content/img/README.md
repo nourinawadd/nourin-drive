@@ -1,6 +1,6 @@
 Images for posts go here.
 
-Reference them by filename alone — the build copies this folder to `/img/` and
+Reference them by filename alone - the build copies this folder to `/img/` and
 rewrites the paths:
 
 ```markdown

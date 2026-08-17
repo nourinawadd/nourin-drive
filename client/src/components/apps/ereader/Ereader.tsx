@@ -12,7 +12,7 @@ import { shareDoc, type InlineDoc, type ReadableDoc } from "./actions";
 export type EreaderPayload = {
   /** Open straight into a library document (Explorer, deep links, Share). */
   docId?: string;
-  /** Text with no file behind it — the Recycle Bin's deleted "files". */
+  /** Text with no file behind it - the Recycle Bin's deleted "files". */
   inline?: InlineDoc;
   view?: RailView | "read";
   shelf?: string;
@@ -34,7 +34,7 @@ export function Ereader({ winId, payload }: { winId: string; payload: unknown })
   const patchPayload = useWindowStore((s) => s.patchPayload);
   const saved = (payload ?? {}) as EreaderPayload;
 
-  // Search is deliberately NOT persisted — a filter you can't see the cause of
+  // Search is deliberately NOT persisted - a filter you can't see the cause of
   // after restoring a window is worse than losing a half-typed query.
   const [query, setQuery] = useState("");
   const [toast, setToast] = useState<{ url: string; copied: boolean } | null>(null);

@@ -16,7 +16,7 @@ const EMOJIS = ["★", "♥", "✿", "☻", "♪", "✦", "☼", "✈", "✧", "
 const MARQUEE =
   "★ WELCOME TO MY GUESTBOOK ★ PLEASE SIGN BEFORE YOU LEAVE ★ THANKS FOR VISITING ★";
 
-/** An entry is NEW! for two days — long enough that a weekend visitor still sees it. */
+/** An entry is NEW! for two days - long enough that a weekend visitor still sees it. */
 const NEW_FOR_MS = 48 * 60 * 60 * 1000;
 
 function formatDate(iso: string): string {
@@ -44,7 +44,7 @@ export function Guestbook() {
       setName("");
       setMessage("");
       setEmoji("");
-      // Silences the stand's pulse — it polls this flag.
+      // Silences the stand's pulse - it polls this flag.
       markSigned();
       qc.invalidateQueries({ queryKey: ["guestbook"] });
     },

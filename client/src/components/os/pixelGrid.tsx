@@ -1,4 +1,4 @@
-// Character-grid pixel art — the format new Workbench icon art lands in.
+// Character-grid pixel art - the format new Workbench icon art lands in.
 // One character per pixel, mapped through the palette in
 // src/data/icon-grids.json to the --wb-* tokens.
 //
@@ -63,7 +63,7 @@ export function gridRects(rows: string[]): ReactElement[] {
 
 /**
  * Renders a named grid at an INTEGER multiple of its source size. The svg
- * carries its own width/height on purpose — never size these from CSS, or the
+ * carries its own width/height on purpose - never size these from CSS, or the
  * rects round to device pixels independently and you get seams, doubled 1px
  * outlines and moiré through dithered areas.
  */

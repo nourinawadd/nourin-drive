@@ -1,7 +1,7 @@
-# Music files — just drop them here
+# Music files - just drop them here
 
 Put your audio files (`.mp3`, `.m4a`, `.ogg`, `.wav`, `.flac`, ...) in this
-folder. That's it — the Music Player picks them up automatically. No code to
+folder. That's it - the Music Player picks them up automatically. No code to
 edit.
 
 How it works: a script (`client/scripts/gen-tracks.mjs`) scans this folder and
@@ -28,14 +28,14 @@ music/
   the name you see, so `01 - Late Night` displays as "Late Night".
 - Folders without a number come after the numbered ones, alphabetically.
   **Singles** is always last.
-- A song lives in exactly one playlist — the folder it's in.
+- A song lives in exactly one playlist - the folder it's in.
 - Loose files at the top level are fine. If you never make a folder, everything
   is in "Singles" and the player works exactly as it always has.
 - `cover.jpg` (or `folder`/`thumbnail`, `.png`/`.webp`) inside a playlist folder
   becomes that playlist's art. Without one, the first few track covers are
   stacked instead.
 
-> `covers/` is **reserved** — that's where extracted album art is written, and
+> `covers/` is **reserved** - that's where extracted album art is written, and
 > it's wiped and rebuilt on every run. Don't name a playlist `covers`.
 
 ## Naming = nicer titles (optional)
@@ -51,7 +51,7 @@ Embedded tags win; the filename is the fallback:
 The leading number (`01 - `) sets the play order within its playlist; it's
 stripped from the title.
 
-Album, year, track number and duration come from the file's tags only — there's
+Album, year, track number and duration come from the file's tags only - there's
 no filename convention for those. Duration is what fills the **Time** column, so
 a file with no tags shows `--:--` there.
 

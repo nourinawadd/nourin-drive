@@ -6,7 +6,7 @@ import { cover } from "./art";
 
 /**
  * Now-playing, transport, seek and volume. Becomes the entire UI in mini mode.
- * Reads and writes the player store directly — playback outlives this window, so
+ * Reads and writes the player store directly - playback outlives this window, so
  * there is no state to lift and nothing to pass down.
  */
 export function PlayerBar({ mini, onToggleMini }: { mini: boolean; onToggleMini: () => void }) {

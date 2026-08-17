@@ -67,7 +67,7 @@ export function whoami(req: Request, res: Response) {
   });
 }
 
-/** ALL /api/fun/echo — httpbin-style mirror of whatever you sent. */
+/** ALL /api/fun/echo - httpbin-style mirror of whatever you sent. */
 export function echo(req: Request, res: Response) {
   res.json({
     method: req.method,
@@ -80,7 +80,7 @@ export function echo(req: Request, res: Response) {
   });
 }
 
-/** GET /api/fun/status/:code — returns whatever status you ask for. */
+/** GET /api/fun/status/:code - returns whatever status you ask for. */
 export function status(req: Request, res: Response) {
   const code = Number(req.params.code);
   if (!Number.isInteger(code) || code < 100 || code > 599) {
@@ -91,7 +91,7 @@ export function status(req: Request, res: Response) {
   res.status(code).json({ status: code, requested: code, ok: code < 400 });
 }
 
-/** GET /api/fun/delay/:ms — sleeps, then answers. Capped at 10s. */
+/** GET /api/fun/delay/:ms - sleeps, then answers. Capped at 10s. */
 export function delay(req: Request, res: Response) {
   const requested = Number(req.params.ms);
   if (!Number.isFinite(requested) || requested < 0) {
@@ -139,7 +139,7 @@ export function fortune(_req: Request, res: Response) {
   res.json({ fortune: FORTUNES[index], index, of: FORTUNES.length });
 }
 
-/** GET /api/fun/guru — a fake Amiga Guru Meditation, for the aesthetic. */
+/** GET /api/fun/guru - a fake Amiga Guru Meditation, for the aesthetic. */
 export function guru(_req: Request, res: Response) {
   const error = hex(randomInt(0x100000000), 8);
   const task = hex(randomInt(0x100000000), 8);

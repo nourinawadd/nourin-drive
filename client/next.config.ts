@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
   // bytes WITHOUT telling the browser they're compressed, so the loader chokes
   // ("Unable to parse ….br"). Tagging them with the right Content-Encoding makes
   // the browser transparently decompress before the loader sees them.
-  //   - Brotli needs a secure context — works on localhost and HTTPS (Vercel).
+  //   - Brotli needs a secure context - works on localhost and HTTPS (Vercel).
   //   - .wasm.br/.gz: we don't set Content-Type: application/wasm, so the engine
   //     falls back from streaming to ArrayBuffer compile (a harmless console
   //     note). Re-export with compression disabled if you want to avoid this.

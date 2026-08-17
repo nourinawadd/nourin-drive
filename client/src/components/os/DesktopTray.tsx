@@ -8,8 +8,8 @@ import { TrayDownGlyph, TrayUpGlyph } from "@/components/os/icons";
 import { useWindowStore } from "@/context/windowStore";
 
 /**
- * The bottom tier of desktop furniture — guestbook stand, minimised-window
- * chips, dock — plus the pull-tab that hides and restores it.
+ * The bottom tier of desktop furniture - guestbook stand, minimised-window
+ * chips, dock - plus the pull-tab that hides and restores it.
  *
  * A maximised window paints all the way to the bottom edge (see the comment in
  * WindowFrame.tsx), so those three float on top of its content and the last
@@ -32,7 +32,7 @@ export function DesktopTray() {
   const trayRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLButtonElement>(null);
 
-  // Nothing left to hide from — drop the peek so the next maximise starts
+  // Nothing left to hide from - drop the peek so the next maximise starts
   // hidden again rather than inheriting a stale "pulled up".
   useEffect(() => {
     if (!anyMaximized) setPulledUp(false);
@@ -52,7 +52,7 @@ export function DesktopTray() {
     return () => document.removeEventListener("pointerdown", onDown);
   }, [pulledUp]);
 
-  // Using anything in the tray retracts it too — launching from the dock,
+  // Using anything in the tray retracts it too - launching from the dock,
   // restoring a chip, signing the guestbook. One handler here beats threading a
   // callback through three components that otherwise know nothing about this.
   function onTrayClick(e: React.MouseEvent) {

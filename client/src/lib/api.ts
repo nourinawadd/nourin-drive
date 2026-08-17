@@ -42,7 +42,7 @@ export async function pingGuestbookVisit() {
 
 /**
  * Axios reports transport failures ("Request failed with status code 400"),
- * which tells a visitor nothing. The API answers with `{ error }` — prefer that.
+ * which tells a visitor nothing. The API answers with `{ error }` - prefer that.
  */
 export function apiErrorMessage(err: unknown, fallback = "something went wrong"): string {
   if (axios.isAxiosError(err)) {

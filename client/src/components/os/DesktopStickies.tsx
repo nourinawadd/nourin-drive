@@ -3,7 +3,7 @@
 import { Rnd } from "react-rnd";
 import { useStickyStore } from "@/context/stickyStore";
 
-// Loose sticky notes on the desktop — draggable by their top grip, editable
+// Loose sticky notes on the desktop - draggable by their top grip, editable
 // in place, sit below windows (zIndex 1). Replaces the old "clippings".
 export function DesktopStickies() {
   const notes = useStickyStore((s) => s.notes);

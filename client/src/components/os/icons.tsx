@@ -1,7 +1,7 @@
-// Detailed dithered pixel-art icon library — inline SVG, hard-edge rects.
+// Detailed dithered pixel-art icon library - inline SVG, hard-edge rects.
 // Ported faithfully from the Claude Design "PixelBench" handoff bundle
-// (icons.js). Built from concise helpers — r() rect, g() group, svg() root,
-// dither() 2px ordered checker — so the art stays dense but editable.
+// (icons.js). Built from concise helpers - r() rect, g() group, svg() root,
+// dither() 2px ordered checker - so the art stays dense but editable.
 // All colors resolve from the --wb-* CSS vars in tokens.css.
 
 import { createElement, type ReactElement } from "react";
@@ -32,7 +32,7 @@ function g(...kids: (El | El[])[]): El {
   return createElement("g", { key: _k++ }, kids.flat());
 }
 // Pixel art only stays crisp at INTEGER scale. The viewBox keeps the source
-// grid, `scale` fixes the rendered size — never size these from CSS, or the
+// grid, `scale` fixes the rendered size - never size these from CSS, or the
 // rects round to device pixels independently and you get seams, doubled
 // outlines and moiré across dither().
 function svg(w: number, h: number, kids: (El | El[])[], scale = 1): El {
@@ -50,7 +50,7 @@ function svg(w: number, h: number, kids: (El | El[])[], scale = 1): El {
 }
 // Drive units: 56×40 source at 2× → 112×80.
 // Dock tiles:  28×28 source at 2× → 56×56, inside a 72px tile.
-// 2× is the only integer step that reads at the intended size — 1× is too
+// 2× is the only integer step that reads at the intended size - 1× is too
 // small, and anything between is fractional, which is what caused the seams.
 // New grid art targets these same source sizes (docs/icon-design-brief.md).
 const driveSvg = (kids: (El | El[])[]): El => svg(56, 40, kids, 2);
@@ -425,7 +425,7 @@ export function IconFloppyStickies() {
     r(20, 20, 16, 1, C.gray3),
     r(20, 23, 16, 1, C.gray3),
     r(20, 26, 10, 1, C.gray3),
-    // pin at the top — "stuck on"
+    // pin at the top - "stuck on"
     r(26, 10, 4, 3, C.red),
     r(26, 10, 4, 1, C.orange),
     r(27, 10, 1, 3, C.redD),
@@ -769,7 +769,7 @@ function FileText(scale = 1) {
     r(5, 12, 5, 1, C.gray3),
   ), scale);
 }
-// Library prose — paper stock rather than office grey, with a ragged right
+// Library prose - paper stock rather than office grey, with a ragged right
 // edge so it reads as verse next to the squared-off FileText.
 function FileDoc(scale = 1) {
   return fileTile(C.tan, C.tanD, g(
@@ -793,7 +793,7 @@ function FilePdf(scale = 1) {
 export type IconCategory = ProjectCategory | "document" | "pdf";
 
 // Maps a project category to its dog-eared file icon (convenience wrapper
-// for the Explorer list). `scale` must stay an integer — see svg() above.
+// for the Explorer list). `scale` must stay an integer - see svg() above.
 export function FileIcon({ category, scale = 1 }: { category: IconCategory; scale?: number }) {
   switch (category) {
     case "websites": return FileGlobe(scale);
@@ -861,7 +861,7 @@ export function MiniFolder({ highlight }: { highlight?: boolean }) {
 }
 
 // ── WINDOW-CONTROL GLYPHS (Amiga Workbench gadget style) ────────────────
-// Hard-edge pixel art in the same idiom as the rest of the icon set — black
+// Hard-edge pixel art in the same idiom as the rest of the icon set - black
 // ink on the raised grey gadget face. Behaviour is Windows (minimise /
 // maximise / close) but the look stays native Workbench.
 export function WinMinGlyph() {
@@ -869,7 +869,7 @@ export function WinMinGlyph() {
   return svg(14, 14, [r(3, 9, 8, 2, C.black)]);
 }
 export function WinMaxGlyph() {
-  // Maximise: the Amiga "zoom" gadget — a big window frame with a solid
+  // Maximise: the Amiga "zoom" gadget - a big window frame with a solid
   // corner block.
   return svg(14, 14, [
     r(2, 2, 10, 1, C.black), r(2, 11, 10, 1, C.black),
@@ -878,7 +878,7 @@ export function WinMaxGlyph() {
   ]);
 }
 export function WinRestoreGlyph() {
-  // Restore: two overlapping windows — the front pane (grey fill) sits over
+  // Restore: two overlapping windows - the front pane (grey fill) sits over
   // the back frame so they read as stacked.
   return svg(14, 14, [
     // back frame (upper-right)
@@ -892,7 +892,7 @@ export function WinRestoreGlyph() {
 }
 // ── DESKTOP TRAY HANDLE GLYPHS ──────────────────────────────────────────
 // The pull-tab that raises/lowers the dock tier over a maximised window.
-// Two explicit glyphs rather than one rotated in CSS — same reason the
+// Two explicit glyphs rather than one rotated in CSS - same reason the
 // zoom/restore pair above are separate, and see the integer-scale note on
 // svg(): this art is never sized or transformed from a stylesheet.
 export function TrayUpGlyph() {
@@ -949,7 +949,7 @@ export function RailBook() {
 }
 
 export function RailShelves() {
-  // 2×2 tiles — the "categories" glyph from the reference layout.
+  // 2×2 tiles - the "categories" glyph from the reference layout.
   return railSvg([
     r(2, 2, 5, 5, C.black), r(3, 3, 3, 3, C.orange),
     r(9, 2, 5, 5, C.black), r(10, 3, 3, 3, C.white),
@@ -968,7 +968,7 @@ export function RailInfo() {
 }
 
 export function WinCloseGlyph() {
-  // Close: the classic Workbench close gadget — square with an inset hole.
+  // Close: the classic Workbench close gadget - square with an inset hole.
   // First icon migrated to the character-grid format; the grid reproduces the
   // old rects pixel for pixel. Consumers import by name, so WindowFrame did
   // not change. Remaining icons move over one at a time the same way.

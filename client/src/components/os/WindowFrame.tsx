@@ -42,7 +42,7 @@ export function WindowFrame({ win, children }: Props) {
   if (win.minimized) return null;
 
   // When maximized we paint the desktop-filling rect but leave win.x/y/w/h
-  // untouched — those stay as the restore bounds. It fills all the way to the
+  // untouched - those stay as the restore bounds. It fills all the way to the
   // bottom; the dock + taskbar float above it (higher z-index), so no strip is
   // reserved for them.
   const maxRect = {
