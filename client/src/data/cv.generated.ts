@@ -16,7 +16,7 @@ export const CV_PROJECTS: Entry[] = [
 export const CV_GAMES: Entry[] = [
   { title: "Suhoor Rush", subtitle: "2D web game blending rapid item collection with narrative, built in 3 days for a jam.", meta: "Mar 2025", stack: "Unity · C# · WebGL", url: "https://sifrstudios.itch.io/suhoor-rush", bullets: ["2D web game blending rapid item collection with narrative; built in 3 days for a 'Collect Them All' jam.","UI Toolkit menus, Scriptable Objects, C# events/delegates, object pooling, sprite atlasing, WebGL tweaks."] },
   { title: "Puppetry", subtitle: "2D puzzle for a power-themed jam: multi-puppet coordination, built in 9 days.", meta: "Jan 2025", stack: "Godot 4.3", url: "https://sifrstudios.itch.io/puppetry", bullets: ["2D puzzle for a power-themed jam, built in 9 days.","Environmental interaction, multi-puppet coordination, and timed disintegration mechanics."] },
-  { title: "AstraCipher", subtitle: "2D story-driven top-down platformer for dark-web awareness.", meta: "Nov 2024", stack: "Godot 4.3", url: "https://sifrstudios.itch.io/astracipher", bullets: ["2D story-driven top-down platformer for dark-web awareness.","Scene instancing + event-driven architecture, AI-driven NPCs, state machines, and pathfinding."] },
+  { title: "AstraCipher", subtitle: "2D story-driven top-down platformer for dark-web awareness.", meta: "Nov 2024", stack: "Godot 4.4 · GDScript · WebAssembly", url: "https://sifrstudios.itch.io/astracipher", bullets: ["2D story-driven top-down platformer for dark-web awareness.","Scene instancing + event-driven architecture, AI-driven NPCs, state machines, and pathfinding."] },
 ];
 
 export const CV_EXPERIENCE: Entry[] = [
