@@ -1,9 +1,9 @@
 // Virtual filesystem backing the Explorer.
 //
 // Nothing here is hand-maintained - the tree is derived from PROJECTS and
-// PHOTOS at module load, so it grows as you add content. Photos already nest
-// for real (public/gallery/<Category>/...), and projects get grouped into year
-// sub-folders so the tree has somewhere to go past depth 2.
+// PHOTOS at module load, so it grows as you add content. Photos nest for real
+// (public/gallery/<Category>/...); everything else sits flat in its category,
+// newest first, so nothing is more than one click deep.
 //
 // Files carry a retro-plausible extension per category. Only photos have a
 // genuine one (parsed from their path); the rest are synthetic but consistent,
@@ -78,12 +78,6 @@ function slug(s: string): string {
     .replace(/['’]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "") || "untitled";
-}
-
-/** Year from a "YYYY-MM" date, or null when the item is undated. */
-function yearOf(date?: string): string | null {
-  const y = date?.slice(0, 4);
-  return y && /^\d{4}$/.test(y) ? y : null;
 }
 
 function actionForProject(p: Project): FileAction {
@@ -182,43 +176,6 @@ const byNameAsc = (a: FsNode, b: FsNode) => a.name.localeCompare(b.name);
 // Newest first, undated last - matches how the old flat list was ordered.
 const byDateDesc = (a: FsFile, b: FsFile) => (b.date ?? "").localeCompare(a.date ?? "");
 
-/**
- * Group a category's files into year sub-folders - but only when there is more
- * than one year to show. A single "2025" folder wrapping everything is just an
- * extra click, so in that case the files sit directly in the category.
- */
-function withYearFolders(files: FsFile[], parentPath: string, idPrefix: string): FsNode[] {
-  const years = new Set(files.map((f) => yearOf(f.date)).filter(Boolean) as string[]);
-  if (years.size < 2) return [...files].sort(byDateDesc);
-
-  const dated = new Map<string, FsFile[]>();
-  const undated: FsFile[] = [];
-  for (const f of files) {
-    const y = yearOf(f.date);
-    if (!y) { undated.push(f); continue; }
-    const bucket = dated.get(y);
-    if (bucket) bucket.push(f);
-    else dated.set(y, [f]);
-  }
-
-  const folders: FsNode[] = [...dated.entries()]
-    .sort((a, b) => b[0].localeCompare(a[0]))
-    .map(([year, items]): FsFolder => {
-      const path = joinPath(parentPath, year);
-      return {
-        kind: "folder",
-        id: `${idPrefix}:${year}`,
-        name: year,
-        path,
-        // Re-home the files so Properties reports the year folder, not the
-        // category it was grouped from.
-        children: items.map((f) => ({ ...f, path })).sort(byDateDesc),
-      };
-    });
-
-  return [...folders, ...undated.sort(byDateDesc)];
-}
-
 const ROOT_NAME = "My Portfolio";
 
 function build(): FsFolder {
@@ -239,7 +196,7 @@ function build(): FsFolder {
         id: `cat:${c.id}`,
         name: c.label,
         path,
-        children: withYearFolders(files, path, `cat:${c.id}`),
+        children: [...files].sort(byDateDesc),
       };
     })
     .filter((f) => f.children.length > 0);
@@ -284,7 +241,7 @@ function build(): FsFolder {
     id: "blog:posts",
     name: "Blog",
     path: blogPath,
-    children: withYearFolders(POSTS.map((p) => postFile(p, blogPath)), blogPath, "blog:posts"),
+    children: POSTS.map((p) => postFile(p, blogPath)).sort(byDateDesc),
   };
 
   const blogFolders = blogFolder.children.length > 0 ? [blogFolder] : [];

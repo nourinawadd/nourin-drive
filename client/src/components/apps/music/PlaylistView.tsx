@@ -215,10 +215,6 @@ export function PlaylistPicker({ onOpen }: { onOpen: (name: string) => void }) {
           </button>
         );
       })}
-      <p style={hint}>
-        A folder in <code>client/public/music/</code> is a playlist. Make one, drag songs in, and it
-        shows up here.
-      </p>
     </div>
   );
 }
@@ -361,5 +357,4 @@ const playlistRow: React.CSSProperties = {
   color: "var(--wb-black)",
   cursor: "pointer",
 };
-const hint: React.CSSProperties = { margin: "6px 0 0", fontSize: 11, opacity: 0.7, lineHeight: 1.5 };
 const emptyNote: React.CSSProperties = { padding: 16, fontSize: 14, lineHeight: 1.6, opacity: 0.75 };

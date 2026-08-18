@@ -29,7 +29,7 @@ type ExplorerState = {
 const DEFAULTS: ExplorerState = {
   folderId: FS_ROOT.id,
   expanded: [FS_ROOT.id],
-  view: "list",
+  view: "icons",
   sortKey: "name",
   sortAsc: true,
 };
