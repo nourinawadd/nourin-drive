@@ -2,6 +2,7 @@
 type: game
 name: Suhoor Rush
 date: 2025-03
+order: 2
 url: https://sifrstudios.itch.io/suhoor-rush
 stack: Unity · C# · WebGL
 cv: true

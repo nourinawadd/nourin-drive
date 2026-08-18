@@ -196,7 +196,7 @@ function build(): FsFolder {
         id: `cat:${c.id}`,
         name: c.label,
         path,
-        children: [...files].sort(byDateDesc),
+        children: files,
       };
     })
     .filter((f) => f.children.length > 0);

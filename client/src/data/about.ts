@@ -63,7 +63,7 @@ export const ABOUT: About = {
   ],
   skills: [
     { label: "Languages", items: ["C", "C#", "Python", "JavaScript", "TypeScript", "SQL", "GDScript"] },
-    { label: "Frameworks & Libraries", items: [".NET", "ASP.NET MVC", "React", "Angular", "Express.js", "Node.js", "Mongoose", "Sequelize"] },
+    { label: "Frameworks & Libraries", items: [".NET", "ASP.NET MVC", "Blazor", "EF Core", "React", "Angular", "Express.js", "Node.js", "Mongoose", "Sequelize"] },
     { label: "Databases", items: ["SQL Server", "MongoDB", "PostgreSQL", "Database Design", "Query Optimization"] },
     { label: "Backend & Architecture", items: ["RESTful API Design", "JWT Auth", "Middleware", "MVC", "Modular Architecture", "CI/CD"] },
     { label: "Cloud & DevOps", items: ["Vercel", "Git", "GitHub Workflows", "Docker", "AWS concepts", "Linux", "Oracle Cloud", "systemd", "Postman"] },

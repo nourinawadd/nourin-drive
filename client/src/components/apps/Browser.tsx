@@ -48,6 +48,7 @@ type Bookmark = { label: string; url: string; group: "mine" | "pinned" | "dev" }
 
 const BOOKMARKS: Bookmark[] = [
   { label: "Blog",            url: "https://blog.nourin.is-a.dev",              group: "mine" },
+  { label: "HOLD",            url: "https://hold.nourin.me",                    group: "mine" },
   { label: "Anchor",          url: "https://anchor-iesq.onrender.com",          group: "mine" },
   { label: "Tether Note",     url: "https://tethernote.vercel.app",             group: "mine" },
   { label: "Github",          url: "https://github.com/nourinawadd",            group: "pinned" },
@@ -116,7 +117,7 @@ export function Browser({ winId, payload }: { winId: string; payload?: unknown }
     if (!next) return;
     setInput(next);
     setTabs(
-      tabs.map((t) => (t.id === active.id ? { ...t, url: next } : t)),
+      tabs.map((t) => (t.id === active.id ? { ...t, url: next, reloadKey: (t.reloadKey ?? 0) + 1 } : t)),
       active.id,
     );
   }
@@ -226,6 +227,7 @@ export function Browser({ winId, payload }: { winId: string; payload?: unknown }
           <TabFrame
             key={t.id}
             url={t.url}
+            reloadKey={t.reloadKey ?? 0}
             active={t.id === activeId}
             onGoHome={() => go(BROWSER_HOME)}
           />
@@ -239,10 +241,12 @@ export function Browser({ winId, payload }: { winId: string; payload?: unknown }
 // loaded page when you switch away and back. Owns its own load/blocked state.
 function TabFrame({
   url,
+  reloadKey,
   active,
   onGoHome,
 }: {
   url: string;
+  reloadKey: number;
   active: boolean;
   onGoHome: () => void;
 }) {
@@ -260,7 +264,7 @@ function TabFrame({
     return () => {
       if (timerRef.current) window.clearTimeout(timerRef.current);
     };
-  }, [url, refused]);
+  }, [url, reloadKey, refused]);
 
   if (refused) {
     return (
@@ -273,7 +277,7 @@ function TabFrame({
   return (
     <div style={{ ...frameLayer, display: active ? "block" : "none" }}>
       <iframe
-        key={url}
+        key={`${url}::${reloadKey}`}
         src={url}
         title="Browser"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
@@ -390,7 +394,7 @@ const tabChip: React.CSSProperties = {
   borderBottom: "none",
   cursor: "pointer",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
 };
 
@@ -402,7 +406,7 @@ const tabText: React.CSSProperties = {
 
 const tabClose: React.CSSProperties = {
   fontFamily: "var(--wb-font)",
-  fontSize: 11,
+  fontSize: 12,
   lineHeight: 1,
   padding: "1px 3px",
   background: "transparent",
@@ -413,7 +417,7 @@ const tabClose: React.CSSProperties = {
 
 const newTabBtn: React.CSSProperties = {
   fontFamily: "var(--wb-font)",
-  fontSize: 15,
+  fontSize: 16,
   lineHeight: 1,
   padding: "0 8px",
   background: "var(--wb-gray)",
@@ -426,7 +430,7 @@ const newTabBtn: React.CSSProperties = {
 const addressStyle: React.CSSProperties = {
   flex: 1,
   fontFamily: "var(--wb-font)",
-  fontSize: 14,
+  fontSize: 15,
   padding: "2px 6px",
   background: "var(--wb-white)",
   border: "1px solid var(--wb-black)",
@@ -435,7 +439,7 @@ const addressStyle: React.CSSProperties = {
 
 const chromeBtnStyle: React.CSSProperties = {
   fontFamily: "var(--wb-font)",
-  fontSize: 14,
+  fontSize: 15,
   padding: "0 10px",
   background: "var(--wb-gray)",
   border: "1px solid var(--wb-black)",
@@ -461,7 +465,7 @@ const bookmarkRow: React.CSSProperties = {
 
 const bookmarkChip: React.CSSProperties = {
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   padding: "1px 6px",
   border: "1px solid var(--wb-black)",
   cursor: "pointer",

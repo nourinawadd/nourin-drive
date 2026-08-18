@@ -35,9 +35,9 @@ function bandX(viewportW: number, i: number): number {
 
 // Seeded notes replace the old desktop "clippings".
 const SEED: StickyNote[] = [
-  { id: mkId(), text: "ch.7 problems 1, 4 and 9-12", x: bandX(FALLBACK_W, 0), y: 96, color: COLORS[0], rotate: -5 },
-  { id: mkId(), text: "office hours thu 2pm, ask about the extension", x: bandX(FALLBACK_W, 1), y: 250, color: COLORS[1], rotate: 4 },
-  { id: mkId(), text: "print the lab report tonight", x: bandX(FALLBACK_W, 2), y: 404, color: COLORS[2], rotate: -3 },
+  { id: mkId(), text: "HW: ch.7 problems 1, 4 and 9-12", x: bandX(FALLBACK_W, 0), y: 96, color: COLORS[0], rotate: -5 },
+  { id: mkId(), text: "remind huda of the presentation tomorrow!!", x: bandX(FALLBACK_W, 1), y: 250, color: COLORS[1], rotate: 4 },
+  { id: mkId(), text: "IMP: print the lab report", x: bandX(FALLBACK_W, 2), y: 404, color: COLORS[2], rotate: -3 },
 ];
 
 type State = { notes: StickyNote[] };

@@ -2,6 +2,7 @@
 type: game
 name: Puppetry
 date: 2025-01
+order: 3
 url: https://sifrstudios.itch.io/puppetry
 stack: Godot 4.3
 cv: true

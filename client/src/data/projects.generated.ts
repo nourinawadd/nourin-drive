@@ -4,13 +4,14 @@
 import type { Project } from "./projects";
 
 export const GENERATED_PROJECTS: Project[] = [
+  { id: "astracipher", name: "AstraCipher", category: "games", blurb: "2D story-driven top-down platformer for dark-web awareness.", url: "https://sifrstudios.itch.io/astracipher", date: "2024-11" },
+  { id: "suhoor-rush", name: "Suhoor Rush", category: "games", blurb: "2D web game blending rapid item collection with narrative, built in 3 days for a jam.", url: "https://sifrstudios.itch.io/suhoor-rush", date: "2025-03" },
+  { id: "puppetry", name: "Puppetry", category: "games", blurb: "2D puzzle for a power-themed jam: multi-puppet coordination, built in 9 days.", url: "https://sifrstudios.itch.io/puppetry", date: "2025-01" },
+  { id: "hold", name: "HOLD", category: "websites", blurb: "A wishlist that makes you wait: save an item, set how long you will hold it, and watch the countdown instead of the thing.", url: "https://hold.nourin.me", date: "2026-07" },
   { id: "anchor", name: "Anchor", category: "websites", blurb: "A focus app that blocks distracting apps and uses a physical NFC tap to prove you actually showed up, with streaks, goals, and AI insights.", url: "https://anchor-iesq.onrender.com/", date: "2026-06" },
   { id: "portfolio-this-site", name: "Portfolio (this site)", category: "websites", blurb: "The Amiga-Workbench desktop you're looking at right now.", url: "https://nourin.is-a.dev", date: "2026-05" },
   { id: "tether-note", name: "Tether Note", category: "websites", blurb: "Time-delayed note delivery: send messages to your future self at custom intervals.", url: "https://tethernote.vercel.app/", date: "2025-11" },
-  { id: "ssh-portfolio", name: "SSH Portfolio", category: "websites", blurb: "Fully interactive TUI portfolio served over SSH (Go + the Charmbracelet stack).", url: "https://nourin.is-a.dev", date: "2025-10" },
+  { id: "ssh-portfolio", name: "SSH Portfolio", category: "websites", blurb: "Fully interactive TUI portfolio served over SSH (Go + the Charmbracelet stack).", url: "https://nourin.is-a.dev/terminal", date: "2025-10" },
   { id: "subscriptions-tracker-api", name: "Subscriptions Tracker API", category: "apis", blurb: "RESTful subscription-management API with JWT auth and 15+ endpoints.", url: "https://github.com/nourinawadd/subscriptions-tracker-api", date: "2025-05" },
   { id: "task-manager-api", name: "Task Manager API", category: "apis", blurb: "Task Manager API with JWT session auth, soft deletes, and avatar uploads.", url: "https://github.com/nourinawadd/task-manager-api", date: "2025-04" },
-  { id: "suhoor-rush", name: "Suhoor Rush", category: "games", blurb: "2D web game blending rapid item collection with narrative, built in 3 days for a jam.", url: "https://sifrstudios.itch.io/suhoor-rush", date: "2025-03" },
-  { id: "puppetry", name: "Puppetry", category: "games", blurb: "2D puzzle for a power-themed jam: multi-puppet coordination, built in 9 days.", url: "https://sifrstudios.itch.io/puppetry", date: "2025-01" },
-  { id: "astracipher", name: "AstraCipher", category: "games", blurb: "2D story-driven top-down platformer for dark-web awareness.", url: "https://sifrstudios.itch.io/astracipher", date: "2024-11" },
 ];

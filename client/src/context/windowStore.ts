@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { APP_REGISTRY } from "@/data/appRegistry";
+import { defaultBounds } from "@/lib/windowBounds";
 import type { AppId, WindowInstance } from "@/types/window";
 
 // Default page for a fresh browser tab. Lives here (not in Browser.tsx) so the
 // store can seed tabs without importing the component - avoids a circular import.
 export const BROWSER_HOME = "https://en.wikipedia.org/wiki/Amiga";
 
-export type BrowserTab = { id: string; url: string };
+export type BrowserTab = { id: string; url: string; reloadKey?: number };
 export type BrowserPayload = { tabs: BrowserTab[]; activeId: string };
 
 type State = {
@@ -69,16 +70,14 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
       }
     }
     const z = get().zCounter + 1;
-    // Cascade new windows slightly so stacked opens don't perfectly overlap.
-    const offset = get().windows.length * 20;
+    // Size and position scale with the viewport, and cascade so stacked opens
+    // don't perfectly overlap.
+    const bounds = defaultBounds(def, get().windows.length);
     const win: WindowInstance = {
       id: mkId(appId),
       appId,
       title: opts?.title ?? def.title,
-      x: def.defaultX + offset,
-      y: def.defaultY + offset,
-      width: def.defaultWidth,
-      height: def.defaultHeight,
+      ...bounds,
       z,
       minimized: false,
       maximized: false,
@@ -145,6 +144,8 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
 
   minimize: (id) =>
     set((s) => {
+      const target = s.windows.find((w) => w.id === id);
+      if (!target || APP_REGISTRY[target.appId].fixed) return s;
       const rest = s.windows.filter((w) => w.id !== id && !w.minimized);
       return {
         windows: s.windows.map((w) => (w.id === id ? { ...w, minimized: true } : w)),
@@ -170,7 +171,7 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
   toggleMaximize: (id) =>
     set((s) => {
       const win = s.windows.find((w) => w.id === id);
-      if (!win) return s;
+      if (!win || APP_REGISTRY[win.appId].fixed) return s;
       const z = s.zCounter + 1;
       return {
         windows: s.windows.map((w) =>

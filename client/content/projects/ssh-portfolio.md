@@ -2,7 +2,7 @@
 type: website
 name: SSH Portfolio
 date: 2025-10
-url: https://nourin.is-a.dev
+url: https://nourin.is-a.dev/terminal
 stack: Go · Bubble Tea · Wish · Linux · Oracle Cloud
 cv: true
 ---
