@@ -5,22 +5,24 @@ import type { MouseEvent as ReactMouseEvent } from "react";
 import { useWindowStore } from "@/context/windowStore";
 import { APP_ICONS } from "@/data/appIcons";
 import { playSfx } from "@/lib/sfx";
-import { STAND_LEFT, STAND_RESERVE } from "@/components/os/GuestbookStand";
+
 
 type Placed = { slot: number; x: number; y: number };
 
 const CELL_W = 76;
+const RIGHT_MARGIN = 16;
+const BOTTOM_RESERVE = 130;
 const COL_GAP = 8;
 const COL_TOP = 32;
 const COL_STEP = 100;
 
-function slotPos(slot: number, viewportH: number) {
-  const usable = Math.max(COL_STEP, viewportH - COL_TOP - STAND_RESERVE);
+function slotPos(slot: number, viewportW: number, viewportH: number) {
+  const usable = Math.max(COL_STEP, viewportH - COL_TOP - BOTTOM_RESERVE);
   const perCol = Math.max(1, Math.floor(usable / COL_STEP));
   const col = Math.floor(slot / perCol);
   const row = slot % perCol;
   return {
-    x: STAND_LEFT + col * (CELL_W + COL_GAP),
+    x: Math.max(RIGHT_MARGIN, viewportW - RIGHT_MARGIN - (col + 1) * CELL_W - col * COL_GAP),
     y: COL_TOP + row * COL_STEP,
   };
 }
@@ -50,13 +52,14 @@ export function MinimizedIcons() {
           taken.add(seat.slot);
         }
       }
+      const w = window.innerWidth;
       const h = window.innerHeight;
       for (const id of live) {
         if (next[id]) continue;
         let slot = 0;
         while (taken.has(slot)) slot += 1;
         taken.add(slot);
-        next[id] = { slot, ...slotPos(slot, h) };
+        next[id] = { slot, ...slotPos(slot, w, h) };
       }
       return next;
     });
@@ -64,13 +67,14 @@ export function MinimizedIcons() {
 
   useEffect(() => {
     const onCleanup = () => {
+      const w = window.innerWidth;
       const h = window.innerHeight;
       setPlaced((prev) => {
         const next: Record<string, Placed> = {};
         Object.keys(prev)
           .sort((a, b) => prev[a].slot - prev[b].slot)
           .forEach((id, i) => {
-            next[id] = { slot: i, ...slotPos(i, h) };
+            next[id] = { slot: i, ...slotPos(i, w, h) };
           });
         return next;
       });

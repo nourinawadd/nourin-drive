@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { SpeakerOffGlyph, SpeakerOnGlyph } from "@/components/os/icons";
+import { useSfxStore } from "@/context/sfxStore";
 import { useWindowStore } from "@/context/windowStore";
+import { playSfx } from "@/lib/sfx";
 
 // Amiga-style "free chip / free fast" memory readout. Pure flavour.
 const GRAPHICS_MEM = 782_400;
@@ -50,6 +53,27 @@ function cascade() {
     });
 }
 
+function SoundToggle() {
+  const enabled = useSfxStore((s) => s.enabled);
+  const toggle = useSfxStore((s) => s.toggle);
+
+  return (
+    <button
+      type="button"
+      className="wb-sound-toggle"
+      aria-pressed={enabled}
+      aria-label={enabled ? "Turn sound effects off" : "Turn sound effects on"}
+      title={enabled ? "Sound: on" : "Sound: off"}
+      onClick={() => {
+        toggle();
+        if (!enabled) playSfx("menu");
+      }}
+    >
+      {enabled ? <SpeakerOnGlyph /> : <SpeakerOffGlyph />}
+    </button>
+  );
+}
+
 export function TopMenubar() {
   const clock = useClock();
   const openApp = useWindowStore((s) => s.openApp);
@@ -60,7 +84,7 @@ export function TopMenubar() {
     {
       name: "Workbench",
       items: [
-        { label: "About This Site", run: () => openApp("about") },
+        { label: "About This Site", run: () => openApp("readme") },
         { label: "Guestbook", run: () => openApp("guestbook") },
         "sep",
         { label: "Reboot", run: () => window.location.reload() },
@@ -133,6 +157,7 @@ export function TopMenubar() {
                       key={it.label}
                       className="wb-menu-action"
                       onClick={() => {
+                        playSfx("menu");
                         it.run();
                         setOpen(null);
                       }}
@@ -147,6 +172,7 @@ export function TopMenubar() {
         ))}
       </div>
       <div className="wb-menu-spacer" />
+      <SoundToggle />
       <div className="wb-mem">
         {fmt(GRAPHICS_MEM)} graphics mem &nbsp;·&nbsp; {fmt(OTHER_MEM)} other mem
         {clock && <> &nbsp;·&nbsp; {clock}</>}

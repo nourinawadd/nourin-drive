@@ -15,7 +15,10 @@ export function BootScreen() {
   if (!visible) return null;
 
   return (
-    <div className="wb-boot" onClick={() => setVisible(false)}>
+    <div
+      className="wb-boot"
+      onClick={() => setVisible(false)}
+    >
       <div className="wb-boot-card">
         <h1>Kickstart 3.31</h1>
         <div className="wb-disk" aria-hidden />

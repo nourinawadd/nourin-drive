@@ -16,7 +16,6 @@ import {
 } from "@/components/os/icons";
 
 export const APP_ICONS: Record<AppId, ComponentType> = {
-  about: DockInfo,
   apis: DockTerminal,
   blog: DockQuill,
   browser: DockGlobe,
@@ -30,5 +29,6 @@ export const APP_ICONS: Record<AppId, ComponentType> = {
   music: DockMusic,
   profile: DockUser,
   properties: DockInfo,
+  readme: DockInfo,
   recycle: DockTrash,
 };

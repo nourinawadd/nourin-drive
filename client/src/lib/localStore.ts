@@ -18,7 +18,10 @@ export const KEY_VISIT_COUNTED = "wb:guestbook-counted";
 /** Music player settings that should outlive the tab - volume, shuffle, repeat,
  *  and the last track, so the player comes back how you left it. */
 export const KEY_PLAYER = "wb:player";
+export const KEY_SFX = "wb:sfx";
 export const KEY_SESSION = "wb:session";
+/** Seen the About This Site window once, so it stops opening itself. */
+export const KEY_README_SEEN = "wb:readme-seen";
 
 function store(kind: "local" | "session"): Storage | null {
   if (typeof window === "undefined") return null;

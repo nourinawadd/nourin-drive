@@ -7,3 +7,4 @@ order: 2
 Backend Committee Member
 
 - Built backend components of a MERN-stack application: RESTful APIs, database management, and server-side logic.
+- Recognised with a certification as one of the chapter's most active volunteers.

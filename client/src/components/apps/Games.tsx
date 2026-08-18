@@ -20,12 +20,12 @@ export function Games() {
         {games.map((g) => {
           const build = LOCAL_GAMES[g.id];
           const play = () => {
-            if (build) openApp("game", { payload: { src: build.src, name: g.name }, title: g.name });
+            if (build?.src) openApp("game", { payload: { src: build.src, name: g.name }, title: g.name });
             else if (g.url) window.open(g.url, "_blank", "noopener,noreferrer");
           };
           return (
             <div key={g.id} style={card}>
-              <button onClick={play} style={cardBtn} title={build ? "Play here" : g.url ?? ""}>
+              <button onClick={play} style={cardBtn} title={build?.src ? "Play here" : g.url ?? ""}>
                 <div style={cover}>
                   {build?.cover ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -38,11 +38,11 @@ export function Games() {
                   <strong style={{ fontSize: 13 }}>{g.name}</strong>
                   <span style={{ fontSize: 11, opacity: 0.7 }}>{g.blurb ?? ""}</span>
                   <span style={{ fontSize: 11, opacity: 0.5 }}>
-                    {build ? "plays here ▶" : "opens in a new tab ↗"}
+                    {build?.src ? "plays here ▶" : "opens in a new tab ↗"}
                   </span>
                 </div>
               </button>
-              {build && g.url && (
+              {build?.src && g.url && (
                 <a href={g.url} target="_blank" rel="noopener noreferrer" style={itchLink}>
                   view on itch ↗
                 </a>

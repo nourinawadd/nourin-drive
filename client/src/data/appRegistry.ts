@@ -15,8 +15,8 @@ const WINDOW_X = 96;
 const WINDOW_Y = 46;
 
 export const APP_REGISTRY: Record<AppId, AppDef> = {
-  about: {
-    appId: "about", title: "About Me",
+  readme: {
+    appId: "readme", title: "About This Site",
     defaultWidth: WINDOW_W, defaultHeight: WINDOW_H,
     defaultX: WINDOW_X, defaultY: WINDOW_Y,
     singleton: true,

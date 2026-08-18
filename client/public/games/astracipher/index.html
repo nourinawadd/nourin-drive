@@ -209,6 +209,11 @@ const engine = new Engine(GODOT_CONFIG);
 					statusProgress.removeAttribute('max');
 				}
 			},
+			'onExit': function (code) {
+				if (window.parent !== window) {
+					window.parent.postMessage({ type: 'game:exit', code: code }, window.location.origin);
+				}
+			},
 		}).then(() => {
 			setStatusMode('hidden');
 		}, displayFailureNotice);

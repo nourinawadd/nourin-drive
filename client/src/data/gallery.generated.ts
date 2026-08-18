@@ -4,7 +4,9 @@
 import type { Photo } from "./gallery";
 
 export const GENERATED_PHOTOS: Photo[] = [
+  { id: "gallery-clancy", title: "clancy", category: "Gallery", src: "/gallery/clancy.png" },
+  { id: "gallery-digitaldecay", title: "digitaldecay", category: "Gallery", src: "/gallery/digitaldecay.gif" },
   { id: "gallery-djo", title: "djo", category: "Gallery", src: "/gallery/djo.png" },
-  { id: "gallery-next-semester", title: "next semester", category: "Gallery", src: "/gallery/next%20semester.png" },
-  { id: "gallery-trench", title: "trench", category: "Gallery", src: "/gallery/trench.png" },
+  { id: "gallery-something-is-missing", title: "something is missing", category: "Gallery", src: "/gallery/something%20is%20missing.jpg" },
+  { id: "gallery-trench", title: "trench", category: "Gallery", src: "/gallery/trench.jpg" },
 ];

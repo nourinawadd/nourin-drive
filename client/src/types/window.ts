@@ -1,5 +1,5 @@
 export type AppId =
-  | "about"
+  | "readme"
   | "apis"
   | "blog"
   | "browser"

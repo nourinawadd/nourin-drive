@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useWindowStore } from "@/context/windowStore";
 
 // Plays a self-hosted HTML5 game build (Godot/Unity WebGL export under
 // /public/games/<slug>/) inside a window. The build is first-party and
@@ -9,9 +10,21 @@ import { useState } from "react";
 
 type GamePayload = { src?: string; name?: string };
 
-export function GamePlayer({ payload }: { payload?: unknown }) {
+export function GamePlayer({ winId, payload }: { winId: string; payload?: unknown }) {
   const { src, name } = (payload as GamePayload | undefined) ?? {};
   const [loaded, setLoaded] = useState(false);
+  const frameRef = useRef<HTMLIFrameElement>(null);
+  const closeWin = useWindowStore((s) => s.closeWin);
+
+  useEffect(() => {
+    function onMessage(e: MessageEvent) {
+      if (e.origin !== window.location.origin) return;
+      if (e.source !== frameRef.current?.contentWindow) return;
+      if ((e.data as { type?: string } | null)?.type === "game:exit") closeWin(winId);
+    }
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [closeWin, winId]);
 
   if (!src) {
     return (
@@ -26,6 +39,7 @@ export function GamePlayer({ payload }: { payload?: unknown }) {
   return (
     <div style={wrap}>
       <iframe
+        ref={frameRef}
         src={src}
         title={name ?? "Game"}
         allow="autoplay; fullscreen; gamepad; cross-origin-isolated"

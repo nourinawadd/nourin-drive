@@ -31,9 +31,13 @@ export const CV_EDUCATION: Entry[] = [
 ];
 
 export const CV_EXTRACURRICULARS: Entry[] = [
+  { title: "Women in Games", subtitle: "Ambassador", meta: "Apr 2026 – Present" },
   { title: "IEEE Mansoura Student Branch · Victoris 3.0", subtitle: "Technical Director", meta: "Jun – Sep 2024", bullets: ["Led technical planning and execution for a national event with 880+ participants and 200+ teams across 4 tracks (IoT, CTF, Software, Micromouse).","Managed online/offline phases, coordinated with teams and mentors, ensured smooth technical operations."] },
-  { title: "IEEE Mansoura Computer Society Chapter", subtitle: "Backend Committee Member", meta: "Dec 2024 – Present", bullets: ["Built backend components of a MERN-stack application: RESTful APIs, database management, and server-side logic."] },
+  { title: "IEEE Mansoura Computer Society Chapter", subtitle: "Backend Committee Member", meta: "Dec 2024 – Present", bullets: ["Built backend components of a MERN-stack application: RESTful APIs, database management, and server-side logic.","Recognised with a certification as one of the chapter's most active volunteers."] },
   { title: "CATReloaded", subtitle: "Game Developer", meta: "Dec 2024 – Present", bullets: ["Applied Unity fundamentals (2D/3D, mechanics, physics, UI) and game design principles.","Collaborated in 48-hour game jams, designing assets and building prototypes in Unity/Godot."] },
+  { title: "IEEE Mansoura Student Branch", subtitle: "Game Development Competition Coordinator", meta: "May – Sep 2025" },
+  { title: "IEEE Mansoura Student Branch", subtitle: "Multimedia Volunteer", meta: "Dec 2024 – Oct 2025", bullets: ["Led the Advanced Graphic Design Team for Career Insider 6.0.","Recognised with a certification as one of the branch's most active volunteers."] },
+  { title: "IEEE Mansoura Computer Society Chapter", subtitle: "Embedded Systems Volunteer", meta: "Feb – Dec 2024", bullets: ["Instructor for Code Steps 4.0: co-designed and delivered a six-session programming syllabus for children aged 9-14.","Built hands-on activities and organised the final competition, with revision materials for participants."] },
 ];
 
 export const CV_CERTIFICATIONS: string[] = [
@@ -48,4 +52,5 @@ export const CV_CERTIFICATIONS: string[] = [
 export const CV_LANGUAGES: string[] = [
   "English · Full Professional Proficiency",
   "Arabic · Native",
+  "German · A2",
 ];

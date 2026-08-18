@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Rnd } from "react-rnd";
 import { useStickyStore } from "@/context/stickyStore";
 
@@ -10,6 +11,17 @@ export function DesktopStickies() {
   const update = useStickyStore((s) => s.update);
   const move = useStickyStore((s) => s.move);
   const remove = useStickyStore((s) => s.remove);
+  const reflow = useStickyStore((s) => s.reflow);
+
+  // The seeds are laid out against a fallback width; snap them to the real one.
+  useEffect(() => reflow(window.innerWidth), [reflow]);
+
+  // "Clean Up" tidies notes back into the band, same as it does the drives.
+  useEffect(() => {
+    const onCleanup = () => reflow(window.innerWidth);
+    window.addEventListener("wb:cleanup-icons", onCleanup);
+    return () => window.removeEventListener("wb:cleanup-icons", onCleanup);
+  }, [reflow]);
 
   return (
     <>

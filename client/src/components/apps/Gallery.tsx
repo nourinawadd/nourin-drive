@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { PHOTOS, type Photo } from "@/data/gallery";
+import { ShareDialog } from "@/components/os/ShareDialog";
+import { copyLink, shareLink, triggerDownload } from "@/lib/share";
 
 type GalleryPayload = { focusId?: string };
 
@@ -9,6 +11,7 @@ export function Gallery({ payload }: { payload?: unknown }) {
   const initial = (payload as GalleryPayload | undefined)?.focusId ?? null;
   const [cat, setCat] = useState<string>("All");
   const [lightbox, setLightbox] = useState<string | null>(initial);
+  const [toast, setToast] = useState<{ url: string; copied: boolean } | null>(null);
 
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(PHOTOS.map((p) => p.category)))],
@@ -89,16 +92,38 @@ export function Gallery({ payload }: { payload?: unknown }) {
                 </div>
               </div>
               <div style={{ display: "flex", gap: 4 }}>
+                <button
+                  style={actionBtn}
+                  title="Save this image"
+                  onClick={() => triggerDownload(focused.src, fileNameOf(focused.src))}
+                >
+                  Save
+                </button>
+                <button
+                  style={actionBtn}
+                  title="Copy a link to this image"
+                  onClick={async () => setToast(await copyLink(shareLink("photo", focused.id)))}
+                >
+                  Share
+                </button>
                 <button style={navBtn} onClick={() => setLightbox(step(lightbox, -1))}>‹</button>
                 <button style={navBtn} onClick={() => setLightbox(step(lightbox, 1))}>›</button>
                 <button style={navBtn} onClick={() => setLightbox(null)}>×</button>
               </div>
             </div>
+            {toast && (
+              <ShareDialog {...toast} what="image" onClose={() => setToast(null)} />
+            )}
           </div>
         </div>
       )}
     </div>
   );
+}
+
+/** Real filename off a public path, undoing the %20s the generator wrote. */
+function fileNameOf(src: string): string {
+  return decodeURIComponent(src.split("/").pop() || "image");
 }
 
 const tabs: React.CSSProperties = {
@@ -172,6 +197,7 @@ const lightboxPanel: React.CSSProperties = {
   boxShadow: "6px 6px 0 var(--wb-black)",
   display: "flex",
   flexDirection: "column",
+  position: "relative",
 };
 const lightboxImg: React.CSSProperties = {
   width: "100%",
@@ -180,6 +206,17 @@ const lightboxImg: React.CSSProperties = {
   objectFit: "contain",  // show the whole image, whatever its size/aspect ratio
   border: "1px solid var(--wb-black)",
   background: "var(--wb-black)",
+};
+const actionBtn: React.CSSProperties = {
+  fontFamily: "var(--wb-font)",
+  fontSize: 13,
+  lineHeight: 1,
+  padding: "4px 10px",
+  background: "var(--wb-gray)",
+  border: "1px solid var(--wb-black)",
+  boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
+  cursor: "pointer",
+  color: "var(--wb-black)",
 };
 const navBtn: React.CSSProperties = {
   fontFamily: "var(--wb-font)",

@@ -1,6 +1,6 @@
 "use client";
 
-import { About } from "@/components/apps/About";
+import { AboutSite } from "@/components/apps/AboutSite";
 import { APIStudio } from "@/components/apps/APIStudio";
 import { Blog } from "@/components/apps/Blog";
 import { Browser } from "@/components/apps/Browser";
@@ -20,7 +20,7 @@ import type { WindowInstance } from "@/types/window";
 // Maps a window's appId to the component that renders its body.
 export function AppRouter({ win }: { win: WindowInstance }) {
   switch (win.appId) {
-    case "about":       return <About />;
+    case "readme":      return <AboutSite />;
     case "apis":        return <APIStudio />;
     case "blog":        return <Blog winId={win.id} payload={win.payload} />;
     case "browser":     return <Browser winId={win.id} payload={win.payload} />;
@@ -28,7 +28,7 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "ereader":     return <Ereader winId={win.id} payload={win.payload} />;
     case "explorer":    return <Explorer winId={win.id} payload={win.payload} />;
     case "gallery":     return <Gallery payload={win.payload} />;
-    case "game":        return <GamePlayer payload={win.payload} />;
+    case "game":        return <GamePlayer winId={win.id} payload={win.payload} />;
     case "games":       return <Games />;
     case "guestbook":   return <Guestbook />;
     case "music":       return <Music winId={win.id} payload={win.payload} />;

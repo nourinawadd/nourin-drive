@@ -182,7 +182,7 @@ function Sidebar({ tab, setTab }: { tab: TabId; setTab: (t: TabId) => void }) {
         <div style={brandMark}>N</div>
         <div style={{ minWidth: 0 }}>
           <div style={{ fontWeight: "bold", letterSpacing: 1 }}>{NET_NAME}</div>
-          <div style={{ fontSize: 9, color: DIM }}>ver. 1.0</div>
+          <div style={{ fontSize: 12, color: DIM }}>ver. 1.0</div>
         </div>
       </div>
 
@@ -199,7 +199,7 @@ function Sidebar({ tab, setTab }: { tab: TabId; setTab: (t: TabId) => void }) {
             >
               <span style={{ color: on ? BG : FG, display: "inline-flex" }}><Ico>{NAV_ICON[t.id]}</Ico></span>
               <span style={{ flex: 1 }}>{t.label}</span>
-              {count != null && <span style={{ color: on ? BG : DIM, fontSize: 10 }}>({count})</span>}
+              {count != null && <span style={{ color: on ? BG : DIM, fontSize: 12 }}>({count})</span>}
             </button>
           );
         })}
@@ -212,7 +212,7 @@ function Sidebar({ tab, setTab }: { tab: TabId; setTab: (t: TabId) => void }) {
           </span>
           <span style={{ flex: 1 }}>{busy ? "BUILDING…" : "EXPORT PDF"}</span>
         </button>
-        {err && <div style={{ color: "#a11", fontSize: 9, marginTop: 4 }}>Export failed. Try again.</div>}
+        {err && <div style={{ color: "#a11", fontSize: 12, marginTop: 4 }}>Export failed. Try again.</div>}
       </div>
     </div>
   );
@@ -220,32 +220,14 @@ function Sidebar({ tab, setTab }: { tab: TabId; setTab: (t: TabId) => void }) {
 
 /* ── dashboard (PROFILE tab) ──────────────────────────────────────────── */
 function Dashboard({ setTab }: { setTab: (t: TabId) => void }) {
-  const [imgOk, setImgOk] = useState(true);
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       {/* row 1: user profile + stats */}
       <div style={row}>
-        {/* minWidth clears the 168px portrait frame (160 + padding + border)
-            so it never gets clipped when the window is narrow. */}
         <Panel title="USER PROFILE" style={{ flex: 1, minWidth: 260 }}>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <div style={portraitFrame}>
-              <img
-                src={imgOk ? "/images/portrait.png" : "/images/portrait-placeholder.svg"}
-                // One pre-dithered file per DPR so the dither always lands 1:1
-                // on device pixels and the browser never resamples it.
-                srcSet={
-                  imgOk
-                    ? "/images/portrait.png 1x, /images/portrait@2x.png 2x"
-                    : undefined
-                }
-                alt={`Portrait of ${ABOUT.name}`}
-                onError={() => setImgOk(false)}
-                style={portraitImg}
-              />
-            </div>
             <div style={{ flex: 1, minWidth: 170 }}>
-              <div style={{ fontSize: 18, fontWeight: "bold", letterSpacing: 1 }}>{ABOUT.name.toUpperCase()}</div>
+              <div style={{ fontSize: 22, fontWeight: "bold", letterSpacing: 1 }}>{ABOUT.name.toUpperCase()}</div>
               <div style={kv}><span style={kKey}>User ID:</span> {USER_ID}</div>
               <div style={kv}><span style={kKey}>Member Since:</span> {MEMBER_SINCE}</div>
               <div style={{ ...kv, display: "flex", alignItems: "center", gap: 6 }}>
@@ -258,6 +240,12 @@ function Dashboard({ setTab }: { setTab: (t: TabId) => void }) {
                     <span style={idKey}>{r.label}:</span>
                     <span>{r.value}</span>
                   </div>
+                ))}
+              </div>
+              <div style={bioBlock}>
+                <div style={idKey}>BIO</div>
+                {ABOUT.bio.map((text, i) => (
+                  <p key={i} style={bioPara}>{text}</p>
                 ))}
               </div>
               <div style={contactRow}>
@@ -285,11 +273,11 @@ function Dashboard({ setTab }: { setTab: (t: TabId) => void }) {
         <Panel title="FEATURED PROJECTS" style={{ flex: 1.2, minWidth: 240 }}>
           {FEATURED.map((p, i) => (
             <div key={p.title} style={{ marginBottom: i === FEATURED.length - 1 ? 0 : 10 }}>
-              <div style={{ color: DIM, fontSize: 10 }}>{p.meta}</div>
+              <div style={{ color: DIM, fontSize: 12 }}>{p.meta}</div>
               <div style={{ fontWeight: "bold" }}>
                 {p.url ? <a href={p.url} target="_blank" rel="noopener noreferrer" style={link}>{p.title} ↗</a> : p.title}
               </div>
-              <div style={{ fontSize: 11 }}>{p.subtitle}</div>
+              <div style={{ fontSize: 14 }}>{p.subtitle}</div>
             </div>
           ))}
           <ViewAll onClick={() => setTab("projects")}>VIEW ALL PROJECTS ▶</ViewAll>
@@ -299,8 +287,8 @@ function Dashboard({ setTab }: { setTab: (t: TabId) => void }) {
           {ABOUT.education.map((e, i) => (
             <div key={e.title} style={{ marginBottom: i === ABOUT.education.length - 1 ? 0 : 10 }}>
               <div style={{ fontWeight: "bold" }}>{e.title}</div>
-              {e.subtitle && <div style={{ fontSize: 11 }}>{e.subtitle}</div>}
-              {e.meta && <div style={{ color: DIM, fontSize: 10 }}>{e.meta}</div>}
+              {e.subtitle && <div style={{ fontSize: 14 }}>{e.subtitle}</div>}
+              {e.meta && <div style={{ color: DIM, fontSize: 12 }}>{e.meta}</div>}
             </div>
           ))}
           <ViewAll onClick={() => setTab("education")}>VIEW ALL ▶</ViewAll>
@@ -368,10 +356,10 @@ function EntryBlock({ entry }: { entry: Entry }) {
         <strong>
           {entry.url ? <a href={entry.url} target="_blank" rel="noopener noreferrer" style={link}>{entry.title} ↗</a> : entry.title}
         </strong>
-        {entry.meta && <span style={{ color: DIM, fontSize: 10 }}>{entry.meta}</span>}
+        {entry.meta && <span style={{ color: DIM, fontSize: 12 }}>{entry.meta}</span>}
       </div>
-      {entry.subtitle && <div style={{ fontSize: 11 }}>{entry.subtitle}</div>}
-      {entry.stack && <div style={{ color: DIM, fontSize: 10 }}>{entry.stack}</div>}
+      {entry.subtitle && <div style={{ fontSize: 14 }}>{entry.subtitle}</div>}
+      {entry.stack && <div style={{ color: DIM, fontSize: 12 }}>{entry.stack}</div>}
       {entry.bullets && (
         <ul style={ul}>{entry.bullets.map((b, i) => <li key={i} style={{ marginBottom: 2 }}>{b}</li>)}</ul>
       )}
@@ -399,7 +387,7 @@ const titleStrip: CSSProperties = {
   alignItems: "center",
   padding: "3px 8px",
   borderBottom: `1px solid ${LINE}`,
-  fontSize: 11,
+  fontSize: 14,
   flexShrink: 0,
 };
 const menuBar: CSSProperties = {
@@ -408,7 +396,7 @@ const menuBar: CSSProperties = {
   padding: "2px 8px",
   borderBottom: `1px solid ${LINE}`,
   color: DIM,
-  fontSize: 11,
+  fontSize: 14,
   flexShrink: 0,
 };
 const menuItem: CSSProperties = { cursor: "default" };
@@ -437,7 +425,7 @@ const brandMark: CSSProperties = {
   display: "grid",
   placeItems: "center",
   fontWeight: "bold",
-  fontSize: 16,
+  fontSize: 19,
   color: BG,
   background: FG,
   border: `1px solid ${FG}`,
@@ -455,7 +443,7 @@ const navItem: CSSProperties = {
   background: "transparent",
   color: FG,
   font: "inherit",
-  fontSize: 11,
+  fontSize: 14,
   cursor: "pointer",
 };
 const navItemOn: CSSProperties = { background: FG, color: BG, fontWeight: "bold" };
@@ -485,31 +473,11 @@ const panelTitle: CSSProperties = {
   color: FG,
   fontWeight: "bold",
   letterSpacing: 1,
-  fontSize: 11,
+  fontSize: 14,
 };
 const panelBody: CSSProperties = { padding: 8, minWidth: 0 };
 
-const portraitFrame: CSSProperties = {
-  // Should match the generated asset size (see scripts/portrait.js) so the
-  // browser serves it 1:1 and does no resampling.
-  width: 160,
-  height: 188,
-  flexShrink: 0,
-  padding: 3,
-  border: `1px solid ${LINE_HI}`,
-  background: "#e6e4db",
-};
-const portraitImg: CSSProperties = {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-  display: "block",
-  // Explicit "auto": image-rendering inherits, and body sets pixelated
-  // (workbench.css). The asset is continuous-tone grayscale sized to the frame,
-  // so on fractional DPRs we want smooth resampling rather than aliasing.
-  imageRendering: "auto",
-};
-const kv: CSSProperties = { marginTop: 3, fontSize: 11 };
+const kv: CSSProperties = { marginTop: 3, fontSize: 14 };
 const kKey: CSSProperties = { color: DIM };
 const badge: CSSProperties = {
   display: "inline-block",
@@ -517,7 +485,7 @@ const badge: CSSProperties = {
   color: BG,
   background: FG,
   fontWeight: "bold",
-  fontSize: 10,
+  fontSize: 12,
   letterSpacing: 1,
 };
 const quoteBox: CSSProperties = {
@@ -525,13 +493,15 @@ const quoteBox: CSSProperties = {
   padding: "4px 8px",
   border: `1px solid ${LINE}`,
   color: FG,
-  fontSize: 11,
+  fontSize: 14,
 };
-const idRow: CSSProperties = { display: "flex", gap: 8, fontSize: 11, marginTop: 2 };
+const idRow: CSSProperties = { display: "flex", gap: 8, fontSize: 14, marginTop: 2 };
 const idKey: CSSProperties = { width: 104, flexShrink: 0, color: DIM };
-const contactRow: CSSProperties = { marginTop: 8, display: "flex", flexWrap: "wrap", gap: 8, fontSize: 10 };
+const bioBlock: CSSProperties = { marginTop: 8, borderTop: `1px solid ${LINE}`, paddingTop: 6 };
+const bioPara: CSSProperties = { margin: "3px 0 0", fontSize: 14, lineHeight: 1.45 };
+const contactRow: CSSProperties = { marginTop: 8, display: "flex", flexWrap: "wrap", gap: 8, fontSize: 12 };
 
-const statRow: CSSProperties = { display: "flex", justifyContent: "space-between", padding: "1px 0", fontSize: 11 };
+const statRow: CSSProperties = { display: "flex", justifyContent: "space-between", padding: "1px 0", fontSize: 14 };
 
 const viewAll: CSSProperties = {
   marginTop: 10,
@@ -540,13 +510,13 @@ const viewAll: CSSProperties = {
   background: "transparent",
   color: DIM,
   font: "inherit",
-  fontSize: 10,
+  fontSize: 12,
   letterSpacing: 0.5,
   cursor: "pointer",
 };
 
-const chip: CSSProperties = { fontSize: 11, padding: "1px 6px", border: `1px solid ${LINE}`, color: FG };
-const ul: CSSProperties = { margin: "4px 0 0", paddingLeft: 16, fontSize: 11, lineHeight: 1.35, color: FG };
+const chip: CSSProperties = { fontSize: 14, padding: "1px 6px", border: `1px solid ${LINE}`, color: FG };
+const ul: CSSProperties = { margin: "4px 0 0", paddingLeft: 16, fontSize: 14, lineHeight: 1.35, color: FG };
 const link: CSSProperties = { color: FG, textDecoration: "underline", textUnderlineOffset: 2 };
 
 const sysMsg: CSSProperties = {
@@ -555,7 +525,7 @@ const sysMsg: CSSProperties = {
   alignItems: "baseline",
   padding: "4px 8px",
   borderTop: `1px solid ${LINE}`,
-  fontSize: 10,
+  fontSize: 12,
   flexShrink: 0,
 };
 const sysMsgTag: CSSProperties = { color: FG, fontWeight: "bold", letterSpacing: 1, flexShrink: 0 };
@@ -566,6 +536,6 @@ const statusBar: CSSProperties = {
   padding: "2px 8px",
   borderTop: `1px solid ${LINE}`,
   color: FG,
-  fontSize: 10,
+  fontSize: 12,
   flexShrink: 0,
 };

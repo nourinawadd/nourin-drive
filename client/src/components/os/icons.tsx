@@ -752,6 +752,20 @@ export function DockPhoto() {
   ]);
 }
 
+export function DockStickies() {
+  return dockSvg([
+    r(5, 3, 18, 21, C.black),
+    r(6, 4, 16, 19, C.yellow),
+    r(6, 4, 16, 3, C.orange),
+    r(6, 4, 16, 1, C.white),
+    r(21, 7, 1, 16, C.tanD), r(6, 22, 16, 1, C.tanD),
+    r(9, 10, 10, 1, C.gray3),
+    r(9, 13, 10, 1, C.gray3),
+    r(9, 16, 10, 1, C.gray3),
+    r(9, 19, 6, 1, C.gray3),
+  ]);
+}
+
 export function DockJoystick() {
   return dockSvg([
     r(4, 17, 20, 7, C.black),

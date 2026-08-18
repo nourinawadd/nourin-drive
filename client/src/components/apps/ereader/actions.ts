@@ -1,6 +1,7 @@
 "use client";
 
 import type { LibraryDoc } from "@/data/library";
+import { copyLink, shareLink, triggerDownload } from "@/lib/share";
 
 /** A document that only exists in memory - the Recycle Bin's deleted text. */
 export type InlineDoc = {
@@ -12,16 +13,6 @@ export type InlineDoc = {
 export type ReadableDoc =
   | { kind: "library"; doc: LibraryDoc }
   | { kind: "inline"; doc: InlineDoc };
-
-function triggerDownload(href: string, fileName: string) {
-  const a = document.createElement("a");
-  a.href = href;
-  a.download = fileName;
-  a.rel = "noopener";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-}
 
 /** Characters Windows and macOS refuse in a filename. */
 const ILLEGAL = /[\\/:*?"<>|]/g;
@@ -64,8 +55,7 @@ export function downloadDoc(item: ReadableDoc): void {
 
 /** The link Share hands out, and the one `?doc=` on the desktop resolves. */
 export function shareUrl(doc: LibraryDoc): string {
-  const origin = typeof window === "undefined" ? "" : window.location.origin;
-  return `${origin}/?doc=${encodeURIComponent(doc.id)}`;
+  return shareLink("doc", doc.id);
 }
 
 /**
@@ -75,25 +65,7 @@ export function shareUrl(doc: LibraryDoc): string {
  * Returns the URL so the caller can show it if copying didn't work.
  */
 export async function shareDoc(doc: LibraryDoc): Promise<{ url: string; copied: boolean }> {
-  const url = shareUrl(doc);
-  try {
-    await navigator.clipboard.writeText(url);
-    return { url, copied: true };
-  } catch {
-    try {
-      const ta = document.createElement("textarea");
-      ta.value = url;
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
-      document.body.appendChild(ta);
-      ta.select();
-      const ok = document.execCommand("copy");
-      ta.remove();
-      return { url, copied: ok };
-    } catch {
-      return { url, copied: false };
-    }
-  }
+  return copyLink(shareUrl(doc));
 }
 
 /** Body text for a document, fetching it when it was too large to inline. */
