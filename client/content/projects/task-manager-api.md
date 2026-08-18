@@ -3,10 +3,11 @@ type: api
 name: Task Manager API
 date: 2025-04
 repo: https://github.com/nourinawadd/task-manager-api
-stack: Node.js · Express · Sequelize · PostgreSQL · JWT · bcrypt · Swagger
+stack: Node.js · Express · MongoDB · Mongoose · JWT · bcrypt
 cv: true
 ---
-Task Manager API with JWT auth, role-based access, and a relational PostgreSQL schema.
+Task Manager API with JWT session auth, soft deletes, and avatar uploads.
 
-- RESTful Task Manager API with JWT auth, role-based access, and secure password hashing.
-- Relational PostgreSQL schema with task filtering, sorting, and full CRUD.
+- RESTful Task Manager API with JWT session auth and secure password hashing.
+- Soft-delete model with restore, plus paging, sorting, and filtering on every list.
+- Avatar uploads processed with Sharp, and transactional email via SendGrid.

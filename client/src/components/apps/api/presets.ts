@@ -12,10 +12,10 @@ export type Preset = {
   body?: string;
 };
 
-export type PresetGroup = "This site" | "Playground" | "Out there";
+export type PresetGroup = "This site" | "Subscriptions API" | "Task Manager API" | "Playground" | "Out there";
 
 /** Sidebar order for the group headings. */
-export const PRESET_GROUPS: PresetGroup[] = ["This site", "Playground", "Out there"];
+export const PRESET_GROUPS: PresetGroup[] = ["This site", "Subscriptions API", "Task Manager API", "Playground", "Out there"];
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
 
@@ -70,6 +70,213 @@ export const PRESETS: Preset[] = [
     method: "GET",
     url: `${API_BASE}/api/blog`,
     group: "This site",
+  },
+
+  /* ---------- the Subscriptions Tracker API, seeded and in-memory ----------
+     Everything past sign-in needs a JWT: run "Sign in", copy `data.token` out
+     of the response, and paste it into the Authorization header the guarded
+     presets already carry. Writes are echoed back, never stored. */
+  {
+    id: "subs-index",
+    name: "About this API",
+    method: "GET",
+    url: `${API_BASE}/api/subs`,
+    group: "Subscriptions API",
+  },
+  {
+    id: "subs-signin",
+    name: "1. Sign in (get token)",
+    method: "POST",
+    url: `${API_BASE}/api/subs/auth/sign-in`,
+    group: "Subscriptions API",
+    headers: JSON_HEADER,
+    body: JSON.stringify({ email: "demo@subs.dev", password: "workbench" }, null, 2),
+  },
+  {
+    id: "subs-list",
+    name: "2. All subscriptions",
+    method: "GET",
+    url: `${API_BASE}/api/subs/subscriptions`,
+    group: "Subscriptions API",
+    headers: [{ key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+  },
+  {
+    id: "subs-renewals",
+    name: "Upcoming renewals",
+    method: "GET",
+    url: `${API_BASE}/api/subs/subscriptions/upcoming-renewals`,
+    group: "Subscriptions API",
+    headers: [{ key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+  },
+  {
+    id: "subs-one",
+    name: "One subscription",
+    method: "GET",
+    url: `${API_BASE}/api/subs/subscriptions/s_2001`,
+    group: "Subscriptions API",
+    headers: [{ key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+  },
+  {
+    id: "subs-mine",
+    name: "My subscriptions",
+    method: "GET",
+    url: `${API_BASE}/api/subs/subscriptions/user/u_1001`,
+    group: "Subscriptions API",
+    headers: [{ key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+  },
+  {
+    id: "subs-create",
+    name: "Create a subscription",
+    method: "POST",
+    url: `${API_BASE}/api/subs/subscriptions`,
+    group: "Subscriptions API",
+    headers: [...JSON_HEADER, { key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+    body: JSON.stringify(
+      {
+        name: "Figma",
+        price: 12,
+        currency: "USD",
+        frequency: "monthly",
+        category: "productivity",
+        paymentMethod: "Visa 4242",
+        startDate: "2026-08-01T00:00:00.000Z",
+        renewalDate: "2026-09-01T00:00:00.000Z",
+      },
+      null,
+      2,
+    ),
+  },
+  {
+    id: "subs-cancel",
+    name: "Cancel a subscription",
+    method: "PUT",
+    url: `${API_BASE}/api/subs/subscriptions/s_2002/cancel`,
+    group: "Subscriptions API",
+    headers: [{ key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+  },
+  {
+    id: "subs-unauthorized",
+    name: "401 without a token",
+    method: "GET",
+    url: `${API_BASE}/api/subs/subscriptions`,
+    group: "Subscriptions API",
+  },
+  {
+    id: "subs-users",
+    name: "Demo users",
+    method: "GET",
+    url: `${API_BASE}/api/subs/users`,
+    group: "Subscriptions API",
+  },
+  {
+    id: "subs-reminder",
+    name: "Trigger reminder workflow",
+    method: "POST",
+    url: `${API_BASE}/api/subs/workflows/subscription/reminder`,
+    group: "Subscriptions API",
+    headers: JSON_HEADER,
+    body: JSON.stringify({ subscriptionId: "s_2001" }, null, 2),
+  },
+
+  /* ---------- the Task Manager API, seeded and in-memory ----------
+     Same drill as above, but this one returns the token nested at
+     `token.accessToken` and soft-deletes instead of removing rows. */
+  {
+    id: "tm-index",
+    name: "About this API",
+    method: "GET",
+    url: `${API_BASE}/api/tasks`,
+    group: "Task Manager API",
+  },
+  {
+    id: "tm-login",
+    name: "1. Log in (get token)",
+    method: "POST",
+    url: `${API_BASE}/api/tasks/account/login`,
+    group: "Task Manager API",
+    headers: JSON_HEADER,
+    body: JSON.stringify({ email: "demo@tasks.dev", password: "workbench" }, null, 2),
+  },
+  {
+    id: "tm-tasks",
+    name: "2. My tasks",
+    method: "GET",
+    url: `${API_BASE}/api/tasks/tasks`,
+    group: "Task Manager API",
+    headers: [{ key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+  },
+  {
+    id: "tm-sorted",
+    name: "Sorted + paged",
+    method: "GET",
+    url: `${API_BASE}/api/tasks/tasks?limit=3&skip=0&sortBy=createdAt:desc`,
+    group: "Task Manager API",
+    headers: [{ key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+  },
+  {
+    id: "tm-open",
+    name: "Only unfinished",
+    method: "GET",
+    url: `${API_BASE}/api/tasks/tasks?completed=false`,
+    group: "Task Manager API",
+    headers: [{ key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+  },
+  {
+    id: "tm-deleted",
+    name: "Soft-deleted tasks",
+    method: "GET",
+    url: `${API_BASE}/api/tasks/tasks/deleted`,
+    group: "Task Manager API",
+    headers: [{ key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+  },
+  {
+    id: "tm-create",
+    name: "Create a task",
+    method: "POST",
+    url: `${API_BASE}/api/tasks/tasks`,
+    group: "Task Manager API",
+    headers: [...JSON_HEADER, { key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+    body: JSON.stringify({ description: "Ship the portfolio" }, null, 2),
+  },
+  {
+    id: "tm-complete",
+    name: "Mark one complete",
+    method: "PATCH",
+    url: `${API_BASE}/api/tasks/tasks/7101b2e5d4b2c3000f0b2002`,
+    group: "Task Manager API",
+    headers: [...JSON_HEADER, { key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+    body: JSON.stringify({ completed: true }, null, 2),
+  },
+  {
+    id: "tm-restore",
+    name: "Restore a deleted task",
+    method: "PATCH",
+    url: `${API_BASE}/api/tasks/tasks/7101b2e5d4b2c3000f0b2006/restore`,
+    group: "Task Manager API",
+    headers: [{ key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+  },
+  {
+    id: "tm-me",
+    name: "Who am I?",
+    method: "GET",
+    url: `${API_BASE}/api/tasks/users/me`,
+    group: "Task Manager API",
+    headers: [{ key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+  },
+  {
+    id: "tm-forbidden",
+    name: "403 on someone else's task",
+    method: "GET",
+    url: `${API_BASE}/api/tasks/tasks/7101b2e5d4b2c3000f0b2008`,
+    group: "Task Manager API",
+    headers: [{ key: "Authorization", value: "Bearer PASTE_TOKEN_HERE" }],
+  },
+  {
+    id: "tm-unauthorized",
+    name: "401 without a token",
+    method: "GET",
+    url: `${API_BASE}/api/tasks/tasks`,
+    group: "Task Manager API",
   },
 
   /* ---------- playground routes on the same server ---------- */
