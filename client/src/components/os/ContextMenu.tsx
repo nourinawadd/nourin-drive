@@ -104,7 +104,7 @@ const menu: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3), 2px 2px 0 rgba(0,0,0,0.35)",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   userSelect: "none",
 };
 const menuItem: React.CSSProperties = {

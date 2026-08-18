@@ -116,7 +116,7 @@ export function Ereader({ winId, payload }: { winId: string; payload: unknown })
       <div style={main}>
         {!readerOpen && (
           <div style={searchBand}>
-            <span aria-hidden style={{ fontSize: 13, opacity: 0.6 }}>⌕</span>
+            <span aria-hidden style={{ fontSize: 14, opacity: 0.6 }}>⌕</span>
             <input
               value={query}
               onChange={(e) => {
@@ -152,7 +152,7 @@ export function Ereader({ winId, payload }: { winId: string; payload: unknown })
                 onShare={onShare}
               />
             ) : (
-              <div style={{ padding: 16, fontSize: 12, lineHeight: 1.6 }}>
+              <div style={{ padding: 16, fontSize: 13, lineHeight: 1.6 }}>
                 <div style={{ fontWeight: "bold", marginBottom: 6 }}>That document isn&apos;t here.</div>
                 It may have been renamed or removed since the link was made.
                 <div style={{ marginTop: 10 }}>
@@ -200,7 +200,7 @@ const shell: React.CSSProperties = {
   display: "flex",
   height: "100%",
   minHeight: 0,
-  fontSize: 12,
+  fontSize: 13,
   background: "var(--wb-gray)",
 };
 const rail: React.CSSProperties = {
@@ -224,7 +224,7 @@ const railItem: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 11,
+  fontSize: 12,
   color: "var(--wb-black)",
   cursor: "pointer",
 };
@@ -257,7 +257,7 @@ const searchInput: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 13,
+  fontSize: 14,
   color: "var(--wb-black)",
   outline: "none",
 };
@@ -269,7 +269,7 @@ const clearButton: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 13,
+  fontSize: 14,
   lineHeight: 1,
   color: "var(--wb-black)",
   cursor: "pointer",
@@ -294,7 +294,7 @@ const backButton: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 11,
+  fontSize: 12,
   color: "var(--wb-black)",
   cursor: "pointer",
 };

@@ -7,6 +7,7 @@ import { DesktopStickies } from "@/components/os/DesktopStickies";
 import { DesktopTray } from "@/components/os/DesktopTray";
 import { DriveColumn } from "@/components/os/DriveColumn";
 import { MinimizedIcons } from "@/components/os/MinimizedIcons";
+import { MobileGate } from "@/components/os/MobileGate";
 import { KonamiListener } from "@/components/os/KonamiListener";
 import { SessionGate } from "@/components/os/SessionGate";
 import { SfxEngine } from "@/components/os/SfxEngine";
@@ -92,8 +93,10 @@ function Desktop() {
 
 export default function Home() {
   return (
-    <SessionGate>
-      <Desktop />
-    </SessionGate>
+    <MobileGate>
+      <SessionGate>
+        <Desktop />
+      </SessionGate>
+    </MobileGate>
   );
 }

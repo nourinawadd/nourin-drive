@@ -207,8 +207,8 @@ export function PlaylistPicker({ onOpen }: { onOpen: (name: string) => void }) {
               ))}
             </span>
             <span style={{ minWidth: 0, textAlign: "left" }}>
-              <span style={{ fontSize: 13, fontWeight: "bold", display: "block" }}>{p.name}</span>
-              <span style={{ fontSize: 11, opacity: 0.75 }}>
+              <span style={{ fontSize: 14, fontWeight: "bold", display: "block" }}>{p.name}</span>
+              <span style={{ fontSize: 12, opacity: 0.75 }}>
                 {p.count} track{p.count === 1 ? "" : "s"}
               </span>
             </span>
@@ -228,7 +228,7 @@ const chip: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
   cursor: "pointer",
   whiteSpace: "nowrap",
@@ -273,7 +273,7 @@ const tileBadge: React.CSSProperties = {
   right: 2,
   bottom: 2,
   padding: "0 4px",
-  fontSize: 11,
+  fontSize: 12,
   lineHeight: "14px",
   background: "var(--wb-orange)",
   border: "1px solid var(--wb-black)",
@@ -284,8 +284,8 @@ const ellipsis: React.CSSProperties = {
   whiteSpace: "nowrap",
   minWidth: 0,
 };
-const tileTitle: React.CSSProperties = { ...ellipsis, fontSize: 12, fontWeight: "bold", marginTop: 2 };
-const tileArtist: React.CSSProperties = { ...ellipsis, fontSize: 11, opacity: 0.75 };
+const tileTitle: React.CSSProperties = { ...ellipsis, fontSize: 13, fontWeight: "bold", marginTop: 2 };
+const tileArtist: React.CSSProperties = { ...ellipsis, fontSize: 12, opacity: 0.75 };
 
 const listWrap: React.CSSProperties = {
   flex: 1,
@@ -313,7 +313,7 @@ const headCell: React.CSSProperties = {
   border: "none",
   borderRight: "1px solid var(--wb-gray-2)",
   fontFamily: "var(--wb-font)",
-  fontSize: 11,
+  fontSize: 12,
   fontWeight: "bold",
   color: "var(--wb-black)",
   cursor: "pointer",
@@ -332,7 +332,7 @@ const row: React.CSSProperties = {
   textAlign: "left",
   font: "inherit",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
 };
 const rowActive: React.CSSProperties = { background: "var(--wb-orange)" };
@@ -344,7 +344,7 @@ const rowThumb: React.CSSProperties = {
   flexShrink: 0,
 };
 
-const sectionHeading: React.CSSProperties = { margin: "0 0 6px", fontSize: 13, fontWeight: "bold" };
+const sectionHeading: React.CSSProperties = { margin: "0 0 6px", fontSize: 14, fontWeight: "bold" };
 const playlistRow: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
@@ -357,4 +357,4 @@ const playlistRow: React.CSSProperties = {
   color: "var(--wb-black)",
   cursor: "pointer",
 };
-const emptyNote: React.CSSProperties = { padding: 16, fontSize: 14, lineHeight: 1.6, opacity: 0.75 };
+const emptyNote: React.CSSProperties = { padding: 16, fontSize: 15, lineHeight: 1.6, opacity: 0.75 };

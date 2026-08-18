@@ -86,7 +86,7 @@ export function Gallery({ payload }: { payload?: unknown }) {
             <div style={{ marginTop: 8, flexShrink: 0, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <strong>{focused.title}</strong>
-                <div style={{ fontSize: 12, opacity: 0.7 }}>
+                <div style={{ fontSize: 13, opacity: 0.7 }}>
                   {focused.category}
                   {focused.date ? ` · ${focused.date}` : ""}
                 </div>
@@ -134,7 +134,7 @@ const tabs: React.CSSProperties = {
 };
 const tab: React.CSSProperties = {
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   padding: "2px 10px",
   background: "var(--wb-gray-0)",
   border: "1px solid var(--wb-black)",
@@ -146,7 +146,7 @@ const tabActive: React.CSSProperties = {
 };
 const grid: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
+  gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))",
   gap: 8,
   padding: 4,
   overflow: "auto",
@@ -173,7 +173,7 @@ const thumb: React.CSSProperties = {
   display: "block",
 };
 const caption: React.CSSProperties = {
-  fontSize: 12,
+  fontSize: 13,
   marginTop: 4,
   whiteSpace: "nowrap",
   overflow: "hidden",
@@ -209,7 +209,7 @@ const lightboxImg: React.CSSProperties = {
 };
 const actionBtn: React.CSSProperties = {
   fontFamily: "var(--wb-font)",
-  fontSize: 13,
+  fontSize: 14,
   lineHeight: 1,
   padding: "4px 10px",
   background: "var(--wb-gray)",
@@ -220,7 +220,7 @@ const actionBtn: React.CSSProperties = {
 };
 const navBtn: React.CSSProperties = {
   fontFamily: "var(--wb-font)",
-  fontSize: 16,
+  fontSize: 17,
   lineHeight: 1,
   padding: "2px 8px",
   background: "var(--wb-gray)",
@@ -230,7 +230,7 @@ const navBtn: React.CSSProperties = {
 };
 const empty: React.CSSProperties = {
   padding: 12,
-  fontSize: 14,
+  fontSize: 15,
   opacity: 0.75,
   lineHeight: 1.6,
   fontFamily: "var(--wb-font)",

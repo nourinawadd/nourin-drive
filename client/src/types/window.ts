@@ -32,11 +32,8 @@ export type WindowInstance = {
 export type AppDef = {
   appId: AppId;
   title: string;
-  defaultWidth: number;
-  defaultHeight: number;
-  defaultX: number;
-  defaultY: number;
   minWidth?: number;
   minHeight?: number;
+  fixed?: { width: number; height: number };
   singleton: boolean;  // re-opening focuses existing instance
 };

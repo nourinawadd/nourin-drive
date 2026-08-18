@@ -86,7 +86,7 @@ function OfflinePanel({ url }: { url: string }) {
     <div style={overlay}>
       <div style={panel}>
         <strong>The blog didn&apos;t load.</strong>
-        <p style={{ margin: "8px 0 12px", fontSize: 14 }}>
+        <p style={{ margin: "8px 0 12px", fontSize: 15 }}>
           {post ? `“${post.title}” lives at ` : "It lives at "}
           <code>{url}</code>
           {". It&apos;s a separate site, so it may be down, or not running locally yet."}
@@ -117,7 +117,7 @@ const chrome: React.CSSProperties = {
 
 const chromeBtn: React.CSSProperties = {
   fontFamily: "var(--wb-font)",
-  fontSize: 14,
+  fontSize: 15,
   padding: "0 10px",
   background: "var(--wb-gray)",
   border: "1px solid var(--wb-black)",
@@ -132,7 +132,7 @@ const address: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   fontFamily: "var(--wb-font)",
-  fontSize: 14,
+  fontSize: 15,
   padding: "2px 6px",
   background: "var(--wb-white)",
   border: "1px solid var(--wb-black)",
@@ -146,7 +146,7 @@ const openBtn: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   fontFamily: "var(--wb-font)",
-  fontSize: 14,
+  fontSize: 15,
   padding: "0 10px",
   background: "var(--wb-orange)",
   border: "1px solid var(--wb-black)",
@@ -186,5 +186,5 @@ const openTabBtn: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   color: "var(--wb-black)",
   textDecoration: "none",
-  fontSize: 13,
+  fontSize: 14,
 };

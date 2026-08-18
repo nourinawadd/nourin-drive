@@ -112,8 +112,8 @@ export function RecycleBin() {
                   <FileIcon category="document" scale={1} />
                   {f.name}
                 </span>
-                <span style={{ width: 70, opacity: 0.7, fontSize: 12 }}>{f.size}</span>
-                <span style={{ width: 100, opacity: 0.7, fontSize: 12 }}>{f.deleted}</span>
+                <span style={{ width: 70, opacity: 0.7, fontSize: 13 }}>{f.size}</span>
+                <span style={{ width: 100, opacity: 0.7, fontSize: 13 }}>{f.deleted}</span>
               </div>
             ))}
           </div>
@@ -183,7 +183,7 @@ const toolButton: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 11,
+  fontSize: 12,
   color: "var(--wb-black)",
 };
 const toolButtonActive: React.CSSProperties = {
@@ -215,7 +215,7 @@ const iconCell: React.CSSProperties = {
   gap: 4,
   padding: "8px 2px",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
   cursor: "pointer",
   userSelect: "none",
@@ -231,7 +231,7 @@ const listHeader: React.CSSProperties = {
   display: "flex",
   background: "var(--wb-black)",
   color: "var(--wb-white)",
-  fontSize: 12,
+  fontSize: 13,
   padding: "2px 6px",
   gap: 6,
 };
@@ -239,13 +239,13 @@ const row: React.CSSProperties = {
   display: "flex",
   gap: 6,
   padding: "1px 6px",
-  fontSize: 13,
+  fontSize: 14,
   borderBottom: "1px solid #eee",
   cursor: "pointer",
   userSelect: "none",
 };
 const statusBar: React.CSSProperties = {
-  fontSize: 11,
+  fontSize: 12,
   padding: "2px 6px",
   background: "var(--wb-gray)",
   borderTop: "1px solid var(--wb-black)",

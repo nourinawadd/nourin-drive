@@ -82,7 +82,7 @@ const shell: React.CSSProperties = {
   height: "100%",
   padding: 8,
   gap: 6,
-  fontSize: 12,
+  fontSize: 13,
   minHeight: 0,
 };
 const tabStrip: React.CSSProperties = {
@@ -99,7 +99,7 @@ const tab: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   borderBottom: "none",
   boxShadow: "inset 1px 1px 0 var(--wb-white)",
-  fontSize: 12,
+  fontSize: 13,
 };
 const sheet: React.CSSProperties = {
   flex: 1,
@@ -117,7 +117,7 @@ const headerRow: React.CSSProperties = {
   marginBottom: 8,
 };
 const nameText: React.CSSProperties = {
-  fontSize: 13,
+  fontSize: 14,
   fontWeight: "bold",
   wordBreak: "break-word",
   minWidth: 0,
@@ -145,7 +145,7 @@ const button: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
   cursor: "pointer",
 };

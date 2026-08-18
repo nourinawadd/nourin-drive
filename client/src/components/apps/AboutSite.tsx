@@ -47,7 +47,7 @@ const CREDITS =
 const NOTICES = [
   "The guestbook keeps what you type in it. Nothing else is collected, no analytics and no tracking.",
   "Sticky notes never leave your browser, and they vanish on refresh.",
-  "One tab at a time. Open a second and it'll ask which one wins.",
+  "One tab at a time please!",
 ];
 
 type TabId = "about" | "inside" | "around" | "credits";
@@ -236,7 +236,7 @@ const tabRow: React.CSSProperties = {
 const tabBtn: React.CSSProperties = {
   padding: "3px 12px",
   fontFamily: "var(--wb-font)",
-  fontSize: 14,
+  fontSize: 15,
   color: "var(--wb-black)",
   background: "var(--wb-gray)",
   border: "1px solid var(--wb-black)",
@@ -258,7 +258,7 @@ const pane: React.CSSProperties = {
   boxShadow: "inset 1px 1px 0 var(--wb-gray-2), inset -1px -1px 0 var(--wb-white)",
 };
 const statusBar: React.CSSProperties = {
-  fontSize: 12,
+  fontSize: 13,
   padding: "2px 6px",
   background: "var(--wb-gray)",
   borderTop: "1px solid var(--wb-black)",
@@ -288,8 +288,8 @@ const bannerIcon: React.CSSProperties = {
   placeItems: "center",
   flexShrink: 0,
 };
-const bannerTitle: React.CSSProperties = { fontSize: 22, fontWeight: "bold" };
-const bannerSub: React.CSSProperties = { fontSize: 13, opacity: 0.7 };
+const bannerTitle: React.CSSProperties = { fontSize: 23, fontWeight: "bold" };
+const bannerSub: React.CSSProperties = { fontSize: 14, opacity: 0.7 };
 const columns: React.CSSProperties = {
   display: "flex",
   gap: 12,
@@ -306,7 +306,7 @@ const specPanel: React.CSSProperties = {
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-2)",
 };
 const specTitle: React.CSSProperties = {
-  fontSize: 12,
+  fontSize: 13,
   fontWeight: "bold",
   letterSpacing: 1,
   background: "var(--wb-black)",
@@ -318,7 +318,7 @@ const specRow: React.CSSProperties = {
   display: "flex",
   justifyContent: "space-between",
   gap: 8,
-  fontSize: 13,
+  fontSize: 14,
   padding: "1px 0",
 };
 const specKey: React.CSSProperties = { opacity: 0.65 };
@@ -344,13 +344,13 @@ const copper: React.CSSProperties = {
 };
 const slogan: React.CSSProperties = {
   padding: "2px 10px",
-  fontSize: 14,
+  fontSize: 15,
   letterSpacing: 1,
   color: "var(--wb-white)",
   background: "var(--wb-black)",
   border: "1px solid var(--wb-white)",
 };
-const para: React.CSSProperties = { margin: "0 0 8px", fontSize: 14, lineHeight: 1.45 };
+const para: React.CSSProperties = { margin: "0 0 8px", fontSize: 15, lineHeight: 1.45 };
 const grid: React.CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fill, minmax(156px, 1fr))",
@@ -378,7 +378,7 @@ const tile: React.CSSProperties = {
 };
 const cellLabel: React.CSSProperties = {
   padding: "0 4px",
-  fontSize: 13,
+  fontSize: 14,
   fontWeight: "bold",
   textAlign: "center",
 };
@@ -387,17 +387,17 @@ const cellLabelActive: React.CSSProperties = {
   outline: "1px dotted var(--wb-black)",
 };
 const cellLine: React.CSSProperties = {
-  fontSize: 12,
+  fontSize: 13,
   lineHeight: 1.3,
   textAlign: "center",
   opacity: 0.75,
 };
-const ul: React.CSSProperties = { margin: 0, paddingLeft: 18, fontSize: 14, lineHeight: 1.45 };
+const ul: React.CSSProperties = { margin: 0, paddingLeft: 18, fontSize: 15, lineHeight: 1.45 };
 const li: React.CSSProperties = { marginBottom: 6 };
 const noticeHead: React.CSSProperties = {
   marginTop: 12,
   marginBottom: 4,
-  fontSize: 12,
+  fontSize: 13,
   fontWeight: "bold",
   background: "var(--wb-black)",
   color: "var(--wb-white)",

@@ -74,7 +74,7 @@ const overlay: React.CSSProperties = {
   color: "var(--wb-white)",
   background: "#000",
   fontFamily: "var(--wb-font)",
-  fontSize: 13,
+  fontSize: 14,
   pointerEvents: "none",
 };
 
@@ -84,7 +84,7 @@ const empty: React.CSSProperties = {
   placeItems: "center",
   textAlign: "center",
   padding: 16,
-  fontSize: 12,
+  fontSize: 13,
   lineHeight: 1.5,
   opacity: 0.8,
 };

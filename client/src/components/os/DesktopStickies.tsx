@@ -39,7 +39,7 @@ export function DesktopStickies() {
         >
           <div style={{ ...card, background: n.color, transform: `rotate(${n.rotate}deg)` }}>
             <div className="wb-sticky-grip" style={grip}>
-              <span style={{ fontSize: 11, opacity: 0.55, letterSpacing: 2 }}>&#8226;&#8226;&#8226;</span>
+              <span style={{ fontSize: 12, opacity: 0.55, letterSpacing: 2 }}>&#8226;&#8226;&#8226;</span>
               <button
                 type="button"
                 className="wb-sticky-del"
@@ -89,7 +89,7 @@ const del: React.CSSProperties = {
   background: "transparent",
   cursor: "pointer",
   fontFamily: "var(--wb-font)",
-  fontSize: 15,
+  fontSize: 16,
   lineHeight: 1,
   color: "var(--wb-black)",
   padding: "0 2px",
@@ -103,7 +103,7 @@ const ta: React.CSSProperties = {
   background: "transparent",
   color: "var(--wb-black)",
   fontFamily: "var(--wb-font)",
-  fontSize: 13,
+  fontSize: 14,
   lineHeight: 1.25,
   padding: 6,
 };

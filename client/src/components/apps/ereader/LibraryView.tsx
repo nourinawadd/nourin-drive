@@ -166,7 +166,7 @@ export function ShelvesView({
               ))}
             </div>
             <div style={{ minWidth: 0, textAlign: "left" }}>
-              <div style={{ fontSize: 13, fontWeight: "bold" }}>{shelf}</div>
+              <div style={{ fontSize: 14, fontWeight: "bold" }}>{shelf}</div>
               <div style={cardMeta}>
                 {counts.get(shelf) ?? 0} item{(counts.get(shelf) ?? 0) === 1 ? "" : "s"}
                 {" · "}
@@ -242,7 +242,7 @@ const chip: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
   cursor: "pointer",
   whiteSpace: "nowrap",
@@ -274,7 +274,7 @@ const coverButton: React.CSSProperties = {
   flexShrink: 0,
 };
 const cardTitle: React.CSSProperties = {
-  fontSize: 13,
+  fontSize: 14,
   fontWeight: "bold",
   lineHeight: 1.2,
   overflow: "hidden",
@@ -283,14 +283,14 @@ const cardTitle: React.CSSProperties = {
   WebkitBoxOrient: "vertical",
 };
 const cardMeta: React.CSSProperties = {
-  fontSize: 11,
+  fontSize: 12,
   opacity: 0.75,
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
 };
 const cardBlurb: React.CSSProperties = {
-  fontSize: 11,
+  fontSize: 12,
   marginTop: 3,
   lineHeight: 1.3,
   opacity: 0.9,
@@ -305,7 +305,7 @@ const miniButton: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 11,
+  fontSize: 12,
   color: "var(--wb-black)",
   cursor: "pointer",
 };
@@ -316,7 +316,7 @@ const readButton: React.CSSProperties = {
   borderTop: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-yellow), inset -1px -1px 0 var(--wb-orange-d)",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   fontWeight: "bold",
   color: "var(--wb-black)",
   cursor: "pointer",
@@ -326,7 +326,7 @@ const sectionHeading: React.CSSProperties = {
   alignItems: "center",
   gap: 8,
   margin: "0 0 6px",
-  fontSize: 13,
+  fontSize: 14,
   fontWeight: "bold",
 };
 const seeAll: React.CSSProperties = {
@@ -334,7 +334,7 @@ const seeAll: React.CSSProperties = {
   border: "none",
   background: "transparent",
   fontFamily: "var(--wb-font)",
-  fontSize: 11,
+  fontSize: 12,
   color: "var(--wb-black)",
   opacity: 0.7,
   textDecoration: "underline",
@@ -354,12 +354,12 @@ const shelfRow: React.CSSProperties = {
 };
 const emptyNote: React.CSSProperties = {
   padding: 16,
-  fontSize: 14,
+  fontSize: 15,
   lineHeight: 1.6,
   opacity: 0.75,
 };
 const infoPara: React.CSSProperties = {
   margin: 0,
-  fontSize: 14,
+  fontSize: 15,
   lineHeight: 1.55,
 };

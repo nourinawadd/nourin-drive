@@ -12,7 +12,7 @@ const PdfPane = dynamic(() => import("./PdfPane").then((m) => m.PdfPane), {
   ssr: false,
   loading: () => (
     <div className="wb-paper" style={{ flex: 1, display: "grid", placeItems: "center" }}>
-      <span style={{ color: "var(--wb-paper-dim)", fontSize: 15 }}>Loading reader…</span>
+      <span style={{ color: "var(--wb-paper-dim)", fontSize: 16 }}>Loading reader…</span>
     </div>
   ),
 });
@@ -158,7 +158,7 @@ export function ReaderView({
         >
           −
         </button>
-        <span style={{ fontSize: 11, minWidth: 34, textAlign: "center" }}>
+        <span style={{ fontSize: 12, minWidth: 34, textAlign: "center" }}>
           {Math.round(zoom * 100)}%
         </span>
         <button
@@ -212,11 +212,11 @@ export function ReaderView({
           />
         ) : bodyError ? (
           <div className="wb-paper" style={{ flex: 1, display: "grid", placeItems: "center", padding: 24 }}>
-            <span style={{ color: "var(--wb-paper-dim)", fontSize: 15 }}>{bodyError}</span>
+            <span style={{ color: "var(--wb-paper-dim)", fontSize: 16 }}>{bodyError}</span>
           </div>
         ) : body == null ? (
           <div className="wb-paper" style={{ flex: 1, display: "grid", placeItems: "center" }}>
-            <span style={{ color: "var(--wb-paper-dim)", fontSize: 15 }}>Opening…</span>
+            <span style={{ color: "var(--wb-paper-dim)", fontSize: 16 }}>Opening…</span>
           </div>
         ) : (
           <TextPane
@@ -343,7 +343,7 @@ const toolButton: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 11,
+  fontSize: 12,
   color: "var(--wb-black)",
   cursor: "pointer",
   whiteSpace: "nowrap",
@@ -364,7 +364,7 @@ const titleStrip: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   gap: 6,
-  fontSize: 12,
+  fontSize: 13,
   maxWidth: 420,
 };
 const ellipsis: React.CSSProperties = {
@@ -393,7 +393,7 @@ const edgeButton: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3), 2px 2px 0 rgba(0,0,0,0.3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 20,
+  fontSize: 21,
   lineHeight: 1,
   color: "var(--wb-black)",
   padding: 0,
@@ -403,7 +403,7 @@ const statusBar: React.CSSProperties = {
   alignItems: "center",
   gap: 8,
   padding: "3px 8px",
-  fontSize: 11,
+  fontSize: 12,
   background: "var(--wb-gray)",
   borderTop: "1px solid var(--wb-white)",
   flexShrink: 0,

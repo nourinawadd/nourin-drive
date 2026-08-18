@@ -156,7 +156,7 @@ function EntryRow({ entry, fallbackNumber }: { entry: GuestbookEntry; fallbackNu
       <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" }}>
         <div>
           <span className="wb-gb-seq">#{number}</span>{" "}
-          <strong style={{ fontSize: 14 }}>
+          <strong style={{ fontSize: 15 }}>
             {entry.emoji ? <span style={{ marginRight: 4 }}>{entry.emoji}</span> : null}
             {entry.name}
           </strong>
@@ -166,12 +166,12 @@ function EntryRow({ entry, fallbackNumber }: { entry: GuestbookEntry; fallbackNu
             </span>
           )}
         </div>
-        <span style={{ fontSize: 12, opacity: 0.6, whiteSpace: "nowrap" }}>
+        <span style={{ fontSize: 13, opacity: 0.6, whiteSpace: "nowrap" }}>
           {formatDate(entry.createdAt)}
         </span>
       </div>
 
-      <div style={{ fontSize: 14, marginTop: 3, whiteSpace: "pre-wrap", lineHeight: 1.3 }}>
+      <div style={{ fontSize: 15, marginTop: 3, whiteSpace: "pre-wrap", lineHeight: 1.3 }}>
         {entry.message}
       </div>
 
@@ -187,7 +187,7 @@ function EntryRow({ entry, fallbackNumber }: { entry: GuestbookEntry; fallbackNu
 
 const counterLine: React.CSSProperties = {
   display: "flex", justifyContent: "space-between", gap: 12,
-  fontSize: 13, padding: "0 2px", color: "var(--wb-black)",
+  fontSize: 14, padding: "0 2px", color: "var(--wb-black)",
 };
 const form: React.CSSProperties = {
   display: "flex", flexDirection: "column", gap: 6,
@@ -198,27 +198,27 @@ const form: React.CSSProperties = {
 };
 const row: React.CSSProperties = { display: "flex", gap: 6 };
 const input: React.CSSProperties = {
-  fontFamily: "var(--wb-font)", fontSize: 14, padding: "4px 6px",
+  fontFamily: "var(--wb-font)", fontSize: 15, padding: "4px 6px",
   background: "var(--wb-white)", border: "1px solid var(--wb-black)",
   outline: "none", color: "var(--wb-black)",
 };
 const signBtn: React.CSSProperties = {
-  fontFamily: "var(--wb-font)", fontSize: 14, padding: "4px 18px",
+  fontFamily: "var(--wb-font)", fontSize: 15, padding: "4px 18px",
   background: "var(--wb-orange)", border: "1px solid var(--wb-black)",
   cursor: "pointer", color: "var(--wb-black)",
 };
 const emojiRow: React.CSSProperties = { display: "flex", gap: 3, flexWrap: "wrap", alignItems: "center" };
-const emojiLabel: React.CSSProperties = { fontSize: 13, opacity: 0.75, marginRight: 2 };
+const emojiLabel: React.CSSProperties = { fontSize: 14, opacity: 0.75, marginRight: 2 };
 const emojiChip: React.CSSProperties = {
-  fontFamily: "var(--wb-font)", fontSize: 15, padding: "1px 7px",
+  fontFamily: "var(--wb-font)", fontSize: 16, padding: "1px 7px",
   border: "1px solid var(--wb-black)", cursor: "pointer",
   color: "var(--wb-black)",
 };
-const errMsg: React.CSSProperties = { fontSize: 13, color: "#a00" };
+const errMsg: React.CSSProperties = { fontSize: 14, color: "#a00" };
 const listWrap: React.CSSProperties = {
   flex: 1, overflow: "auto",
   background: "var(--wb-white)", border: "1px solid var(--wb-black)",
   padding: "2px 8px",
 };
-const msg: React.CSSProperties = { padding: 8, fontSize: 13, opacity: 0.6 };
+const msg: React.CSSProperties = { padding: 8, fontSize: 14, opacity: 0.6 };
 const entryStyle: React.CSSProperties = { padding: "6px 2px" };

@@ -6,8 +6,7 @@ import { useWindowStore } from "@/context/windowStore";
 import { APP_REGISTRY } from "@/data/appRegistry";
 import type { WindowInstance } from "@/types/window";
 import { WinMinGlyph, WinMaxGlyph, WinRestoreGlyph, WinCloseGlyph } from "@/components/os/icons";
-
-const MENUBAR_H = 18;
+import { MENUBAR_H } from "@/lib/windowBounds";
 
 type Props = {
   win: WindowInstance;
@@ -65,7 +64,7 @@ export function WindowFrame({ win, children }: Props) {
       dragHandleClassName="wb-titlebar"
       cancel=".wb-winbtn"
       disableDragging={win.maximized}
-      enableResizing={!win.maximized}
+      enableResizing={!win.maximized && !def.fixed}
       style={{ zIndex: win.z }}
       onDragStart={() => focus(win.id)}
       onDragStop={(_e, d) => {
@@ -88,11 +87,11 @@ export function WindowFrame({ win, children }: Props) {
       >
         <div
           className={`wb-titlebar${active ? "" : " is-inactive"}`}
-          onDoubleClick={() => toggleMaximize(win.id)}
+          onDoubleClick={() => { if (!def.fixed) toggleMaximize(win.id); }}
         >
           <div className="wb-title-text">{win.title}</div>
           <div className="wb-winbtns">
-            <button
+            {!def.fixed && <button
               type="button"
               className="wb-winbtn wb-winbtn--min"
               aria-label="Minimize"
@@ -104,8 +103,8 @@ export function WindowFrame({ win, children }: Props) {
               }}
             >
               <WinMinGlyph />
-            </button>
-            <button
+            </button>}
+            {!def.fixed && <button
               type="button"
               className="wb-winbtn wb-winbtn--max"
               aria-label={win.maximized ? "Restore" : "Maximize"}
@@ -117,7 +116,7 @@ export function WindowFrame({ win, children }: Props) {
               }}
             >
               {win.maximized ? <WinRestoreGlyph /> : <WinMaxGlyph />}
-            </button>
+            </button>}
             <button
               type="button"
               className="wb-winbtn wb-winbtn--close"

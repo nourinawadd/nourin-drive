@@ -14,7 +14,7 @@ import { ContextMenu, type MenuItem } from "@/components/os/ContextMenu";
 import type { PropertiesPayload } from "@/components/apps/Properties";
 
 type ViewMode = "list" | "icons";
-type SortKey = "name" | "type" | "date";
+type SortKey = "natural" | "name" | "type" | "date";
 
 // Persisted in the window payload so the view survives minimize/restore, the
 // same way the Ereader keeps its page.
@@ -30,7 +30,7 @@ const DEFAULTS: ExplorerState = {
   folderId: FS_ROOT.id,
   expanded: [FS_ROOT.id],
   view: "icons",
-  sortKey: "name",
+  sortKey: "natural",
   sortAsc: true,
 };
 
@@ -448,8 +448,8 @@ function IconView({
           >
             <span style={{ display: "inline-flex" }}>
               {n.kind === "folder"
-                ? <FolderIcon scale={3} />
-                : <FileIcon category={n.iconCat} scale={3} />}
+                ? <FolderIcon scale={4} />
+                : <FileIcon category={n.iconCat} scale={4} />}
             </span>
             <span
               style={{
@@ -580,6 +580,8 @@ function sortNodes(nodes: FsNode[], key: SortKey, asc: boolean): FsNode[] {
   return [...nodes].sort((a, b) => {
     if (a.kind !== b.kind) return a.kind === "folder" ? -1 : 1;
     switch (key) {
+      case "natural":
+        return 0;
       case "type": {
         const at = a.kind === "folder" ? "File Folder" : a.typeLabel;
         const bt = b.kind === "folder" ? "File Folder" : b.typeLabel;
@@ -616,7 +618,7 @@ const shell: React.CSSProperties = {
   flexDirection: "column",
   height: "100%",
   minHeight: 0,
-  fontSize: 12,
+  fontSize: 13,
 };
 const menuBar: React.CSSProperties = {
   display: "flex",
@@ -631,7 +633,7 @@ const menuBarItem: React.CSSProperties = {
   border: "none",
   background: "transparent",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
   cursor: "pointer",
 };
@@ -659,7 +661,7 @@ const dropItem: React.CSSProperties = {
   border: "none",
   background: "transparent",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
   textAlign: "left",
   cursor: "pointer",
@@ -685,7 +687,7 @@ const toolButton: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 11,
+  fontSize: 12,
   color: "var(--wb-black)",
 };
 const toolButtonActive: React.CSSProperties = {
@@ -700,14 +702,14 @@ const toolDivider: React.CSSProperties = {
   borderRight: "1px solid var(--wb-white)",
   flexShrink: 0,
 };
-const addressLabel: React.CSSProperties = { fontSize: 11, opacity: 0.7, flexShrink: 0 };
+const addressLabel: React.CSSProperties = { fontSize: 12, opacity: 0.7, flexShrink: 0 };
 const address: React.CSSProperties = {
   maxWidth: 260,
   padding: "1px 6px",
   background: "var(--wb-white)",
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-gray-3)",
-  fontSize: 11,
+  fontSize: 12,
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
@@ -724,7 +726,7 @@ const paneHeader: React.CSSProperties = {
   padding: "2px 6px",
   background: "var(--wb-black)",
   color: "var(--wb-white)",
-  fontSize: 11,
+  fontSize: 12,
   fontWeight: "bold",
   whiteSpace: "nowrap",
   overflow: "hidden",
@@ -774,7 +776,7 @@ const expander: React.CSSProperties = {
   background: "var(--wb-white)",
   border: "1px solid var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 10,
+  fontSize: 11,
   color: "var(--wb-black)",
   cursor: "pointer",
 };
@@ -787,7 +789,7 @@ const treeLabel: React.CSSProperties = {
   padding: "1px 4px 1px 2px",
   border: "none",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
   textAlign: "left",
   cursor: "pointer",
@@ -810,7 +812,7 @@ const colButton: React.CSSProperties = {
   borderRight: "1px solid var(--wb-gray-3)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 11,
+  fontSize: 12,
   fontWeight: "bold",
   color: "var(--wb-black)",
   cursor: "pointer",
@@ -820,7 +822,7 @@ const listRow: React.CSSProperties = {
   alignItems: "center",
   gap: 6,
   padding: "3px 6px",
-  fontSize: 12,
+  fontSize: 13,
   cursor: "default",
   userSelect: "none",
 };
@@ -829,7 +831,7 @@ const iconGrid: React.CSSProperties = {
   minHeight: 0,
   overflow: "auto",
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(112px, 1fr))",
+  gridTemplateColumns: "repeat(auto-fill, minmax(148px, 1fr))",
   gap: 6,
   padding: 8,
   alignContent: "start",
@@ -843,7 +845,7 @@ const iconCell: React.CSSProperties = {
   border: "none",
   background: "transparent",
   fontFamily: "var(--wb-font)",
-  fontSize: 11,
+  fontSize: 12,
   color: "var(--wb-black)",
   cursor: "default",
   userSelect: "none",
@@ -857,7 +859,7 @@ const iconLabel: React.CSSProperties = {
 };
 const emptyNote: React.CSSProperties = {
   padding: 12,
-  fontSize: 14,
+  fontSize: 15,
   opacity: 0.6,
 };
 const statusBar: React.CSSProperties = {
@@ -865,7 +867,7 @@ const statusBar: React.CSSProperties = {
   alignItems: "center",
   gap: 8,
   padding: "2px 6px",
-  fontSize: 11,
+  fontSize: 12,
   background: "var(--wb-gray)",
   borderTop: "1px solid var(--wb-white)",
   flexShrink: 0,

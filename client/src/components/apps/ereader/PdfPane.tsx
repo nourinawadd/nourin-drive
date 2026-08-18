@@ -61,7 +61,7 @@ export function PdfPane({ src, page, columns, zoom, onPageCount }: PdfPaneProps)
   if (error) {
     return (
       <div className="wb-paper" style={{ ...surface, ...centered }}>
-        <div style={{ maxWidth: 380, textAlign: "center", fontSize: 15 }}>
+        <div style={{ maxWidth: 380, textAlign: "center", fontSize: 16 }}>
           <div style={{ marginBottom: 8, fontWeight: 600 }}>Couldn&apos;t open this PDF</div>
           <div style={{ color: "var(--wb-paper-dim)" }}>{error}</div>
         </div>
@@ -72,7 +72,7 @@ export function PdfPane({ src, page, columns, zoom, onPageCount }: PdfPaneProps)
   if (loading || !doc) {
     return (
       <div className="wb-paper" style={{ ...surface, ...centered }}>
-        <span style={{ color: "var(--wb-paper-dim)", fontSize: 15 }}>Opening…</span>
+        <span style={{ color: "var(--wb-paper-dim)", fontSize: 16 }}>Opening…</span>
       </div>
     );
   }

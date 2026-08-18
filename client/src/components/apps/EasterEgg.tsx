@@ -26,7 +26,7 @@ export function EasterEgg() {
       <pre style={art}>{ART}</pre>
       <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
         {MESSAGE.map((line, i) => (
-          <span key={i} style={{ fontSize: 13, minHeight: 14 }}>{line}</span>
+          <span key={i} style={{ fontSize: 14, minHeight: 14 }}>{line}</span>
         ))}
       </div>
     </div>
@@ -48,7 +48,7 @@ const wrap: React.CSSProperties = {
 };
 const art: React.CSSProperties = {
   margin: 0,
-  fontSize: 12,
+  fontSize: 13,
   lineHeight: 1.1,
   color: "var(--wb-orange)",
 };

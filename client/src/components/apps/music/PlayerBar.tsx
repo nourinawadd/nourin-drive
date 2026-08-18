@@ -108,7 +108,7 @@ export function PlayerBar({ mini, onToggleMini }: { mini: boolean; onToggleMini:
         )}
         {!mini && (
           <span style={volWrap}>
-            <span style={{ fontSize: 12 }} aria-hidden>
+            <span style={{ fontSize: 13 }} aria-hidden>
               🔊
             </span>
             <input
@@ -164,13 +164,13 @@ const barThumb: React.CSSProperties = {
 };
 const barMeta: React.CSSProperties = { display: "flex", flexDirection: "column", overflow: "hidden" };
 const barTitle: React.CSSProperties = {
-  fontSize: 13,
+  fontSize: 14,
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
 };
 const barArtist: React.CSSProperties = {
-  fontSize: 11,
+  fontSize: 12,
   opacity: 0.7,
   whiteSpace: "nowrap",
   overflow: "hidden",
@@ -179,7 +179,7 @@ const barArtist: React.CSSProperties = {
 const seekRow: React.CSSProperties = { display: "flex", alignItems: "center", gap: 6 };
 const slider: React.CSSProperties = { flex: 1, accentColor: "var(--wb-orange)", cursor: "pointer" };
 const timeText: React.CSSProperties = {
-  fontSize: 11,
+  fontSize: 12,
   width: 34,
   textAlign: "center",
   flexShrink: 0,
@@ -187,7 +187,7 @@ const timeText: React.CSSProperties = {
 const controls: React.CSSProperties = { display: "flex", alignItems: "center", gap: 4 };
 const ctrlBtn: React.CSSProperties = {
   fontFamily: "var(--wb-font)",
-  fontSize: 14,
+  fontSize: 15,
   lineHeight: 1,
   padding: "3px 8px",
   background: "var(--wb-gray-0)",
@@ -198,7 +198,7 @@ const ctrlBtn: React.CSSProperties = {
 };
 const playBtn: React.CSSProperties = {
   background: "var(--wb-orange)",
-  fontSize: 16,
+  fontSize: 17,
   padding: "3px 12px",
 };
 const ctrlOn: React.CSSProperties = { background: "var(--wb-orange)" };

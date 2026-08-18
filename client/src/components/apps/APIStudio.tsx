@@ -148,11 +148,11 @@ export function APIStudio() {
 
         {/* response */}
         <div style={respHeader}>
-          <strong style={{ fontSize: 12 }}>Response</strong>
+          <strong style={{ fontSize: 13 }}>Response</strong>
           {state.kind === "done" && (
             <>
               <span style={statusBadge(state.status)}>{state.status} {state.statusText}</span>
-              <span style={{ fontSize: 11, opacity: 0.7 }}>{state.ms}ms</span>
+              <span style={{ fontSize: 12, opacity: 0.7 }}>{state.ms}ms</span>
             </>
           )}
           {state.kind === "error" && <span style={statusBadge(0)}>error</span>}
@@ -257,14 +257,14 @@ const sidebar: React.CSSProperties = {
   flexShrink: 0,
 };
 const sidebarHeader: React.CSSProperties = {
-  fontSize: 12,
+  fontSize: 13,
   fontWeight: "bold",
   padding: "2px 6px",
   background: "var(--wb-black)",
   color: "var(--wb-white)",
 };
 const groupHeader: React.CSSProperties = {
-  fontSize: 11,
+  fontSize: 12,
   fontWeight: "bold",
   padding: "1px 6px",
   background: "var(--wb-gray)",
@@ -283,7 +283,7 @@ const presetRow: React.CSSProperties = {
   borderBottom: "1px solid var(--wb-gray)",
   cursor: "pointer",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
 };
 function methodBadge(m: Method): React.CSSProperties {
@@ -291,7 +291,7 @@ function methodBadge(m: Method): React.CSSProperties {
     GET: "#2a7", POST: "#e80", PUT: "#37a", PATCH: "#a3a", DELETE: "#c33",
   };
   return {
-    fontSize: 10,
+    fontSize: 11,
     padding: "0 4px",
     background: colors[m],
     color: "white",
@@ -301,16 +301,16 @@ function methodBadge(m: Method): React.CSSProperties {
   };
 }
 const selectStyle: React.CSSProperties = {
-  fontFamily: "var(--wb-font)", fontSize: 14, padding: "2px 4px",
+  fontFamily: "var(--wb-font)", fontSize: 15, padding: "2px 4px",
   background: "var(--wb-white)", border: "1px solid var(--wb-black)",
 };
 const inputStyle: React.CSSProperties = {
-  fontFamily: "var(--wb-font)", fontSize: 14, padding: "2px 6px", flex: 1,
+  fontFamily: "var(--wb-font)", fontSize: 15, padding: "2px 6px", flex: 1,
   background: "var(--wb-white)", border: "1px solid var(--wb-black)", outline: "none",
   minWidth: 0,
 };
 const sendBtn: React.CSSProperties = {
-  fontFamily: "var(--wb-font)", fontSize: 14, padding: "2px 14px",
+  fontFamily: "var(--wb-font)", fontSize: 15, padding: "2px 14px",
   background: "var(--wb-orange)", border: "1px solid var(--wb-black)",
   cursor: "pointer", color: "var(--wb-black)",
 };
@@ -318,7 +318,7 @@ const tabRow: React.CSSProperties = {
   display: "flex", gap: 2, borderBottom: "1px solid var(--wb-black)",
 };
 const tabBtn: React.CSSProperties = {
-  fontFamily: "var(--wb-font)", fontSize: 12, padding: "1px 10px",
+  fontFamily: "var(--wb-font)", fontSize: 13, padding: "1px 10px",
   border: "1px solid var(--wb-black)", borderBottomWidth: 1,
   cursor: "pointer", color: "var(--wb-black)",
 };
@@ -328,7 +328,7 @@ const tabPanel: React.CSSProperties = {
 };
 const textareaStyle: React.CSSProperties = {
   width: "100%", minHeight: 80, resize: "vertical",
-  fontFamily: "var(--wb-font)", fontSize: 13,
+  fontFamily: "var(--wb-font)", fontSize: 14,
   background: "var(--wb-white)", border: "1px solid var(--wb-black)",
   padding: 4, outline: "none", color: "var(--wb-black)",
 };
@@ -338,15 +338,15 @@ const respHeader: React.CSSProperties = {
 function statusBadge(code: number): React.CSSProperties {
   const ok = code >= 200 && code < 300;
   return {
-    fontSize: 11, padding: "0 6px",
+    fontSize: 12, padding: "0 6px",
     background: ok ? "#2a7" : "#c33",
     color: "white", border: "1px solid black",
   };
 }
 const preStyle: React.CSSProperties = {
-  margin: 0, padding: 8, fontFamily: "var(--wb-font)", fontSize: 12,
+  margin: 0, padding: 8, fontFamily: "var(--wb-font)", fontSize: 13,
   whiteSpace: "pre-wrap", wordBreak: "break-word", color: "var(--wb-black)",
 };
 const emptyMsg: React.CSSProperties = {
-  padding: 12, fontSize: 12, opacity: 0.6,
+  padding: 12, fontSize: 13, opacity: 0.6,
 };

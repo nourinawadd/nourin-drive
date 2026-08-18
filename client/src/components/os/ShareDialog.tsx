@@ -16,7 +16,7 @@ export function ShareDialog({
     <div style={dialogBackdrop} onClick={onClose}>
       <div style={dialogPanel} onClick={(e) => e.stopPropagation()}>
         <div style={dialogTitle}>{copied ? "Link copied" : "Copy this link"}</div>
-        <div style={{ fontSize: 11, marginBottom: 8, lineHeight: 1.5 }}>
+        <div style={{ fontSize: 12, marginBottom: 8, lineHeight: 1.5 }}>
           {copied
             ? `The link is on your clipboard. It opens this ${what}.`
             : "Your browser blocked the clipboard. Select and copy it by hand:"}
@@ -54,7 +54,7 @@ const dialogPanel: React.CSSProperties = {
 };
 const dialogTitle: React.CSSProperties = {
   marginBottom: 6,
-  fontSize: 13,
+  fontSize: 14,
   fontWeight: "bold",
 };
 const dialogInput: React.CSSProperties = {
@@ -64,7 +64,7 @@ const dialogInput: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 11,
+  fontSize: 12,
   color: "var(--wb-black)",
 };
 const dialogButton: React.CSSProperties = {
@@ -73,7 +73,7 @@ const dialogButton: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
   cursor: "pointer",
 };

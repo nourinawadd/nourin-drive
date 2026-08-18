@@ -13,7 +13,7 @@ export function Games() {
     <div style={{ height: "100%", overflow: "auto" }}>
       <div style={grid}>
         {games.length === 0 && (
-          <div style={{ padding: 12, fontSize: 12, opacity: 0.6 }}>
+          <div style={{ padding: 12, fontSize: 13, opacity: 0.6 }}>
             no games yet. add one with `npm run add`.
           </div>
         )}
@@ -31,13 +31,13 @@ export function Games() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={build.cover} alt="" style={coverImg} />
                   ) : (
-                    <span style={{ fontSize: 22 }}>▶</span>
+                    <span style={{ fontSize: 23 }}>▶</span>
                   )}
                 </div>
                 <div style={meta}>
-                  <strong style={{ fontSize: 13 }}>{g.name}</strong>
-                  <span style={{ fontSize: 11, opacity: 0.7 }}>{g.blurb ?? ""}</span>
-                  <span style={{ fontSize: 11, opacity: 0.5 }}>
+                  <strong style={{ fontSize: 14 }}>{g.name}</strong>
+                  <span style={{ fontSize: 12, opacity: 0.7 }}>{g.blurb ?? ""}</span>
+                  <span style={{ fontSize: 12, opacity: 0.5 }}>
                     {build?.src ? "plays here ▶" : "opens in a new tab ↗"}
                   </span>
                 </div>
@@ -57,9 +57,9 @@ export function Games() {
 
 const grid: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-  gap: 8,
-  padding: 4,
+  gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+  gap: 12,
+  padding: 8,
 };
 const card: React.CSSProperties = {
   display: "flex", flexDirection: "column", gap: 4,
@@ -90,7 +90,7 @@ const meta: React.CSSProperties = {
   display: "flex", flexDirection: "column", gap: 2,
 };
 const itchLink: React.CSSProperties = {
-  fontSize: 11,
+  fontSize: 12,
   color: "#0055aa",
   textDecoration: "underline",
   alignSelf: "flex-start",

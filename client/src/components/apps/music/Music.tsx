@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ALL_TRACKS, TRACKS, searchTracks, tracksIn, type Track } from "@/data/tracks";
 import { currentTrack, usePlayerStore } from "@/context/playerStore";
 import { useWindowStore } from "@/context/windowStore";
+import { APP_REGISTRY } from "@/data/appRegistry";
+import { defaultSize } from "@/lib/windowBounds";
 import { ContextMenu, type MenuItem } from "@/components/os/ContextMenu";
 import { PlayerBar } from "./PlayerBar";
 import { PlaylistChips, PlaylistPicker, TrackGrid, TrackList, type SortKey } from "./PlaylistView";
@@ -11,8 +13,6 @@ import { PlaylistChips, PlaylistPicker, TrackGrid, TrackList, type SortKey } fro
 // Compact "mini player" footprint, restored to the previous size on expand.
 const MINI_W = 320;
 const MINI_H = 150;
-const FULL_W = 480;
-const FULL_H = 460;
 
 type ViewMode = "grid" | "list";
 
@@ -116,7 +116,7 @@ export function Music({ winId, payload }: { winId: string; payload: unknown }) {
       updateBounds(winId, { width: MINI_W, height: MINI_H });
     } else {
       setState({ mini: false });
-      updateBounds(winId, saved.prevSize ?? { width: FULL_W, height: FULL_H });
+      updateBounds(winId, saved.prevSize ?? defaultSize(APP_REGISTRY.music));
     }
   }
 
@@ -211,7 +211,7 @@ export function Music({ winId, payload }: { winId: string; payload: unknown }) {
               ▤ List
             </ToolButton>
             <span style={{ flex: 1 }} />
-            <span aria-hidden style={{ fontSize: 12, opacity: 0.6 }}>⌕</span>
+            <span aria-hidden style={{ fontSize: 13, opacity: 0.6 }}>⌕</span>
             <input
               ref={searchRef}
               value={query}
@@ -317,7 +317,7 @@ const toolBtn: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
   cursor: "pointer",
   whiteSpace: "nowrap",
@@ -339,7 +339,7 @@ const searchInput: React.CSSProperties = {
   border: "1px solid var(--wb-black)",
   boxShadow: "inset 1px 1px 0 var(--wb-gray-2)",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
 };
 const clearButton: React.CSSProperties = {
@@ -347,14 +347,14 @@ const clearButton: React.CSSProperties = {
   background: "var(--wb-gray)",
   border: "1px solid var(--wb-black)",
   fontFamily: "var(--wb-font)",
-  fontSize: 12,
+  fontSize: 13,
   color: "var(--wb-black)",
   cursor: "pointer",
 };
 const scroller: React.CSSProperties = { flex: 1, minHeight: 0, overflow: "auto" };
 const empty: React.CSSProperties = {
   padding: 12,
-  fontSize: 12,
+  fontSize: 13,
   opacity: 0.7,
   fontFamily: "var(--wb-font)",
   lineHeight: 1.6,
