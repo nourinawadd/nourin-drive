@@ -362,4 +362,4 @@ const playlistRow: React.CSSProperties = {
   cursor: "pointer",
 };
 const hint: React.CSSProperties = { margin: "6px 0 0", fontSize: 11, opacity: 0.7, lineHeight: 1.5 };
-const emptyNote: React.CSSProperties = { padding: 16, fontSize: 12, lineHeight: 1.6, opacity: 0.75 };
+const emptyNote: React.CSSProperties = { padding: 16, fontSize: 14, lineHeight: 1.6, opacity: 0.75 };

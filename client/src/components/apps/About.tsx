@@ -137,7 +137,7 @@ const sectionTitle: React.CSSProperties = {
   color: "var(--wb-white)",
   padding: "1px 6px",
 };
-const para: React.CSSProperties = { margin: "0 0 8px", fontSize: 13, lineHeight: 1.35 };
+const para: React.CSSProperties = { margin: "0 0 8px", fontSize: 14, lineHeight: 1.4 };
 const chip: React.CSSProperties = {
   fontSize: 12,
   padding: "1px 6px",
@@ -147,8 +147,8 @@ const chip: React.CSSProperties = {
 const ul: React.CSSProperties = {
   margin: "4px 0 0",
   paddingLeft: 18,
-  fontSize: 12,
-  lineHeight: 1.3,
+  fontSize: 14,
+  lineHeight: 1.4,
 };
 const link: React.CSSProperties = {
   color: "#0055aa",

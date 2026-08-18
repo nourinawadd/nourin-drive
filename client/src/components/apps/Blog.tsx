@@ -86,7 +86,7 @@ function OfflinePanel({ url }: { url: string }) {
     <div style={overlay}>
       <div style={panel}>
         <strong>The blog didn&apos;t load.</strong>
-        <p style={{ margin: "8px 0 12px", fontSize: 13 }}>
+        <p style={{ margin: "8px 0 12px", fontSize: 14 }}>
           {post ? `“${post.title}” lives at ` : "It lives at "}
           <code>{url}</code>
           {". It&apos;s a separate site, so it may be down, or not running locally yet."}

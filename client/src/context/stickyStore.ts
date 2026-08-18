@@ -22,9 +22,9 @@ const mkId = () => `note-${nextId++}`;
 
 // Seeded notes replace the old desktop "clippings", roughly where they sat.
 const SEED: StickyNote[] = [
-  { id: mkId(), text: "Drag me around ✎", x: 60, y: 96, color: COLORS[0], rotate: -5 },
-  { id: mkId(), text: "Double-click Notes:\nto add your own", x: 232, y: 250, color: COLORS[1], rotate: 4 },
-  { id: mkId(), text: "Heads up! I vanish\non refresh.", x: 120, y: 392, color: COLORS[2], rotate: -3 },
+  { id: mkId(), text: "ch.7 problems 1, 4 and 9-12", x: 60, y: 96, color: COLORS[0], rotate: -5 },
+  { id: mkId(), text: "office hours thu 2pm, ask about the extension", x: 232, y: 250, color: COLORS[1], rotate: 4 },
+  { id: mkId(), text: "print the lab report tonight", x: 120, y: 392, color: COLORS[2], rotate: -3 },
 ];
 
 type State = { notes: StickyNote[] };

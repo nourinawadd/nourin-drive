@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ComponentType, MouseEvent as ReactMouseEvent } from "react";
 import { useWindowStore } from "@/context/windowStore";
 import { useStickyStore } from "@/context/stickyStore";
+import { playSfx } from "@/lib/sfx";
 import type { AppId } from "@/types/window";
 import {
   IconFloppyUser,
@@ -25,7 +26,7 @@ import {
 // don't: `game` and `properties` only exist once something hands them a
 // payload, and `easter-egg` would stop being one.
 //
-// `appId` opens an app window; a drive without one (Notes) runs a custom
+// `appId` opens an app window; a drive without one (Sticky Notes) runs a custom
 // action on open instead - handled in the double-click below.
 const DRIVES: { id: string; label: string; appId?: AppId; Icon: ComponentType }[] = [
   { id: "work",      label: "User:",      appId: "profile",   Icon: IconFloppyUser },
@@ -39,7 +40,7 @@ const DRIVES: { id: string; label: string; appId?: AppId; Icon: ComponentType }[
   { id: "guestbook", label: "Guestbook:", appId: "guestbook", Icon: IconFloppyQuill },
   { id: "music",     label: "Music:",     appId: "music",     Icon: IconFloppyMusic },
   { id: "browser",   label: "Browser:",   appId: "browser",   Icon: IconFloppyGlobe },
-  { id: "stickies",  label: "Notes:",     Icon: IconFloppyStickies },
+  { id: "stickies",  label: "Sticky Notes:", Icon: IconFloppyStickies },
   { id: "trash",     label: "Trash:",     appId: "recycle",   Icon: IconTrashcan },
 ];
 
@@ -124,8 +125,15 @@ export function DriveColumn() {
           className={`wb-drive${selected === d.id ? " is-selected" : ""}`}
           style={{ left: pos[d.id].x, top: pos[d.id].y }}
           onMouseDown={(e) => startDrag(e, d.id)}
-          onClick={() => setSelected(d.id)}
-          onDoubleClick={() => (d.appId ? openApp(d.appId) : addSticky())}
+          onClick={() => {
+            if (selected !== d.id) playSfx("select");
+            setSelected(d.id);
+          }}
+          onDoubleClick={() => {
+            playSfx("launch");
+            if (d.appId) openApp(d.appId);
+            else addSticky();
+          }}
         >
           <div className="wb-drive-icon">
             <d.Icon />

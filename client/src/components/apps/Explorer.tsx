@@ -77,7 +77,7 @@ export function Explorer({ winId, payload }: { winId: string; payload: unknown }
         break;
       case "game": {
         const build = LOCAL_GAMES[action.projectId];
-        if (build) openApp("game", { payload: { src: build.src, name: action.name }, title: action.name });
+        if (build?.src) openApp("game", { payload: { src: build.src, name: action.name }, title: action.name });
         else if (action.url) window.open(action.url, "_blank", "noopener,noreferrer");
         break;
       }
@@ -857,7 +857,7 @@ const iconLabel: React.CSSProperties = {
 };
 const emptyNote: React.CSSProperties = {
   padding: 12,
-  fontSize: 12,
+  fontSize: 14,
   opacity: 0.6,
 };
 const statusBar: React.CSSProperties = {

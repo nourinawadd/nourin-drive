@@ -193,7 +193,7 @@ const navBtn: React.CSSProperties = {
 };
 const empty: React.CSSProperties = {
   padding: 12,
-  fontSize: 12,
+  fontSize: 14,
   opacity: 0.75,
   lineHeight: 1.6,
   fontFamily: "var(--wb-font)",

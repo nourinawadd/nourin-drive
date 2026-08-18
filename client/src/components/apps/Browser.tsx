@@ -8,6 +8,7 @@ import {
   type BrowserPayload,
   type BrowserTab,
 } from "@/context/windowStore";
+import { playSfx } from "@/lib/sfx";
 
 const SLOW_LOAD_MS = 10000;
 
@@ -22,6 +23,7 @@ const FRAMING_BLOCKED_HOSTS = [
   "stackoverflow.com",
   "google.com",
   "youtube.com",
+  "itch.io",
 ];
 
 type BlockReason = "framing" | "insecure" | "slow";
@@ -42,9 +44,12 @@ function blockReason(url: string): BlockReason | null {
   return blocked ? "framing" : null;
 }
 
-type Bookmark = { label: string; url: string; group: "pinned" | "dev" };
+type Bookmark = { label: string; url: string; group: "mine" | "pinned" | "dev" };
 
 const BOOKMARKS: Bookmark[] = [
+  { label: "Blog",            url: "https://blog.nourin.is-a.dev",              group: "mine" },
+  { label: "Anchor",          url: "https://anchor-iesq.onrender.com",          group: "mine" },
+  { label: "Tether Note",     url: "https://tethernote.vercel.app",             group: "mine" },
   { label: "Github",          url: "https://github.com/nourinawadd",            group: "pinned" },
   { label: "LinkedIn",        url: "https://linkedin.com/in/nourinawad",        group: "pinned" },
   { label: "Instagram",       url: "https://instagram.com/diarydump.jpg",       group: "pinned" },
@@ -202,7 +207,12 @@ export function Browser({ winId, payload }: { winId: string; payload?: unknown }
             title={b.url}
             style={{
               ...bookmarkChip,
-              background: b.group === "pinned" ? "var(--wb-orange)" : "var(--wb-white)",
+              background:
+                b.group === "mine"
+                  ? "var(--wb-orange)"
+                  : b.group === "pinned"
+                    ? "var(--wb-gray-0)"
+                    : "var(--wb-white)",
             }}
           >
             {b.label}
@@ -321,6 +331,9 @@ function BlockedRequester({
   onGoHome: () => void;
 }) {
   const copy = REFUSAL_COPY[reason];
+
+  useEffect(() => playSfx("error"), [url, reason]);
+
   return (
     <div className="wb-req-overlay" role="alertdialog" aria-label="System Request">
       <div className="wb-req-card">

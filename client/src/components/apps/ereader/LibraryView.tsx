@@ -190,14 +190,14 @@ const SHELF_BLURBS: Record<string, string> = {
 
 export function InfoView() {
   return (
-    <div style={{ maxWidth: 560, display: "flex", flexDirection: "column", gap: 10 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       <h2 style={sectionHeading}>About this library</h2>
       <p style={infoPara}>
         A reading room for things worth re-reading: poems and prose I wrote, and
         books I didn&apos;t.
       </p>
       <p style={infoPara}>
-        Everything on the <strong>Books</strong> shelf is someone else&apos;s work:
+        Everything on the <strong>Books</strong>{" "}shelf is someone else&apos;s work:
         freely available editions of published titles, kept here to read rather
         than to claim. Authorship is on every card. The <strong>Poems</strong> and{" "}
         <strong>Writings</strong> shelves are mine.
@@ -354,12 +354,12 @@ const shelfRow: React.CSSProperties = {
 };
 const emptyNote: React.CSSProperties = {
   padding: 16,
-  fontSize: 12,
+  fontSize: 14,
   lineHeight: 1.6,
   opacity: 0.75,
 };
 const infoPara: React.CSSProperties = {
   margin: 0,
-  fontSize: 12,
+  fontSize: 14,
   lineHeight: 1.55,
 };

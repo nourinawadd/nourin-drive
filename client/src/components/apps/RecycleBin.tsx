@@ -35,8 +35,7 @@ the one i use everywhere: nope`,
 [ ] start a podcast
 [ ] go to bed before 2am
 [ ] reply to that email
-[ ] reply to that other email
-[ ] stop opening random files`,
+[ ] reply to that other email`,
   },
   {
     name: "ex.jpg",
@@ -52,15 +51,6 @@ the one i use everywhere: nope`,
     content:
 `you deleted it.
 you absolutely deleted it.`,
-  },
-  {
-    name: "screenshot_2027-09-12_at_4.41.07_AM.png",
-    size: "812 KB",
-    deleted: "minutes ago",
-    content:
-`probably a meme.
-probably for a group chat.
-probably never sent.`,
   },
   {
     name: "secrets.env",
