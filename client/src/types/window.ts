@@ -26,6 +26,7 @@ export type WindowInstance = {
   z: number;
   minimized: boolean;
   maximized: boolean;  // filling the desktop (Windows-style); x/y/w/h keep the restore bounds
+  noMaximize?: boolean; // set by the app itself, e.g. the music mini player
   payload?: unknown;   // arbitrary per-instance data (e.g. the ereader's page)
 };
 

@@ -28,6 +28,7 @@ type Actions = {
   minimize: (id: string) => void;
   restore: (id: string) => void;
   toggleMaximize: (id: string) => void;
+  setNoMaximize: (id: string, value: boolean) => void;
 };
 
 let nextId = 1;
@@ -168,10 +169,17 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
   // Windows-style maximize/restore. We only flip the flag: the frame keeps its
   // stored x/y/w/h as the restore bounds and paints the maximized rect itself,
   // so toggling back needs no saved geometry. Also focuses + brings to front.
+  setNoMaximize: (id, value) =>
+    set((s) => ({
+      windows: s.windows.map((w) =>
+        w.id === id ? { ...w, noMaximize: value, maximized: value ? false : w.maximized } : w,
+      ),
+    })),
+
   toggleMaximize: (id) =>
     set((s) => {
       const win = s.windows.find((w) => w.id === id);
-      if (!win || APP_REGISTRY[win.appId].fixed) return s;
+      if (!win || APP_REGISTRY[win.appId].fixed || win.noMaximize) return s;
       const z = s.zCounter + 1;
       return {
         windows: s.windows.map((w) =>

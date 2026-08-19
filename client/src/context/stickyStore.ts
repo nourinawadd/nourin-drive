@@ -28,16 +28,21 @@ const MINICON_BAND = 100;   // 76px minicon cell + 16px margin + 8px gap
 const RIGHT_MARGIN = 16;
 const FALLBACK_W = 1280;
 
+// How far each seeded note sits from the band's left edge. Not a formula: the
+// scatter is hand-placed so the three read as dropped there rather than filed.
+const SEED_DX = [0, -80, 58];
+
 function bandX(viewportW: number, i: number): number {
   const right = viewportW - RIGHT_MARGIN - MINICON_BAND - STICKY_W;
-  return Math.max(RIGHT_MARGIN, right - (i % 3) * 18);
+  const dx = SEED_DX[i] ?? -(i % 3) * 18;
+  return Math.max(RIGHT_MARGIN, Math.min(right + dx, viewportW - RIGHT_MARGIN - STICKY_W));
 }
 
 // Seeded notes replace the old desktop "clippings".
 const SEED: StickyNote[] = [
-  { id: mkId(), text: "HW: ch.7 problems 1, 4 and 9-12", x: bandX(FALLBACK_W, 0), y: 96, color: COLORS[0], rotate: -5 },
-  { id: mkId(), text: "remind huda of the presentation tomorrow!!", x: bandX(FALLBACK_W, 1), y: 250, color: COLORS[1], rotate: 4 },
-  { id: mkId(), text: "IMP: print the lab report", x: bandX(FALLBACK_W, 2), y: 404, color: COLORS[2], rotate: -3 },
+  { id: mkId(), text: "HW: ch.7 problems 1, 4 and 9-12", x: bandX(FALLBACK_W, 0), y: 100, color: COLORS[0], rotate: -5 },
+  { id: mkId(), text: "remind huda of the presentation tomorrow!!", x: bandX(FALLBACK_W, 1), y: 240, color: COLORS[1], rotate: -2 },
+  { id: mkId(), text: "IMP: print the lab report", x: bandX(FALLBACK_W, 2), y: 412, color: COLORS[2], rotate: -3 },
 ];
 
 type State = { notes: StickyNote[] };

@@ -11,7 +11,7 @@ import type { AppDef, AppId } from "@/types/window";
 export const APP_REGISTRY: Record<AppId, AppDef> = {
   readme: {
     appId: "readme", title: "About This Site",
-    fixed: { width: 1390, height: 626 },
+    fixed: { width: 1180, height: 520 },
     singleton: true,
   },
   apis: {

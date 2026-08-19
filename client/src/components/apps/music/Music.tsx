@@ -39,6 +39,7 @@ export type MusicPayload = {
 export function Music({ winId, payload }: { winId: string; payload: unknown }) {
   const patchPayload = useWindowStore((s) => s.patchPayload);
   const updateBounds = useWindowStore((s) => s.updateBounds);
+  const setNoMaximize = useWindowStore((s) => s.setNoMaximize);
   const saved = (payload ?? {}) as MusicPayload;
 
   const setState = useCallback(
@@ -112,9 +113,14 @@ export function Music({ winId, payload }: { winId: string; payload: unknown }) {
   function toggleMini() {
     const win = useWindowStore.getState().windows.find((w) => w.id === winId);
     if (!mini) {
+      // Also drops out of maximized: that state paints the whole desktop and
+      // ignores the window's own w/h, so shrinking the bounds alone would leave
+      // the mini player full screen.
+      setNoMaximize(winId, true);
       setState({ mini: true, prevSize: win ? { width: win.width, height: win.height } : undefined });
       updateBounds(winId, { width: MINI_W, height: MINI_H });
     } else {
+      setNoMaximize(winId, false);
       setState({ mini: false });
       updateBounds(winId, saved.prevSize ?? defaultSize(APP_REGISTRY.music));
     }

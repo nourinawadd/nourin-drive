@@ -20,7 +20,11 @@ let pending: Promise<PdfjsModule> | null = null;
 export function loadPdfjs(): Promise<PdfjsModule> {
   if (!pending) {
     pending = import("pdfjs-dist").then((mod) => {
-      mod.GlobalWorkerOptions.workerSrc = "/vendor/pdf.worker.min.mjs";
+      // Version query, not a bare path: the worker filename is stable, so a
+      // browser that cached it under a wrong Content-Type would keep using the
+      // broken copy. Keying on the library version also guarantees the worker
+      // and the API can never be a version apart.
+      mod.GlobalWorkerOptions.workerSrc = `/vendor/pdf.worker.min.mjs?v=${mod.version}`;
       return mod;
     });
   }

@@ -37,6 +37,7 @@ export function WindowFrame({ win, children }: Props) {
 
   const def = APP_REGISTRY[win.appId];
   const active = focusedId === win.id;
+  const canMaximize = !def.fixed && !win.noMaximize;
 
   if (win.minimized) return null;
 
@@ -87,7 +88,7 @@ export function WindowFrame({ win, children }: Props) {
       >
         <div
           className={`wb-titlebar${active ? "" : " is-inactive"}`}
-          onDoubleClick={() => { if (!def.fixed) toggleMaximize(win.id); }}
+          onDoubleClick={() => { if (canMaximize) toggleMaximize(win.id); }}
         >
           <div className="wb-title-text">{win.title}</div>
           <div className="wb-winbtns">
@@ -104,7 +105,7 @@ export function WindowFrame({ win, children }: Props) {
             >
               <WinMinGlyph />
             </button>}
-            {!def.fixed && <button
+            {canMaximize && <button
               type="button"
               className="wb-winbtn wb-winbtn--max"
               aria-label={win.maximized ? "Restore" : "Maximize"}

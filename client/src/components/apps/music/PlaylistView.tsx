@@ -183,38 +183,53 @@ export function PlaylistPicker({ onOpen }: { onOpen: (name: string) => void }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       <h2 style={sectionHeading}>Playlists</h2>
-      {PLAYLISTS.map((p) => {
-        const arts = playlistArt(p.name);
-        return (
-          <button key={p.name} type="button" onClick={() => onOpen(p.name)} style={playlistRow}>
-            <span style={{ display: "flex", gap: 3, flexShrink: 0 }}>
-              {(arts.length ? arts : [null]).map((src, i) => (
-                <span
-                  key={i}
-                  style={{
-                    width: 34,
-                    height: 34,
-                    border: "1px solid var(--wb-black)",
-                    ...(src
-                      ? {
+      <div style={grid} role="list">
+        {PLAYLISTS.map((p) => {
+          // Up to four covers, laid out as a square mosaic the way a playlist
+          // thumbnail usually reads. Fewer than four just fills the row.
+          const arts = playlistArt(p.name).slice(0, 4);
+          return (
+            <button
+              key={p.name}
+              type="button"
+              role="listitem"
+              onClick={() => onOpen(p.name)}
+              style={tile}
+              title={`${p.name} · ${p.count} track${p.count === 1 ? "" : "s"}`}
+            >
+              <span style={{ ...tileArt, background: gradFor(p.name) }}>
+                {arts.length > 0 && (
+                  <span
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: arts.length > 1 ? "1fr 1fr" : "1fr",
+                      gridAutoRows: arts.length > 2 ? "1fr 1fr" : "1fr",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    {arts.map((src, i) => (
+                      <span
+                        key={i}
+                        style={{
                           backgroundImage: `url("${src}")`,
                           backgroundSize: "cover",
                           backgroundPosition: "center",
-                        }
-                      : { background: gradFor(p.name) }),
-                  }}
-                />
-              ))}
-            </span>
-            <span style={{ minWidth: 0, textAlign: "left" }}>
-              <span style={{ fontSize: 14, fontWeight: "bold", display: "block" }}>{p.name}</span>
-              <span style={{ fontSize: 12, opacity: 0.75 }}>
+                          gridColumn: arts.length === 3 && i === 0 ? "span 2" : undefined,
+                        }}
+                      />
+                    ))}
+                  </span>
+                )}
+              </span>
+              <span style={tileTitle}>{p.name}</span>
+              <span style={tileArtist}>
                 {p.count} track{p.count === 1 ? "" : "s"}
               </span>
-            </span>
-          </button>
-        );
-      })}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -345,16 +360,4 @@ const rowThumb: React.CSSProperties = {
 };
 
 const sectionHeading: React.CSSProperties = { margin: "0 0 6px", fontSize: 14, fontWeight: "bold" };
-const playlistRow: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 10,
-  padding: 6,
-  background: "var(--wb-gray)",
-  border: "1px solid var(--wb-black)",
-  boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-3)",
-  fontFamily: "var(--wb-font)",
-  color: "var(--wb-black)",
-  cursor: "pointer",
-};
 const emptyNote: React.CSSProperties = { padding: 16, fontSize: 15, lineHeight: 1.6, opacity: 0.75 };

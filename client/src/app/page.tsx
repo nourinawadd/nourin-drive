@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AudioEngine } from "@/components/os/AudioEngine";
 import { BootScreen } from "@/components/os/BootScreen";
 import { DesktopStickies } from "@/components/os/DesktopStickies";
@@ -15,7 +15,8 @@ import { TopMenubar } from "@/components/os/TopMenubar";
 import { WindowLayer } from "@/components/os/WindowLayer";
 import { useWindowStore } from "@/context/windowStore";
 import { findPost } from "@/data/blog";
-import { KEY_README_SEEN, readFlag, writeFlag } from "@/lib/localStore";
+import { playSfx } from "@/lib/sfx";
+import { deepLinkParams, hasDeepLink } from "@/lib/deepLink";
 
 /**
  * `?doc=<id>` opens the Ereader on that document - the link the reader's Share
@@ -27,7 +28,7 @@ import { KEY_README_SEEN, readFlag, writeFlag } from "@/lib/localStore";
 function useDeepLink() {
   const openApp = useWindowStore((s) => s.openApp);
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = deepLinkParams();
     const docId = params.get("doc");
     const postSlug = params.get("post");
     const photoId = params.get("photo");
@@ -49,25 +50,32 @@ function useDeepLink() {
 }
 
 /**
- * First visit gets the readme opened for them - a desktop nobody has seen
- * before doesn't explain itself. Declared after useDeepLink so its effect runs
- * second: a shared ?doc= / ?post= link has already opened its window by then,
- * and the windows check below leaves that visitor alone.
+ * The readme introduces itself a beat after the disk goes in, rather than being
+ * there the instant the desktop appears - the pause reads as the machine
+ * finishing its boot. Skipped entirely when something else is already open,
+ * which is what a shared deep link does.
  */
-function useFirstRun() {
+const README_DELAY_MS = 2000;
+
+function useReadmeAfterBoot(booted: boolean) {
   const openApp = useWindowStore((s) => s.openApp);
   useEffect(() => {
-    if (readFlag(KEY_README_SEEN)) return;
-    if (useWindowStore.getState().windows.length > 0) return;
-    writeFlag(KEY_README_SEEN, true);
-    openApp("readme");
-  }, [openApp]);
+    if (!booted) return;
+    if (hasDeepLink()) return;
+    const t = setTimeout(() => {
+      if (useWindowStore.getState().windows.length > 0) return;
+      playSfx("open");
+      openApp("readme");
+    }, README_DELAY_MS);
+    return () => clearTimeout(t);
+  }, [booted, openApp]);
 }
 
 function Desktop() {
   const openApp = useWindowStore((s) => s.openApp);
+  const [booted, setBooted] = useState(false);
   useDeepLink();
-  useFirstRun();
+  useReadmeAfterBoot(booted);
 
   return (
     <main
@@ -81,7 +89,7 @@ function Desktop() {
       <WindowLayer />
       <DesktopTray />
 
-      <BootScreen />
+      <BootScreen onBoot={() => setBooted(true)} />
       {/* Outside WindowLayer on purpose: a minimized window unmounts, and the
           music should not stop just because you put the player away. */}
       <AudioEngine />
