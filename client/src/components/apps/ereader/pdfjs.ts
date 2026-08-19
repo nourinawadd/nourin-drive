@@ -38,15 +38,21 @@ export async function renderPageToCanvas(
   page: { getViewport: (o: { scale: number }) => { width: number; height: number } } & Record<string, unknown>,
   canvas: HTMLCanvasElement,
   cssWidth: number,
+  cssMaxHeight?: number,
 ): Promise<void> {
   const base = page.getViewport({ scale: 1 });
-  const scale = cssWidth / base.width;
+  // Contain, not just fit-width: a portrait page scaled to the column width
+  // overflows the pane vertically, which reads as "opened zoomed in".
+  let scale = cssWidth / base.width;
+  if (cssMaxHeight && base.height * scale > cssMaxHeight) {
+    scale = cssMaxHeight / base.height;
+  }
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const viewport = page.getViewport({ scale: scale * dpr });
 
   canvas.width = Math.floor(viewport.width);
   canvas.height = Math.floor(viewport.height);
-  canvas.style.width = `${Math.floor(cssWidth)}px`;
+  canvas.style.width = `${Math.floor(viewport.width / dpr)}px`;
   canvas.style.height = `${Math.floor(viewport.height / dpr)}px`;
 
   const ctx = canvas.getContext("2d");

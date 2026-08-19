@@ -23,6 +23,20 @@ export function PdfPane({ src, page, columns, zoom, onPageCount }: PdfPaneProps)
   const [doc, setDoc] = useState<Doc | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const surfaceRef = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState({ w: 0, h: 0 });
+
+  // Measured on the scrolling surface, not the row inside it: measuring the row
+  // would feed its own overflow back in and never settle.
+  useEffect(() => {
+    const el = surfaceRef.current;
+    if (!el) return;
+    const read = () => setBox({ w: el.clientWidth, h: el.clientHeight });
+    read();
+    const ro = new ResizeObserver(read);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [doc]);
 
   // ── open the document ────────────────────────────────────────────────
   useEffect(() => {
@@ -78,22 +92,33 @@ export function PdfPane({ src, page, columns, zoom, onPageCount }: PdfPaneProps)
   }
 
   const pages = columns === 2 ? [page, page + 1] : [page];
+  const availWidth = Math.max(
+    120,
+    (box.w - PAD * 2 - (columns === 2 ? GAP : 0)) / columns,
+  );
+  const availHeight = Math.max(120, box.h - PAD * 2);
 
   return (
-    <div className="wb-paper" style={{ ...surface, overflow: "auto" }}>
+    <div ref={surfaceRef} className="wb-paper" style={{ ...surface, overflow: "auto" }}>
       <div
         style={{
           display: "flex",
           justifyContent: "center",
-          alignItems: "flex-start",
-          gap: 16,
-          padding: 16,
+          alignItems: "center",
+          gap: GAP,
+          padding: PAD,
           minHeight: "100%",
         }}
       >
         {pages.map((p) =>
           p < doc.numPages ? (
-            <PdfPage key={p} doc={doc} index={p} zoom={zoom} columns={columns} />
+            <PdfPage
+              key={p}
+              doc={doc}
+              index={p}
+              maxWidth={availWidth * zoom}
+              maxHeight={availHeight * zoom}
+            />
           ) : (
             // Keeps the left page from sliding to the middle on the last odd
             // page of a spread.
@@ -105,50 +130,34 @@ export function PdfPane({ src, page, columns, zoom, onPageCount }: PdfPaneProps)
   );
 }
 
-/** One rendered page. Re-renders on zoom, column change and container resize. */
+/** One rendered page, scaled to fit the box it is given. */
 function PdfPage({
-  doc, index, zoom, columns,
+  doc, index, maxWidth, maxHeight,
 }: {
   doc: Doc;
   index: number;
-  zoom: number;
-  columns: 1 | 2;
+  maxWidth: number;
+  maxHeight: number;
 }) {
-  const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [available, setAvailable] = useState(0);
-
-  // Width the page may occupy, measured from the flex row that holds it.
-  useEffect(() => {
-    const el = wrap.current?.parentElement;
-    if (!el) return;
-    const read = () => {
-      const gutters = 32 + (columns === 2 ? 16 : 0);
-      setAvailable(Math.max(120, (el.clientWidth - gutters) / columns));
-    };
-    read();
-    const ro = new ResizeObserver(read);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [columns]);
 
   useEffect(() => {
-    if (!available) return;
+    if (!maxWidth || !maxHeight) return;
     let cancelled = false;
     doc
       .getPage(index + 1)
       .then(async (pdfPage) => {
         if (cancelled || !canvas.current) return;
-        await renderPageToCanvas(pdfPage, canvas.current, available * zoom);
+        await renderPageToCanvas(pdfPage, canvas.current, maxWidth, maxHeight);
       })
       .catch(() => {
         // A cancelled render (page turn mid-paint) rejects; nothing to do.
       });
     return () => { cancelled = true; };
-  }, [doc, index, available, zoom]);
+  }, [doc, index, maxWidth, maxHeight]);
 
   return (
-    <div ref={wrap} style={{ flex: "0 0 auto" }}>
+    <div style={{ flex: "0 0 auto" }}>
       <canvas
         ref={canvas}
         style={{
@@ -161,5 +170,7 @@ function PdfPage({
   );
 }
 
+const PAD = 16;
+const GAP = 16;
 const surface: React.CSSProperties = { flex: 1, minHeight: 0, minWidth: 0 };
 const centered: React.CSSProperties = { display: "grid", placeItems: "center" };
