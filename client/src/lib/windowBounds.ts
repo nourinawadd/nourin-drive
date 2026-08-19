@@ -26,16 +26,24 @@ export function viewportSize() {
   return { w: window.innerWidth, h: window.innerHeight };
 }
 
-export function defaultSize(def: Pick<AppDef, "minWidth" | "minHeight">) {
+export function defaultSize(def: Pick<AppDef, "minWidth" | "minHeight" | "preferred">) {
   const { w: vw, h: vh } = viewportSize();
   const usableH = Math.max(1, vh - MENUBAR_H);
   return {
-    width: clamp(def.minWidth ?? MIN_W, Math.round(vw * WIDTH_RATIO), vw - EDGE_MARGIN * 2),
-    height: clamp(def.minHeight ?? MIN_H, Math.round(usableH * HEIGHT_RATIO), usableH - EDGE_MARGIN),
+    width: clamp(
+      def.minWidth ?? MIN_W,
+      def.preferred?.width ?? Math.round(vw * WIDTH_RATIO),
+      vw - EDGE_MARGIN * 2,
+    ),
+    height: clamp(
+      def.minHeight ?? MIN_H,
+      def.preferred?.height ?? Math.round(usableH * HEIGHT_RATIO),
+      usableH - EDGE_MARGIN,
+    ),
   };
 }
 
-export function defaultBounds(def: Pick<AppDef, "minWidth" | "minHeight" | "fixed">, index: number) {
+export function defaultBounds(def: Pick<AppDef, "minWidth" | "minHeight" | "fixed" | "preferred">, index: number) {
   const { w: vw, h: vh } = viewportSize();
   if (def.fixed) {
     const width = Math.min(def.fixed.width, vw - EDGE_MARGIN * 2);

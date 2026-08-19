@@ -26,10 +26,6 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     appId: "browser", title: "Browser",
     singleton: true,
   },
-  "easter-egg": {
-    appId: "easter-egg", title: "???",
-    singleton: true,
-  },
   ereader: {
     appId: "ereader", title: "Ereader",
     minWidth: 480, minHeight: 360,
@@ -63,6 +59,24 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
   music: {
     appId: "music", title: "Music Player",
     minWidth: 260, minHeight: 116,
+    singleton: true,
+  },
+  prefs: {
+    appId: "prefs", title: "Prefs",
+    minWidth: 260, minHeight: 200,
+    preferred: { width: 360, height: 260 },
+    singleton: true,
+  },
+  "prefs-palette": {
+    appId: "prefs-palette", title: "Palette",
+    minWidth: 380, minHeight: 240,
+    preferred: { width: 580, height: 400 },
+    singleton: true,
+  },
+  "prefs-pattern": {
+    appId: "prefs-pattern", title: "WBPattern",
+    minWidth: 380, minHeight: 240,
+    preferred: { width: 580, height: 300 },
     singleton: true,
   },
   profile: {

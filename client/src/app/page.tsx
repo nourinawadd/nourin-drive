@@ -8,9 +8,11 @@ import { DesktopTray } from "@/components/os/DesktopTray";
 import { DriveColumn } from "@/components/os/DriveColumn";
 import { MinimizedIcons } from "@/components/os/MinimizedIcons";
 import { MobileGate } from "@/components/os/MobileGate";
+import { PrefsEngine } from "@/components/os/PrefsEngine";
 import { KonamiListener } from "@/components/os/KonamiListener";
 import { SessionGate } from "@/components/os/SessionGate";
 import { SfxEngine } from "@/components/os/SfxEngine";
+import { SignalReveal } from "@/components/os/SignalReveal";
 import { TopMenubar } from "@/components/os/TopMenubar";
 import { WindowLayer } from "@/components/os/WindowLayer";
 import { useWindowStore } from "@/context/windowStore";
@@ -72,8 +74,8 @@ function useReadmeAfterBoot(booted: boolean) {
 }
 
 function Desktop() {
-  const openApp = useWindowStore((s) => s.openApp);
   const [booted, setBooted] = useState(false);
+  const [signal, setSignal] = useState(false);
   useDeepLink();
   useReadmeAfterBoot(booted);
 
@@ -94,7 +96,9 @@ function Desktop() {
           music should not stop just because you put the player away. */}
       <AudioEngine />
       <SfxEngine />
-      <KonamiListener onTrigger={() => openApp("easter-egg")} />
+      <PrefsEngine />
+      {!signal && <KonamiListener onTrigger={() => setSignal(true)} />}
+      <SignalReveal open={signal} onClose={() => setSignal(false)} />
     </main>
   );
 }

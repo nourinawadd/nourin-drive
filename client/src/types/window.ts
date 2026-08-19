@@ -3,7 +3,6 @@ export type AppId =
   | "apis"
   | "blog"
   | "browser"
-  | "easter-egg"
   | "ereader"
   | "explorer"
   | "gallery"
@@ -11,6 +10,9 @@ export type AppId =
   | "games"
   | "guestbook"
   | "music"
+  | "prefs"
+  | "prefs-palette"
+  | "prefs-pattern"
   | "profile"
   | "properties"
   | "recycle";
@@ -36,5 +38,6 @@ export type AppDef = {
   minWidth?: number;
   minHeight?: number;
   fixed?: { width: number; height: number };
+  preferred?: { width: number; height: number };
   singleton: boolean;  // re-opening focuses existing instance
 };

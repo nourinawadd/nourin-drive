@@ -19,6 +19,8 @@ export const KEY_VISIT_COUNTED = "wb:guestbook-counted";
  *  and the last track, so the player comes back how you left it. */
 export const KEY_PLAYER = "wb:player";
 export const KEY_SFX = "wb:sfx";
+/** Desktop appearance chosen in Prefs - the palette and backdrop pattern ids. */
+export const KEY_PREFS = "wb:prefs";
 export const KEY_SESSION = "wb:session";
 /** Seen the About This Site window once, so it stops opening itself. */
 export const KEY_README_SEEN = "wb:readme-seen";

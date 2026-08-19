@@ -25,6 +25,7 @@ const ITEMS: Item[] = [
   { name: "Blog", line: "Whatever I've been chewing on lately.", appId: "blog", Icon: APP_ICONS.blog },
   { name: "Ereader", line: "A reading room for my poems and writing, plus books worth keeping.", appId: "ereader", Icon: APP_ICONS.ereader },
   { name: "Browser", line: "A browser, inside a browser. Bookmarks included.", appId: "browser", Icon: APP_ICONS.browser },
+  { name: "Prefs", line: "Repaint the desktop. Pick a palette and a backdrop, and it remembers.", appId: "prefs", Icon: APP_ICONS.prefs },
   { name: "API Studio", line: "Fire real HTTP requests at real endpoints and read what comes back.", appId: "apis", Icon: APP_ICONS.apis },
   { name: "Music Player", line: "What I've had on repeat. Keeps playing while you wander off.", appId: "music", Icon: APP_ICONS.music },
   { name: "Guestbook", line: "Sign it. I do read them.", appId: "guestbook", Icon: APP_ICONS.guestbook },

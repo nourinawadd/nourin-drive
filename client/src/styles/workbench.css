@@ -45,11 +45,11 @@ body {
 }
 
 /* ------- dithered desktop pattern ----------------------------------- */
-/* 2x2 checker built from a tiny SVG. Two dark blues alternate per pixel. */
+/* Fills and tile size come from tokens.css so Prefs can swap both. */
 .wb-desktop-bg {
   background-color: var(--wb-blue);
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='2' height='2'><rect width='1' height='1' x='0' y='0' fill='%230055aa'/><rect width='1' height='1' x='1' y='1' fill='%230055aa'/><rect width='1' height='1' x='1' y='0' fill='%23114488'/><rect width='1' height='1' x='0' y='1' fill='%23114488'/></svg>");
-  background-size: 2px 2px;
+  background-image: var(--wb-desktop-image);
+  background-size: var(--wb-desktop-size, 2px 2px);
   image-rendering: pixelated;
 }
 
@@ -447,7 +447,7 @@ body {
 .wb-prose p { margin: 6px 0; line-height: 1.3; }
 .wb-prose ul, .wb-prose ol { padding-left: 20px; margin: 6px 0; }
 .wb-prose li { margin: 2px 0; line-height: 1.3; }
-.wb-prose a { color: #0055aa; text-decoration: underline; }
+.wb-prose a { color: var(--wb-link); text-decoration: underline; }
 .wb-prose code {
   background: var(--wb-gray);
   padding: 0 3px;
@@ -928,6 +928,7 @@ body {
   padding: 3px 6px;
   border-left: 3px solid var(--wb-orange);
   background: rgba(255, 136, 0, 0.08);
+  background: color-mix(in srgb, var(--wb-orange) 8%, transparent);
   font-size: 14px;
 }
 .wb-gb-reply-who { color: var(--wb-orange-d); font-weight: bold; }
@@ -947,4 +948,86 @@ body {
   .wb-stand {
     transition: none;
   }
+}
+
+.wb-signal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--wb-black);
+  opacity: 0;
+  transition: opacity var(--wb-signal-fade, 1100ms) linear;
+  overflow: hidden;
+  cursor: default;
+}
+.wb-signal.is-lit { opacity: 1; }
+.wb-signal.is-leaving {
+  opacity: 0;
+  transition-duration: 600ms;
+}
+
+.wb-signal-scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.5) 3px,
+    rgba(0, 0, 0, 0.5) 4px
+  );
+}
+.wb-signal-scan::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 20%;
+  background: linear-gradient(
+    to bottom,
+    rgba(207, 224, 210, 0) 0%,
+    rgba(207, 224, 210, 0.04) 50%,
+    rgba(207, 224, 210, 0) 100%
+  );
+  animation: wb-signal-band 6.5s linear infinite;
+}
+
+@keyframes wb-signal-band {
+  from { top: -22%; }
+  to   { top: 100%; }
+}
+
+.wb-signal-line {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-54%, -50%);
+  margin: 0;
+  max-width: 92vw;
+  font-family: var(--wb-font);
+  font-size: clamp(19px, 3.1vw, 42px);
+  letter-spacing: 2px;
+  white-space: nowrap;
+  user-select: text;
+}
+.wb-signal-host { color: #37423a; }
+.wb-signal-code {
+  color: #cfe0d2;
+  text-shadow: 0 0 12px rgba(207, 224, 210, 0.35);
+}
+.wb-signal-cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.95em;
+  margin-left: 0.1em;
+  vertical-align: -0.1em;
+  background: #cfe0d2;
+  animation: wb-blink 1.06s step-end infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wb-signal { transition: none; }
+  .wb-signal-scan::after { display: none; }
+  .wb-signal-cursor { animation: none; }
 }

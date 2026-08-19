@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { SpeakerOffGlyph, SpeakerOnGlyph } from "@/components/os/icons";
 import { useSfxStore } from "@/context/sfxStore";
+import { usePrefsStore } from "@/context/prefsStore";
 import { useWindowStore } from "@/context/windowStore";
 import { playSfx } from "@/lib/sfx";
 
@@ -86,6 +87,9 @@ export function TopMenubar() {
       items: [
         { label: "About This Site", run: () => openApp("readme") },
         { label: "Guestbook", run: () => openApp("guestbook") },
+        "sep",
+        { label: "Preferences", run: () => openApp("prefs") },
+        { label: "Reset Preferences", run: () => usePrefsStore.getState().reset() },
         "sep",
         { label: "Reboot", run: () => window.location.reload() },
       ],

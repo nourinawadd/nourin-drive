@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /*.mp3$
+Disallow: /*.wav$

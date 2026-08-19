@@ -97,6 +97,29 @@ function fire(name: SfxName, queuedAt: number): void {
   source.start();
 }
 
+export function playTick(level = 0.045): void {
+  if (!ctx || ctx.state !== "running") return;
+
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const env = ctx.createGain();
+
+  osc.type = "square";
+  osc.frequency.setValueAtTime(1500 + Math.random() * 600, now);
+  env.gain.setValueAtTime(0, now);
+  env.gain.linearRampToValueAtTime(level, now + 0.001);
+  env.gain.exponentialRampToValueAtTime(0.0001, now + 0.016);
+
+  osc.connect(env);
+  env.connect(ctx.destination);
+  osc.onended = () => {
+    osc.disconnect();
+    env.disconnect();
+  };
+  osc.start(now);
+  osc.stop(now + 0.02);
+}
+
 export function playSfx(name: SfxName): void {
   if (!enabled || !ready) return;
 

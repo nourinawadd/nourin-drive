@@ -15,7 +15,15 @@ export type StickyNote = {
 
 // Paper tints - soft enough to read as sticky notes, still framed by the hard
 // black border + pixel shadow that keeps them on-theme.
-const COLORS = ["#ffe27a", "#9ad3c8", "#f6a96b", "#c7a6f0"];
+const tint = (token: string, pct: number) =>
+  `color-mix(in srgb, var(${token}) ${pct}%, var(--wb-white))`;
+
+const COLORS = [
+  tint("--wb-yellow", 70),
+  tint("--wb-teal", 45),
+  tint("--wb-tan", 60),
+  tint("--wb-purple", 45),
+];
 
 let nextId = 1;
 const mkId = () => `note-${nextId++}`;
