@@ -7,6 +7,7 @@ import { APP_REGISTRY } from "@/data/appRegistry";
 import type { WindowInstance } from "@/types/window";
 import { WinMinGlyph, WinMaxGlyph, WinRestoreGlyph, WinCloseGlyph } from "@/components/os/icons";
 import { MENUBAR_H } from "@/lib/windowBounds";
+import { emitWinDrag } from "@/lib/winDrag";
 
 type Props = {
   win: WindowInstance;
@@ -67,12 +68,20 @@ export function WindowFrame({ win, children }: Props) {
       disableDragging={win.maximized}
       enableResizing={!win.maximized && !def.fixed}
       style={{ zIndex: win.z }}
-      onDragStart={() => focus(win.id)}
+      onDragStart={() => {
+        focus(win.id);
+        emitWinDrag(win.id, true);
+      }}
       onDragStop={(_e, d) => {
         updateBounds(win.id, { x: d.x, y: Math.max(MENUBAR_H, d.y) });
+        emitWinDrag(win.id, false);
       }}
-      onResizeStart={() => focus(win.id)}
+      onResizeStart={() => {
+        focus(win.id);
+        emitWinDrag(win.id, true);
+      }}
       onResizeStop={(_e, _dir, ref, _delta, pos) => {
+        emitWinDrag(win.id, false);
         updateBounds(win.id, {
           x: pos.x,
           y: Math.max(MENUBAR_H, pos.y),

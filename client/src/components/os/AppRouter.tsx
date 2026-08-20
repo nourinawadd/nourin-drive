@@ -13,6 +13,7 @@ import { Guestbook } from "@/components/apps/Guestbook";
 import { Music } from "@/components/apps/music/Music";
 import { PaletteEditor } from "@/components/apps/prefs/PaletteEditor";
 import { PatternEditor } from "@/components/apps/prefs/PatternEditor";
+import { PetEditor } from "@/components/apps/prefs/PetEditor";
 import { PrefsDrawer } from "@/components/apps/prefs/PrefsDrawer";
 import { ScreensaverEditor } from "@/components/apps/prefs/ScreensaverEditor";
 import { Profile } from "@/components/apps/Profile";
@@ -39,6 +40,7 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "prefs-palette": return <PaletteEditor />;
     case "prefs-pattern": return <PatternEditor />;
     case "prefs-screensaver": return <ScreensaverEditor />;
+    case "prefs-pet": return <PetEditor />;
     case "profile":     return <Profile />;
     case "properties":  return <Properties winId={win.id} payload={win.payload} />;
     case "recycle":     return <RecycleBin />;

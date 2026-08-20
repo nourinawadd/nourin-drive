@@ -1057,3 +1057,24 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .wb-saver { transition: none; }
 }
+
+.wb-pet-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 902;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.wb-pet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 48px;
+  height: 48px;
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+  will-change: transform;
+}
+.wb-pet:active { cursor: grabbing; }

@@ -85,6 +85,12 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     preferred: { width: 580, height: 330 },
     singleton: true,
   },
+  "prefs-pet": {
+    appId: "prefs-pet", title: "Pet",
+    minWidth: 400, minHeight: 280,
+    preferred: { width: 580, height: 360 },
+    singleton: true,
+  },
   profile: {
     appId: "profile", title: "User Profile",
     minWidth: 480, minHeight: 400,

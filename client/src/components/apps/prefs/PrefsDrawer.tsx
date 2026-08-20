@@ -6,6 +6,7 @@ import { useWindowStore } from "@/context/windowStore";
 import { usePrefsStore } from "@/context/prefsStore";
 import { DEFAULT_PALETTE, DEFAULT_PATTERN } from "@/data/prefs";
 import { DEFAULT_IDLE, DEFAULT_SAVER } from "@/data/savers";
+import { DEFAULT_DELAY, DEFAULT_PET } from "@/data/pets";
 import { DockPhoto } from "@/components/os/icons";
 import { playSfx } from "@/lib/sfx";
 import type { AppId } from "@/types/window";
@@ -17,6 +18,7 @@ const TOOLS: Tool[] = [
   { id: "palette", name: "Palette", appId: "prefs-palette", Icon: DockPhoto },
   { id: "pattern", name: "WBPattern", appId: "prefs-pattern", Icon: DockPhoto },
   { id: "saver", name: "ScreenSaver", appId: "prefs-screensaver", Icon: DockPhoto },
+  { id: "pet", name: "Pet", appId: "prefs-pet", Icon: DockPhoto },
 ];
 
 export function PrefsDrawer() {
@@ -26,13 +28,17 @@ export function PrefsDrawer() {
   const pattern = usePrefsStore((s) => s.pattern);
   const saver = usePrefsStore((s) => s.saver);
   const saverIdle = usePrefsStore((s) => s.saverIdle);
+  const pet = usePrefsStore((s) => s.pet);
+  const petDelay = usePrefsStore((s) => s.petDelay);
   const [selected, setSelected] = useState<string | null>(null);
 
   const isDefault =
     palette === DEFAULT_PALETTE &&
     pattern === DEFAULT_PATTERN &&
     saver === DEFAULT_SAVER &&
-    saverIdle === DEFAULT_IDLE;
+    saverIdle === DEFAULT_IDLE &&
+    pet === DEFAULT_PET &&
+    petDelay === DEFAULT_DELAY;
 
   return (
     <div style={shell}>

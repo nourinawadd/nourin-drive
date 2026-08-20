@@ -31,6 +31,7 @@ export const APP_ICONS: Record<AppId, ComponentType> = {
   "prefs-palette": DockPhoto,
   "prefs-pattern": DockPhoto,
   "prefs-screensaver": DockPhoto,
+  "prefs-pet": DockPhoto,
   profile: DockUser,
   properties: DockInfo,
   readme: DockInfo,

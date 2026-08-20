@@ -2,14 +2,24 @@ import { create } from "zustand";
 import { KEY_PREFS, clearKey, readJson, writeJson } from "@/lib/localStore";
 import { DEFAULT_PALETTE, DEFAULT_PATTERN, findPalette, findPattern } from "@/data/prefs";
 import { DEFAULT_IDLE, DEFAULT_SAVER, findIdle, findSaver } from "@/data/savers";
+import { DEFAULT_DELAY, DEFAULT_PET, findDelay, findPet } from "@/data/pets";
 
-type Saved = { palette: string; pattern: string; saver: string; saverIdle: number };
+type Saved = {
+  palette: string;
+  pattern: string;
+  saver: string;
+  saverIdle: number;
+  pet: string;
+  petDelay: number;
+};
 
 const DEFAULTS: Saved = {
   palette: DEFAULT_PALETTE,
   pattern: DEFAULT_PATTERN,
   saver: DEFAULT_SAVER,
   saverIdle: DEFAULT_IDLE,
+  pet: DEFAULT_PET,
+  petDelay: DEFAULT_DELAY,
 };
 
 type State = Saved & { hydrated: boolean };
@@ -19,14 +29,16 @@ type Actions = {
   setPattern: (id: string) => void;
   setSaver: (id: string) => void;
   setSaverIdle: (seconds: number) => void;
+  setPet: (id: string) => void;
+  setPetDelay: (seconds: number) => void;
   reset: () => void;
   hydrate: () => void;
 };
 
 export const usePrefsStore = create<State & Actions>((set, get) => {
   const persist = () => {
-    const { palette, pattern, saver, saverIdle } = get();
-    writeJson(KEY_PREFS, { palette, pattern, saver, saverIdle } satisfies Saved);
+    const { palette, pattern, saver, saverIdle, pet, petDelay } = get();
+    writeJson(KEY_PREFS, { palette, pattern, saver, saverIdle, pet, petDelay } satisfies Saved);
   };
 
   return {
@@ -50,7 +62,12 @@ export const usePrefsStore = create<State & Actions>((set, get) => {
         typeof saved.saverIdle === "number" && findIdle(saved.saverIdle)
           ? saved.saverIdle
           : DEFAULTS.saverIdle;
-      set({ palette, pattern, saver, saverIdle, hydrated: true });
+      const pet = typeof saved.pet === "string" && findPet(saved.pet) ? saved.pet : DEFAULTS.pet;
+      const petDelay =
+        typeof saved.petDelay === "number" && findDelay(saved.petDelay)
+          ? saved.petDelay
+          : DEFAULTS.petDelay;
+      set({ palette, pattern, saver, saverIdle, pet, petDelay, hydrated: true });
     },
 
     setPalette: (id) => {
@@ -74,6 +91,18 @@ export const usePrefsStore = create<State & Actions>((set, get) => {
     setSaverIdle: (seconds) => {
       if (!findIdle(seconds)) return;
       set({ saverIdle: seconds });
+      persist();
+    },
+
+    setPet: (id) => {
+      if (!findPet(id)) return;
+      set({ pet: id });
+      persist();
+    },
+
+    setPetDelay: (seconds) => {
+      if (!findDelay(seconds)) return;
+      set({ petDelay: seconds });
       persist();
     },
 

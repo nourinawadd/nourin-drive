@@ -12,18 +12,25 @@
 // WARNINGS (exit 0) - suspicious but sometimes deliberate: asymmetry on a
 //                     grid marked "symmetric", orphan pixels, corner-only
 //                     strokes, an object sitting on the field with no outline.
+//                     A grid marked "organic" skips the corner-only check:
+//                     creature sprites outline themselves with 1px diagonals.
 //
 // Pass a path to lint a candidate file instead of the committed one:
 //   node scripts/lint-icons.mjs /tmp/draft.json
 
 import { readFileSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const file = process.argv[2] ?? join(here, "..", "src", "data", "icon-grids.json");
+const dataDir = join(here, "..", "src", "data");
+const DEFAULT_FILES = [join(dataDir, "icon-grids.json"), join(dataDir, "pet-grids.json")];
+const files = process.argv.length > 2 ? process.argv.slice(2) : DEFAULT_FILES;
 
-const { palette, grids } = JSON.parse(readFileSync(file, "utf8"));
+const read = (path) => JSON.parse(readFileSync(path, "utf8"));
+
+const BASE_PALETTE = read(DEFAULT_FILES[0]).palette;
+let palette = BASE_PALETTE;
 
 // ── terminal colour ────────────────────────────────────────────────────
 const hexToRgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
@@ -101,7 +108,7 @@ function isDitherTile(comp) {
 function lint(name, grid) {
   const errors = [];
   const warnings = [];
-  const { w, h, rows, scale, symmetric, field } = grid;
+  const { w, h, rows, scale, symmetric, field, organic } = grid;
 
   if (!Number.isInteger(scale) || scale < 1) {
     errors.push(`scale must be a positive integer, got ${scale}`);
@@ -161,12 +168,14 @@ function lint(name, grid) {
   // Dither is the legitimate exception - its tiles are meant to be separate,
   // so a blob made entirely of 2×2 tiles is left alone.
   const byColor = new Map();
-  for (let y = 0; y < rows.length; y++) {
-    for (let x = 0; x < w; x++) {
-      const ch = rows[y][x];
-      if (ch === ".") continue;
-      if (!byColor.has(ch)) byColor.set(ch, []);
-      byColor.get(ch).push(at(x, y));
+  if (!organic) {
+    for (let y = 0; y < rows.length; y++) {
+      for (let x = 0; x < w; x++) {
+        const ch = rows[y][x];
+        if (ch === ".") continue;
+        if (!byColor.has(ch)) byColor.set(ch, []);
+        byColor.get(ch).push(at(x, y));
+      }
     }
   }
   for (const [ch, keys] of byColor) {
@@ -231,11 +240,16 @@ function lint(name, grid) {
 }
 
 // ── run ────────────────────────────────────────────────────────────────
-const names = Object.keys(grids);
 let totalErrors = 0;
 let totalWarnings = 0;
 
-console.log(`\n${BOLD}icon-grids.json${RESET} ${DIM} - ${names.length} grid(s)${RESET}\n`);
+for (const path of files) {
+const sheet = read(path);
+palette = sheet.palette ?? BASE_PALETTE;
+const grids = sheet.grids;
+const names = Object.keys(grids);
+
+console.log(`\n${BOLD}${basename(path)}${RESET} ${DIM} - ${names.length} grid(s)${RESET}\n`);
 
 for (const name of names) {
   const grid = grids[name];
@@ -253,6 +267,7 @@ for (const name of names) {
   for (const e of errors) console.log(`  ${RED}error${RESET}  ${e}`);
   for (const w of warnings) console.log(`  ${YELLOW}warn${RESET}   ${w}`);
   console.log();
+}
 }
 
 const summary = `${totalErrors} error(s), ${totalWarnings} warning(s)`;

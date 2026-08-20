@@ -12,6 +12,7 @@ import { PrefsEngine } from "@/components/os/PrefsEngine";
 import { KonamiListener } from "@/components/os/KonamiListener";
 import { SessionGate } from "@/components/os/SessionGate";
 import { SfxEngine } from "@/components/os/SfxEngine";
+import { PixelPet } from "@/components/os/pet/PixelPet";
 import { Screensaver } from "@/components/os/Screensaver";
 import { SignalReveal } from "@/components/os/SignalReveal";
 import { TopMenubar } from "@/components/os/TopMenubar";
@@ -123,6 +124,7 @@ function Desktop() {
         saverId={saver === SAVER_OFF ? DEFAULT_SAVER : saver}
         onWake={() => setSaving(false)}
       />
+      <PixelPet enabled={booted} />
     </main>
   );
 }
