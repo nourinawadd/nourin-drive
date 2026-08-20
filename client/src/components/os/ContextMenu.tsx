@@ -11,7 +11,8 @@ export type MenuItem =
       disabled?: boolean;
       /** Rendered right-aligned, e.g. a checkmark for the active view mode. */
       hint?: string;
-    };
+    }
+  | { kind: "submenu"; label: string; items: MenuItem[]; disabled?: boolean };
 
 type Props = {
   x: number;
@@ -70,26 +71,143 @@ export function ContextMenu({ x, y, items, onClose }: Props) {
       onPointerDown={(e) => e.stopPropagation()}
       onContextMenu={(e) => e.preventDefault()}
     >
-      {items.map((item, i) =>
-        item.kind === "separator" ? (
-          <div key={`sep-${i}`} style={separator} />
-        ) : (
-          <button
+      <MenuItems items={items} onClose={onClose} />
+    </div>
+  );
+}
+
+function MenuItems({ items, onClose }: { items: MenuItem[]; onClose: () => void }) {
+  return (
+    <>
+      {items.map((item, i) => {
+        if (item.kind === "separator") return <div key={`sep-${i}`} style={separator} />;
+        if (item.kind === "submenu") {
+          return (
+            <SubMenu
+              key={item.label}
+              label={item.label}
+              items={item.items}
+              disabled={item.disabled}
+              onClose={onClose}
+            />
+          );
+        }
+        return (
+          <MenuRow
             key={item.label}
-            role="menuitem"
+            label={item.label}
+            hint={item.hint}
             disabled={item.disabled}
             onClick={() => { item.onSelect?.(); onClose(); }}
-            style={{ ...menuItem, opacity: item.disabled ? 0.4 : 1 }}
-            onMouseEnter={(e) => {
-              if (item.disabled) return;
-              e.currentTarget.style.background = "var(--wb-orange)";
-            }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-          >
-            <span>{item.label}</span>
-            {item.hint && <span style={{ marginLeft: 16, opacity: 0.7 }}>{item.hint}</span>}
-          </button>
-        ),
+          />
+        );
+      })}
+    </>
+  );
+}
+
+type RowProps = {
+  label: string;
+  hint?: string;
+  disabled?: boolean;
+  active?: boolean;
+  expanded?: boolean;
+  rowRef?: React.Ref<HTMLButtonElement>;
+  onClick?: () => void;
+  onMouseEnter?: () => void;
+};
+
+function MenuRow({
+  label, hint, disabled, active, expanded, rowRef, onClick, onMouseEnter,
+}: RowProps) {
+  return (
+    <button
+      ref={rowRef}
+      role="menuitem"
+      disabled={disabled}
+      aria-haspopup={expanded === undefined ? undefined : "menu"}
+      aria-expanded={expanded}
+      onClick={onClick}
+      style={{
+        ...menuItem,
+        opacity: disabled ? 0.4 : 1,
+        background: active ? "var(--wb-orange)" : "transparent",
+      }}
+      onMouseEnter={(e) => {
+        onMouseEnter?.();
+        if (disabled) return;
+        e.currentTarget.style.background = "var(--wb-orange)";
+      }}
+      onMouseLeave={(e) => {
+        if (active) return;
+        e.currentTarget.style.background = "transparent";
+      }}
+    >
+      <span>{label}</span>
+      {hint && <span style={{ marginLeft: 16, opacity: 0.7 }}>{hint}</span>}
+    </button>
+  );
+}
+
+function SubMenu({
+  label, items, disabled, onClose,
+}: {
+  label: string;
+  items: MenuItem[];
+  disabled?: boolean;
+  onClose: () => void;
+}) {
+  const rowRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+
+  function openAt() {
+    if (disabled) return;
+    const r = rowRef.current?.getBoundingClientRect();
+    if (r) setPos({ x: r.right - 2, y: r.top - 1 });
+    setOpen(true);
+  }
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    const row = rowRef.current;
+    const panel = panelRef.current;
+    if (!row || !panel) return;
+    const r = row.getBoundingClientRect();
+    const { width, height } = panel.getBoundingClientRect();
+    const pad = 4;
+    setPos({
+      x: r.right - 2 + width > window.innerWidth - pad
+        ? Math.max(pad, r.left - width + 2)
+        : r.right - 2,
+      y: r.top - 1 + height > window.innerHeight - pad
+        ? Math.max(pad, window.innerHeight - pad - height)
+        : r.top - 1,
+    });
+  }, [open]);
+
+  return (
+    <div onMouseLeave={() => setOpen(false)}>
+      <MenuRow
+        label={label}
+        hint="&#9656;"
+        disabled={disabled}
+        active={open}
+        expanded={open}
+        rowRef={rowRef}
+        onClick={() => (open ? setOpen(false) : openAt())}
+        onMouseEnter={openAt}
+      />
+      {open && (
+        <div
+          ref={panelRef}
+          role="menu"
+          style={{ ...menu, left: pos.x, top: pos.y }}
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <MenuItems items={items} onClose={onClose} />
+        </div>
       )}
     </div>
   );

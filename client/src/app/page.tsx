@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AudioEngine } from "@/components/os/AudioEngine";
 import { BootScreen } from "@/components/os/BootScreen";
 import { DesktopStickies } from "@/components/os/DesktopStickies";
+import { DesktopMenu } from "@/components/os/DesktopMenu";
 import { DesktopTray } from "@/components/os/DesktopTray";
 import { DriveColumn } from "@/components/os/DriveColumn";
 import { MinimizedIcons } from "@/components/os/MinimizedIcons";
@@ -82,6 +83,7 @@ function Desktop() {
   const [booted, setBooted] = useState(false);
   const [signal, setSignal] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
   const saver = usePrefsStore((s) => s.saver);
   const saverIdle = usePrefsStore((s) => s.saverIdle);
   useDeepLink();
@@ -103,6 +105,11 @@ function Desktop() {
     <main
       className="wb-desktop-bg"
       style={{ width: "100vw", height: "100vh", position: "relative", overflow: "hidden" }}
+      onContextMenu={(e) => {
+        if (e.target !== e.currentTarget) return;
+        e.preventDefault();
+        setMenu({ x: e.clientX, y: e.clientY });
+      }}
     >
       <TopMenubar />
       <DriveColumn />
@@ -110,6 +117,7 @@ function Desktop() {
       <MinimizedIcons />
       <WindowLayer />
       <DesktopTray />
+      {menu && <DesktopMenu x={menu.x} y={menu.y} onClose={() => setMenu(null)} />}
 
       <BootScreen onBoot={() => setBooted(true)} />
       {/* Outside WindowLayer on purpose: a minimized window unmounts, and the

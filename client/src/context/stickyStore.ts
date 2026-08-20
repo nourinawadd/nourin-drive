@@ -32,9 +32,14 @@ const mkId = () => `note-${nextId++}`;
 // of minimised-window icons that hugs the edge. x depends on viewport width, so
 // the seeds use a fallback and DesktopStickies re-snaps them on mount.
 const STICKY_W = 156;
+const STICKY_H = 148;
 const MINICON_BAND = 100;   // 76px minicon cell + 16px margin + 8px gap
 const RIGHT_MARGIN = 16;
+const TOP_MARGIN = 24;
 const FALLBACK_W = 1280;
+const FALLBACK_H = 800;
+
+const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(v, hi));
 
 // How far each seeded note sits from the band's left edge. Not a formula: the
 // scatter is hand-placed so the three read as dropped there rather than filed.
@@ -55,7 +60,7 @@ const SEED: StickyNote[] = [
 
 type State = { notes: StickyNote[] };
 type Actions = {
-  add: () => string;
+  add: (at?: { x: number; y: number }) => string;
   reflow: (viewportW: number) => void;
   update: (id: string, text: string) => void;
   move: (id: string, x: number, y: number) => void;
@@ -67,14 +72,15 @@ export const useStickyStore = create<State & Actions>((set, get) => ({
 
   // Drop a fresh blank note into the right-hand band, cascaded so repeated
   // adds don't land exactly on top of each other.
-  add: () => {
+  add: (at) => {
     const i = get().notes.length;
     const w = typeof window === "undefined" ? FALLBACK_W : window.innerWidth;
+    const h = typeof window === "undefined" ? FALLBACK_H : window.innerHeight;
     const note: StickyNote = {
       id: mkId(),
       text: "",
-      x: bandX(w, i),
-      y: 96 + (i % 4) * 26,
+      x: at ? clamp(at.x, RIGHT_MARGIN, w - RIGHT_MARGIN - STICKY_W) : bandX(w, i),
+      y: at ? clamp(at.y, TOP_MARGIN, h - RIGHT_MARGIN - STICKY_H) : 96 + (i % 4) * 26,
       color: COLORS[i % COLORS.length],
       rotate: (i % 2 ? 1 : -1) * (2 + (i % 3)),
     };

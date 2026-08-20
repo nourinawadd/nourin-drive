@@ -526,7 +526,7 @@ function DropDown({ items, onClose }: { items: MenuItem[]; onClose: () => void }
         {items.map((item, i) =>
           item.kind === "separator" ? (
             <div key={`sep-${i}`} style={dropSeparator} />
-          ) : (
+          ) : item.kind === "submenu" ? null : (
             <button
               key={item.label}
               disabled={item.disabled}

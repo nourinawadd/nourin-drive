@@ -39,6 +39,7 @@ const GETTING_AROUND = [
   "Drag anything. Windows move by their title bar, icons go wherever you drop them.",
   "Minimise a window and it shrinks to an icon down the left edge. Double-click that to bring it back.",
   "Right-click an icon or a file for Properties.",
+  "Right-click the desktop itself for a new sticky, a tidy up and the palettes.",
   "Icons ▸ Clean Up puts every icon back where it started.",
   "The Window menu does the obvious: cascade, minimise all, restore all.",
 ];
