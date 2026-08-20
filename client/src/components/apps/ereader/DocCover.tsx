@@ -93,7 +93,7 @@ function PdfThumb({ doc, width, height }: { doc: LibraryDoc; width: number; heig
   );
 }
 
-function PlaceholderCover({ doc, width, height }: { doc: LibraryDoc; width: number; height: number }) {
+export function PlaceholderCover({ doc, width, height }: { doc: LibraryDoc; width: number; height: number }) {
   return (
     <div style={{ ...frame, width, height, position: "relative", background: "var(--wb-paper)" }}>
       <PlaceholderFace doc={doc} width={width} height={height} />
