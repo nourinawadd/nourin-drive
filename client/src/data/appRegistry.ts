@@ -79,6 +79,12 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     preferred: { width: 580, height: 300 },
     singleton: true,
   },
+  "prefs-screensaver": {
+    appId: "prefs-screensaver", title: "ScreenSaver",
+    minWidth: 400, minHeight: 260,
+    preferred: { width: 580, height: 330 },
+    singleton: true,
+  },
   profile: {
     appId: "profile", title: "User Profile",
     minWidth: 480, minHeight: 400,

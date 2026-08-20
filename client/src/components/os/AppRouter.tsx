@@ -14,6 +14,7 @@ import { Music } from "@/components/apps/music/Music";
 import { PaletteEditor } from "@/components/apps/prefs/PaletteEditor";
 import { PatternEditor } from "@/components/apps/prefs/PatternEditor";
 import { PrefsDrawer } from "@/components/apps/prefs/PrefsDrawer";
+import { ScreensaverEditor } from "@/components/apps/prefs/ScreensaverEditor";
 import { Profile } from "@/components/apps/Profile";
 import { Properties } from "@/components/apps/Properties";
 import { RecycleBin } from "@/components/apps/RecycleBin";
@@ -37,6 +38,7 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "prefs":       return <PrefsDrawer />;
     case "prefs-palette": return <PaletteEditor />;
     case "prefs-pattern": return <PatternEditor />;
+    case "prefs-screensaver": return <ScreensaverEditor />;
     case "profile":     return <Profile />;
     case "properties":  return <Properties winId={win.id} payload={win.payload} />;
     case "recycle":     return <RecycleBin />;

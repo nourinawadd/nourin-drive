@@ -121,6 +121,8 @@ export function TopMenubar() {
         { label: "API Studio", run: () => openApp("apis") },
         { label: "Shell", run: () => openApp("terminal") },
         { label: "Music Player", run: () => openApp("music") },
+        "sep",
+        { label: "Blank Screen", run: () => window.dispatchEvent(new Event("wb:blank-screen")) },
       ],
     },
   ];

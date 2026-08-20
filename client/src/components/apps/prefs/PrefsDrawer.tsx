@@ -5,6 +5,7 @@ import type { ComponentType } from "react";
 import { useWindowStore } from "@/context/windowStore";
 import { usePrefsStore } from "@/context/prefsStore";
 import { DEFAULT_PALETTE, DEFAULT_PATTERN } from "@/data/prefs";
+import { DEFAULT_IDLE, DEFAULT_SAVER } from "@/data/savers";
 import { DockPhoto } from "@/components/os/icons";
 import { playSfx } from "@/lib/sfx";
 import type { AppId } from "@/types/window";
@@ -15,6 +16,7 @@ type Tool = { id: string; name: string; appId: AppId; Icon: ComponentType };
 const TOOLS: Tool[] = [
   { id: "palette", name: "Palette", appId: "prefs-palette", Icon: DockPhoto },
   { id: "pattern", name: "WBPattern", appId: "prefs-pattern", Icon: DockPhoto },
+  { id: "saver", name: "ScreenSaver", appId: "prefs-screensaver", Icon: DockPhoto },
 ];
 
 export function PrefsDrawer() {
@@ -22,9 +24,15 @@ export function PrefsDrawer() {
   const reset = usePrefsStore((s) => s.reset);
   const palette = usePrefsStore((s) => s.palette);
   const pattern = usePrefsStore((s) => s.pattern);
+  const saver = usePrefsStore((s) => s.saver);
+  const saverIdle = usePrefsStore((s) => s.saverIdle);
   const [selected, setSelected] = useState<string | null>(null);
 
-  const isDefault = palette === DEFAULT_PALETTE && pattern === DEFAULT_PATTERN;
+  const isDefault =
+    palette === DEFAULT_PALETTE &&
+    pattern === DEFAULT_PATTERN &&
+    saver === DEFAULT_SAVER &&
+    saverIdle === DEFAULT_IDLE;
 
   return (
     <div style={shell}>

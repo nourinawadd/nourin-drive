@@ -15,11 +15,13 @@ export function PresetList({
   activeId,
   onPick,
   hint,
+  footer,
 }: {
   rows: PresetRow[];
   activeId: string;
   onPick: (id: string) => void;
   hint: string;
+  footer?: ReactNode;
 }) {
   return (
     <div style={shell}>
@@ -48,6 +50,7 @@ export function PresetList({
           );
         })}
       </div>
+      {footer}
       <div style={statusBar}>{hint}</div>
     </div>
   );

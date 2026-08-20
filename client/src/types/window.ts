@@ -13,6 +13,7 @@ export type AppId =
   | "prefs"
   | "prefs-palette"
   | "prefs-pattern"
+  | "prefs-screensaver"
   | "profile"
   | "properties"
   | "terminal"

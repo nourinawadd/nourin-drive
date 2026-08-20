@@ -12,13 +12,17 @@ import { PrefsEngine } from "@/components/os/PrefsEngine";
 import { KonamiListener } from "@/components/os/KonamiListener";
 import { SessionGate } from "@/components/os/SessionGate";
 import { SfxEngine } from "@/components/os/SfxEngine";
+import { Screensaver } from "@/components/os/Screensaver";
 import { SignalReveal } from "@/components/os/SignalReveal";
 import { TopMenubar } from "@/components/os/TopMenubar";
 import { WindowLayer } from "@/components/os/WindowLayer";
+import { usePrefsStore } from "@/context/prefsStore";
 import { useWindowStore } from "@/context/windowStore";
 import { findPost } from "@/data/blog";
+import { DEFAULT_SAVER, SAVER_OFF } from "@/data/savers";
 import { playSfx } from "@/lib/sfx";
 import { deepLinkParams, hasDeepLink } from "@/lib/deepLink";
+import { useIdle } from "@/lib/idle";
 
 /**
  * `?doc=<id>` opens the Ereader on that document - the link the reader's Share
@@ -76,8 +80,23 @@ function useReadmeAfterBoot(booted: boolean) {
 function Desktop() {
   const [booted, setBooted] = useState(false);
   const [signal, setSignal] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const saver = usePrefsStore((s) => s.saver);
+  const saverIdle = usePrefsStore((s) => s.saverIdle);
   useDeepLink();
   useReadmeAfterBoot(booted);
+
+  useIdle({
+    timeoutMs: saverIdle * 1000,
+    enabled: booted && !signal && !saving && saver !== SAVER_OFF,
+    onIdle: () => setSaving(true),
+  });
+
+  useEffect(() => {
+    const onBlank = () => setSaving(true);
+    window.addEventListener("wb:blank-screen", onBlank);
+    return () => window.removeEventListener("wb:blank-screen", onBlank);
+  }, []);
 
   return (
     <main
@@ -99,6 +118,11 @@ function Desktop() {
       <PrefsEngine />
       {!signal && <KonamiListener onTrigger={() => setSignal(true)} />}
       <SignalReveal open={signal} onClose={() => setSignal(false)} />
+      <Screensaver
+        open={saving}
+        saverId={saver === SAVER_OFF ? DEFAULT_SAVER : saver}
+        onWake={() => setSaving(false)}
+      />
     </main>
   );
 }
