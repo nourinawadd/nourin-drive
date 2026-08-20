@@ -34,6 +34,7 @@ const DRIVES: { id: string; label: string; appId?: AppId; Icon: ComponentType }[
   { id: "work",      label: "User:",      appId: "profile",   Icon: IconFloppyUser },
   { id: "projects",  label: "Projects:",  appId: "explorer",  Icon: IconDrawer },
   { id: "apis",      label: "APIs:",      appId: "apis",      Icon: IconFloppyTerminal },
+  { id: "shell",     label: "Shell:",     appId: "terminal",  Icon: IconFloppyTerminal },
   { id: "games",     label: "Games:",     appId: "games",     Icon: IconFloppyJoystick },
   { id: "photos",    label: "Photos:",    appId: "gallery",   Icon: IconFloppyPhoto },
   { id: "blog",      label: "Blog:",      appId: "blog",      Icon: IconFloppyNotepad },

@@ -119,6 +119,7 @@ export function TopMenubar() {
         { label: "Ereader", run: () => openApp("ereader") },
         { label: "Blog", run: () => openApp("blog") },
         { label: "API Studio", run: () => openApp("apis") },
+        { label: "Shell", run: () => openApp("terminal") },
         { label: "Music Player", run: () => openApp("music") },
       ],
     },

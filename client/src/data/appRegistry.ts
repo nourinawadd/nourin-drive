@@ -91,6 +91,12 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     // once, and each window carries its own item in its payload.
     singleton: false,
   },
+  terminal: {
+    appId: "terminal", title: "Shell",
+    minWidth: 420, minHeight: 260,
+    preferred: { width: 760, height: 460 },
+    singleton: false,
+  },
   recycle: {
     appId: "recycle", title: "Recycle Bin",
     singleton: true,

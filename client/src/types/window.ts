@@ -15,6 +15,7 @@ export type AppId =
   | "prefs-pattern"
   | "profile"
   | "properties"
+  | "terminal"
   | "recycle";
 
 export type WindowInstance = {

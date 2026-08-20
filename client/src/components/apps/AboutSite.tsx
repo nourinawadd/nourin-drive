@@ -27,6 +27,7 @@ const ITEMS: Item[] = [
   { name: "Browser", line: "A browser, inside a browser. Bookmarks included.", appId: "browser", Icon: APP_ICONS.browser },
   { name: "Prefs", line: "Repaint the desktop. Pick a palette and a backdrop, and it remembers.", appId: "prefs", Icon: APP_ICONS.prefs },
   { name: "API Studio", line: "Fire real HTTP requests at real endpoints and read what comes back.", appId: "apis", Icon: APP_ICONS.apis },
+  { name: "Shell", line: "A command line for the desktop. Browse the drive, launch apps, or ssh into the real machine.", appId: "terminal", Icon: APP_ICONS.terminal },
   { name: "Music Player", line: "What I've had on repeat. Keeps playing while you wander off.", appId: "music", Icon: APP_ICONS.music },
   { name: "Guestbook", line: "Sign it. I do read them.", appId: "guestbook", Icon: APP_ICONS.guestbook },
   { name: "Sticky Notes", line: "Scratch paper for the desktop. Double-click for a fresh one.", Icon: DockStickies },

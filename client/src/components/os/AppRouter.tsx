@@ -17,6 +17,7 @@ import { PrefsDrawer } from "@/components/apps/prefs/PrefsDrawer";
 import { Profile } from "@/components/apps/Profile";
 import { Properties } from "@/components/apps/Properties";
 import { RecycleBin } from "@/components/apps/RecycleBin";
+import { Terminal } from "@/components/apps/terminal/Terminal";
 import type { WindowInstance } from "@/types/window";
 
 // Maps a window's appId to the component that renders its body.
@@ -39,6 +40,7 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "profile":     return <Profile />;
     case "properties":  return <Properties winId={win.id} payload={win.payload} />;
     case "recycle":     return <RecycleBin />;
+    case "terminal":    return <Terminal winId={win.id} payload={win.payload} />;
     default:            return null;
   }
 }

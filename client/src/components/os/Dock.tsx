@@ -21,6 +21,7 @@ const ITEMS: { id: string; Icon: ComponentType; title: string; appId: AppId }[] 
   { id: "ereader",  Icon: DockBook,      title: "Ereader",             appId: "ereader" },
   { id: "blog",     Icon: DockQuill,     title: "Blog",                appId: "blog" },
   { id: "apis",     Icon: DockTerminal,  title: "API Studio",          appId: "apis" },
+  { id: "terminal", Icon: DockTerminal,  title: "Shell",               appId: "terminal" },
   { id: "music",    Icon: DockMusic,     title: "Music Player",        appId: "music" },
   { id: "trash",    Icon: DockTrash,     title: "Recycle Bin",         appId: "recycle" },
 ];
