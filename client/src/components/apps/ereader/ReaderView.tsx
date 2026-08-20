@@ -3,18 +3,24 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { isShortForm, type LibraryDoc } from "@/data/library";
+import { useSeek } from "@/lib/useSeek";
 import { TextPane } from "./TextPane";
 import { downloadDoc, fetchBody, type InlineDoc, type ReadableDoc } from "./actions";
 
 // pdf.js lives in its own chunk - see pdfjs.ts for why. ssr:false because it
 // touches window/canvas on mount.
-const PdfPane = dynamic(() => import("./PdfPane").then((m) => m.PdfPane), {
-  ssr: false,
-  loading: () => (
+function PdfChunkLoading() {
+  useSeek(true);
+  return (
     <div className="wb-paper" style={{ flex: 1, display: "grid", placeItems: "center" }}>
       <span style={{ color: "var(--wb-paper-dim)", fontSize: 16 }}>Loading reader…</span>
     </div>
-  ),
+  );
+}
+
+const PdfPane = dynamic(() => import("./PdfPane").then((m) => m.PdfPane), {
+  ssr: false,
+  loading: () => <PdfChunkLoading />,
 });
 
 // Below this the spread collapses to a single page - two columns in a 500px
@@ -53,6 +59,14 @@ export function ReaderView({
   const shortForm = item.kind === "inline"
     ? true                                   // deleted-file text is always brief
     : isShortForm(item.doc);
+
+  useSeek(
+    item.kind === "library" &&
+      format !== "pdf" &&
+      item.doc.body == null &&
+      body === null &&
+      !bodyError,
+  );
 
   // ── oversized text: not inlined at build time, so fetch it ────────────
   useEffect(() => {

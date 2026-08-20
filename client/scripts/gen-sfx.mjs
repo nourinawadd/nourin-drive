@@ -200,6 +200,29 @@ const SOUNDS = {
       return out;
     },
   },
+  seek: {
+    seed: 110,
+    peak: 0.55,
+    render() {
+      const out = buffer(0.34);
+      [0, 0.075, 0.165, 0.235].forEach((at, i) => {
+        mix(out, noise({ dur: 0.035, cutoff: 0.28, curve: 3.2 }), at, 0.42 - i * 0.05);
+        mix(out, tone({ dur: 0.05, from: 124 - i * 9, wave: "square", curve: 3.2 }), at, 0.2);
+      });
+      mix(out, tone({ dur: 0.32, from: 57, to: 53, wave: "sine", curve: 1.1, attack: 0.02 }), 0, 0.3);
+      return out;
+    },
+  },
+  ready: {
+    seed: 120,
+    peak: 0.45,
+    render() {
+      const out = buffer(0.09);
+      mix(out, noise({ dur: 0.025, cutoff: 0.42, curve: 5 }), 0, 0.3);
+      mix(out, tone({ dur: 0.06, from: 880, to: 1180, curve: 3.2, attack: 0.001 }), 0.01, 0.42);
+      return out;
+    },
+  },
 };
 
 export function generate() {

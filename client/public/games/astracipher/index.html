@@ -216,6 +216,9 @@ const engine = new Engine(GODOT_CONFIG);
 			},
 		}).then(() => {
 			setStatusMode('hidden');
+			if (window.parent !== window) {
+				window.parent.postMessage({ type: 'game:ready' }, window.location.origin);
+			}
 		}, displayFailureNotice);
 	}
 }());

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSeek } from "@/lib/useSeek";
 import { loadPdfjs, renderPageToCanvas } from "./pdfjs";
 
 export type PdfPaneProps = {
@@ -25,6 +26,8 @@ export function PdfPane({ src, page, columns, zoom, onPageCount }: PdfPaneProps)
   const [loading, setLoading] = useState(true);
   const surfaceRef = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState({ w: 0, h: 0 });
+
+  useSeek(loading && !error);
 
   // Measured on the scrolling surface, not the row inside it: measuring the row
   // would feed its own overflow back in and never settle.

@@ -146,6 +146,9 @@
               document.querySelector("#unity-fullscreen-button").onclick = () => {
                 unityInstance.SetFullscreen(1);
               };
+              if (window.parent !== window) {
+                window.parent.postMessage({ type: 'game:ready' }, window.location.origin);
+              }
             }).catch((message) => {
               console.error('createUnityInstance promise rejected:', message);
               alert(message);

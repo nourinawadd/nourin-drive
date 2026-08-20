@@ -8,6 +8,8 @@ export const SFX_NAMES = [
   "select",
   "menu",
   "error",
+  "seek",
+  "ready",
 ] as const;
 
 export type SfxName = (typeof SFX_NAMES)[number];
@@ -128,4 +130,70 @@ export function playSfx(name: SfxName): void {
   lastFired.set(name, now);
 
   void ready.then(() => fire(name, now));
+}
+
+const SEEK_GAP_MIN_MS = 400;
+const SEEK_GAP_MAX_MS = 520;
+const SEEK_SETTLE_MS = 140;
+const SEEK_MAX_MS = 12_000;
+
+let seekHolders = 0;
+let seekTimer: ReturnType<typeof setTimeout> | null = null;
+let seekSettle: ReturnType<typeof setTimeout> | null = null;
+let seekRunning = false;
+let seekStartedAt = 0;
+let seekLimitMs = SEEK_MAX_MS;
+let seekCapped = false;
+
+function seekGap(): number {
+  return SEEK_GAP_MIN_MS + Math.random() * (SEEK_GAP_MAX_MS - SEEK_GAP_MIN_MS);
+}
+
+function seekTick(): void {
+  if (Date.now() - seekStartedAt > seekLimitMs) {
+    seekCapped = true;
+    seekTimer = null;
+    return;
+  }
+  playSfx("seek");
+  seekTimer = setTimeout(seekTick, seekGap());
+}
+
+export function startSeek(maxMs = SEEK_MAX_MS): () => void {
+  if (seekSettle !== null) {
+    clearTimeout(seekSettle);
+    seekSettle = null;
+  }
+
+  if (!seekRunning) {
+    seekRunning = true;
+    seekLimitMs = maxMs;
+    seekStartedAt = Date.now();
+    seekCapped = false;
+    seekTick();
+  } else if (seekTimer === null && !seekCapped) {
+    seekTimer = setTimeout(seekTick, seekGap());
+  }
+  seekHolders++;
+
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    seekHolders--;
+    if (seekHolders > 0) return;
+
+    if (seekTimer !== null) {
+      clearTimeout(seekTimer);
+      seekTimer = null;
+    }
+    seekSettle = setTimeout(() => {
+      seekSettle = null;
+      if (seekHolders > 0) return;
+      const capped = seekCapped;
+      seekRunning = false;
+      seekCapped = false;
+      if (!capped) playSfx("ready");
+    }, SEEK_SETTLE_MS);
+  };
 }
