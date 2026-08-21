@@ -18,6 +18,7 @@ import { Screensaver } from "@/components/os/Screensaver";
 import { SignalReveal } from "@/components/os/SignalReveal";
 import { TopMenubar } from "@/components/os/TopMenubar";
 import { WindowLayer } from "@/components/os/WindowLayer";
+import { WindowSwitcher } from "@/components/os/WindowSwitcher";
 import { usePrefsStore } from "@/context/prefsStore";
 import { useWindowStore } from "@/context/windowStore";
 import { findPost } from "@/data/blog";
@@ -124,6 +125,7 @@ function Desktop() {
           music should not stop just because you put the player away. */}
       <AudioEngine />
       <SfxEngine />
+      <WindowSwitcher />
       <PrefsEngine />
       {!signal && <KonamiListener onTrigger={() => setSignal(true)} />}
       <SignalReveal open={signal} onClose={() => setSignal(false)} />

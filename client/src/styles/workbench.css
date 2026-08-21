@@ -1177,3 +1177,68 @@ body {
 }
 .wb-mobile-foot p { margin: 2px 0; }
 .wb-mobile-foot .wb-req-gadgets { margin-top: 14px; }
+
+/* ------- Alt+` window switcher --------------------------------------- */
+
+.wb-switcher {
+  position: fixed;
+  inset: 0;
+  z-index: 10002;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.wb-switcher-panel {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: min(80vw, 720px);
+  padding: 12px;
+  background: var(--wb-gray);
+  border: 2px solid var(--wb-black);
+  box-shadow:
+    inset 1px 1px 0 var(--wb-white),
+    inset -1px -1px 0 var(--wb-gray-2),
+    4px 4px 0 var(--wb-black);
+  font-family: var(--wb-font);
+}
+.wb-switcher-tile {
+  width: 92px;
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid transparent;
+  color: var(--wb-black);
+  text-align: center;
+}
+.wb-switcher-tile.is-picked {
+  background: var(--wb-orange);
+  border-color: var(--wb-black);
+}
+.wb-switcher-icon {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  background: var(--wb-white);
+  border: 1px solid var(--wb-black);
+  box-shadow: inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-2);
+}
+.wb-switcher-icon svg { width: 40px; height: 40px; }
+.wb-switcher-label {
+  width: 100%;
+  font-size: 12px;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wb-switcher-min { font-size: 10px; opacity: 0.6; }
+
+/* The focused window needs to be identifiable without clicking to find out. */
+.wb-window.is-active > .wb-titlebar {
+  box-shadow: inset 0 0 0 1px var(--wb-orange);
+}
