@@ -225,7 +225,8 @@ function Dashboard({ setTab }: { setTab: (t: TabId) => void }) {
       {/* row 1: user profile + stats */}
       <div style={row}>
         <Panel title="USER PROFILE" style={{ flex: 1, minWidth: 260 }}>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "stretch" }}>
+            <FaceBox />
             <div style={{ flex: 1, minWidth: 170 }}>
               <div style={{ fontSize: 23, fontWeight: "bold", letterSpacing: 1 }}>{ABOUT.name.toUpperCase()}</div>
               <div style={kv}><span style={kKey}>User ID:</span> {USER_ID}</div>
@@ -293,6 +294,29 @@ function Dashboard({ setTab }: { setTab: (t: TabId) => void }) {
           ))}
           <ViewAll onClick={() => setTab("education")}>VIEW ALL ▶</ViewAll>
         </Panel>
+      </div>
+    </div>
+  );
+}
+
+/* ── portrait ─────────────────────────────────────────────────────────── */
+const FACE_SRC = "/profile/face.png";
+const FACE_W = 770;
+const FACE_H = 1083;
+const FACE_MIN_H = 200;
+const FACE_MAX_H = 380;
+
+function FaceBox() {
+  return (
+    <div style={faceFrame}>
+      <div style={faceStage}>
+        <img
+          src={FACE_SRC}
+          width={FACE_W}
+          height={FACE_H}
+          alt={`${ABOUT.name}, ASCII portrait`}
+          style={faceImg}
+        />
       </div>
     </div>
   );
@@ -476,6 +500,31 @@ const panelTitle: CSSProperties = {
   fontSize: 15,
 };
 const panelBody: CSSProperties = { padding: 8, minWidth: 0 };
+
+const FACE_PAPER = "#14140e";
+const faceFrame: CSSProperties = {
+  flexShrink: 0,
+  maxWidth: "100%",
+  boxSizing: "border-box",
+  border: `1px solid ${LINE}`,
+  background: FACE_PAPER,
+  padding: 4,
+  display: "flex",
+  flexDirection: "column",
+  alignSelf: "stretch",
+};
+const faceStage: CSSProperties = {
+  flex: 1,
+  minHeight: FACE_MIN_H,
+  maxHeight: FACE_MAX_H,
+  aspectRatio: `${FACE_W} / ${FACE_H}`,
+};
+const faceImg: CSSProperties = {
+  display: "block",
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+};
 
 const kv: CSSProperties = { marginTop: 3, fontSize: 15 };
 const kKey: CSSProperties = { color: DIM };
