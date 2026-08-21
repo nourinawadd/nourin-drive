@@ -1,4 +1,4 @@
-# NOURIN:
+# NOURIN-DRIVE:
 
 a personal computer.
 
@@ -8,7 +8,8 @@ windows open, drag, resize and stack. everything i make ends up in here somewher
 
 the name is an amiga volume. the desktop mounts `User:`, `Projects:`, `Games:`,
 `Music:`, `Library:` and `Trash:`, and the site is one more drive in that set.
-everything-nourin, mounted.
+everything-nourin, mounted. on a phone it drops to a plain landing page instead,
+the desktop needs a mouse and keyboard.
 
 ```
 https://nourin.is-a.dev        the desktop (next.js / mern)
@@ -49,6 +50,9 @@ the windows on the desktop:
 - **music player**: plays tracks from `public/music`, reads the embedded tags
 - **user profile**: a nourin-net style profile with pdf export
 - **ereader**: poems, writing and open-licence books in a pdf.js viewer
+- **shell**: a command line for the desktop, browse the drive, launch apps, or ssh into the real machine
+- **prefs**: repaint the desktop, palette, backdrop pattern, screensaver and a desktop pet
+- **sticky notes**: scratch paper that never leaves the browser
 - **recycle bin · about · easter egg**: desktop fixtures (the egg is a konami code)
 
 ## ✦ content

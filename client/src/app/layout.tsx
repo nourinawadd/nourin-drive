@@ -22,7 +22,7 @@ const paperFont = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NOURIN: · Nourin Awad",
+  title: "NOURIN-DRIVE: · Nourin Awad",
   description: "A personal computer. Everything-Nourin, mounted as an Amiga Workbench desktop.",
 };
 

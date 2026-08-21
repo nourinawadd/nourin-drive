@@ -11,7 +11,7 @@ import { MAX_LINES, tokenize } from "./types";
 import { chainFor, last, promptFor, resolve, sortNodes } from "./vfs";
 
 const BANNER = [
-  "NOURIN Shell",
+  "N-Shell",
   "",
   "help  what this shell can do",
   "ls    what is on the drive",

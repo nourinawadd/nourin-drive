@@ -4,7 +4,7 @@ export type Chain = FsFolder[];
 
 export const ROOT_CHAIN: Chain = [FS_ROOT];
 
-export const VOLUME = "NOURIN:";
+export const VOLUME = "NOURIN-DRIVE:";
 
 export function chainFor(cwdId: string): Chain {
   return pathTo(cwdId) ?? ROOT_CHAIN;

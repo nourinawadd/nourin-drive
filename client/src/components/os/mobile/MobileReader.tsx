@@ -62,7 +62,7 @@ function Bar({ title, tag }: { title: string; tag?: string }) {
 function Foot() {
   return (
     <div className="wb-mobile-foot">
-      <p>NOURIN: is a desktop simulation.</p>
+      <p>NOURIN-DRIVE: is a desktop simulation.</p>
       <p>There is a whole machine here on a computer.</p>
       <div className="wb-req-gadgets">
         <a className="wb-req-gadget" href={REPO_URL} target="_blank" rel="noreferrer">

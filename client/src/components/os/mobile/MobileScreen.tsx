@@ -14,7 +14,7 @@ export function MobileScreen() {
         <span className="wb-mobile-tag">{ABOUT.title}</span>
       </div>
       <div className="wb-mobile-card">
-        <p>NOURIN: is a desktop simulation, best explored with a mouse and keyboard.</p>
+        <p>NOURIN-DRIVE: is a desktop simulation, best explored with a mouse and keyboard.</p>
         <p>{ABOUT.bio[0]}</p>
         <div className="wb-req-gadgets">
           <a className="wb-req-gadget is-primary" href={BLOG_URL} target="_blank" rel="noreferrer">
