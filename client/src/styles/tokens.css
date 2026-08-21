@@ -25,8 +25,8 @@
   --wb-menu-bg: #aaaaaa;
   --wb-menu-fg: #000000;
 
-  --wb-desktop-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='2' height='2'><rect width='1' height='1' x='0' y='0' fill='%230055aa'/><rect width='1' height='1' x='1' y='1' fill='%230055aa'/><rect width='1' height='1' x='1' y='0' fill='%23114488'/><rect width='1' height='1' x='0' y='1' fill='%23114488'/></svg>");
-  --wb-desktop-size: 2px 2px;
+  --wb-desktop-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='2' height='2' shape-rendering='crispEdges'><rect width='1' height='1' x='0' y='0' fill='%230055aa'/><rect width='1' height='1' x='1' y='1' fill='%230055aa'/><rect width='1' height='1' x='1' y='0' fill='%23114488'/><rect width='1' height='1' x='0' y='1' fill='%23114488'/></svg>");
+  --wb-desktop-size: 6px 6px;
 
   --wb-title-h: 18px;
   --wb-menu-h:  18px;

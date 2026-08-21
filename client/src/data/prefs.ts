@@ -227,6 +227,8 @@ export function findPattern(id: string): Pattern | undefined {
   return PATTERNS.find((p) => p.id === id);
 }
 
+const DITHER_SCALE = 3;
+
 type Run = { x: number; width: number; fill: string };
 
 function rowRuns(row: string, colorA: string, colorB: string): Run[] {
@@ -252,7 +254,7 @@ export function patternSvg(pattern: Pattern, colorA: string, colorB: string): st
         .join(""),
     )
     .join("");
-  return `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'>${rects}</svg>`;
+  return `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' shape-rendering='crispEdges'>${rects}</svg>`;
 }
 
 export function patternImage(pattern: Pattern, colorA: string, colorB: string): string {
@@ -261,5 +263,5 @@ export function patternImage(pattern: Pattern, colorA: string, colorB: string): 
 }
 
 export function patternSize(pattern: Pattern): string {
-  return `${pattern.rows[0].length}px ${pattern.rows.length}px`;
+  return `${pattern.rows[0].length * DITHER_SCALE}px ${pattern.rows.length * DITHER_SCALE}px`;
 }
