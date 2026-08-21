@@ -48,7 +48,7 @@ const CREDITS =
   "Modelled on Commodore's AmigaOS 3.1 Workbench. Type is VT323. Every icon on this desktop was drawn by hand, one pixel at a time.";
 
 const NOTICES = [
-  "The guestbook keeps what you type in it. Nothing else is collected, no analytics and no tracking.",
+  "The guestbook keeps what you type in it. Optional analytics only measure page views and major app opens, never guestbook text or form contents.",
   "Sticky notes never leave your browser, and they vanish on refresh.",
   "One tab at a time please!",
 ];

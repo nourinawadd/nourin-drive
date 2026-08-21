@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { APP_REGISTRY } from "@/data/appRegistry";
 import { defaultBounds } from "@/lib/windowBounds";
+import { trackAppOpen } from "@/lib/analytics";
 import type { AppId, WindowInstance } from "@/types/window";
 
 // Default page for a fresh browser tab. Lives here (not in Browser.tsx) so the
@@ -60,6 +61,7 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
         const tabs = [...(prev?.tabs ?? []), tab];
         get().patchPayload(existing.id, { tabs, activeId: tab.id });
         get().restore(existing.id);
+        trackAppOpen(appId, true);
         return existing.id;
       }
       opts = { ...opts, payload: { tabs: [tab], activeId: tab.id } satisfies BrowserPayload };
@@ -67,6 +69,7 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
       const existing = get().windows.find((w) => w.appId === appId);
       if (existing) {
         get().restore(existing.id);
+        trackAppOpen(appId, true);
         return existing.id;
       }
     }
@@ -89,6 +92,7 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
       focusedId: win.id,
       zCounter: z,
     });
+    trackAppOpen(appId, false);
     return win.id;
   },
 
