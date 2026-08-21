@@ -11,7 +11,6 @@ import { MinimizedIcons } from "@/components/os/MinimizedIcons";
 import { MobileGate } from "@/components/os/MobileGate";
 import { PrefsEngine } from "@/components/os/PrefsEngine";
 import { KonamiListener } from "@/components/os/KonamiListener";
-import { SessionGate } from "@/components/os/SessionGate";
 import { SfxEngine } from "@/components/os/SfxEngine";
 import { PixelPet } from "@/components/os/pet/PixelPet";
 import { Screensaver } from "@/components/os/Screensaver";
@@ -142,9 +141,7 @@ function Desktop() {
 export default function Home() {
   return (
     <MobileGate>
-      <SessionGate>
-        <Desktop />
-      </SessionGate>
+      <Desktop />
     </MobileGate>
   );
 }
