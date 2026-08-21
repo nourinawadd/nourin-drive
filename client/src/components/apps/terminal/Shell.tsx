@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { APP_REGISTRY } from "@/data/appRegistry";
+import { HIDDEN_APPS } from "./commands/desktop";
 import { playSfx } from "@/lib/sfx";
 import { COMMAND_NAMES, lookup } from "./registry";
 import { appendLines, patch, readPayload } from "./payload";
@@ -26,7 +27,9 @@ const KIND_STYLE: Record<LineKind, React.CSSProperties> = {
   head: { color: "var(--wb-black)", fontWeight: "bold" },
 };
 
-const APP_IDS = Object.keys(APP_REGISTRY);
+const APP_IDS = Object.keys(APP_REGISTRY).filter(
+  (id) => !(HIDDEN_APPS as string[]).includes(id),
+);
 
 function commonPrefix(items: string[]): string {
   if (!items.length) return "";

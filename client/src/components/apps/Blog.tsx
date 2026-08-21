@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { BLOG_URL, findPost, postUrl } from "@/data/blog";
 import { useWindowStore } from "@/context/windowStore";
+import { getPostStats } from "@/lib/api";
 
 const LOAD_TIMEOUT_MS = 4000;
 
@@ -19,6 +21,12 @@ export function Blog({ winId, payload }: { winId: string; payload?: unknown }) {
 
   const p = payload as BlogPayload | undefined;
   const url = urlFor(p);
+
+  const statsQ = useQuery({
+    queryKey: ["blog", "stats", p?.slug],
+    queryFn: () => getPostStats(p!.slug!),
+    enabled: !!p?.slug,
+  });
 
   const [status, setStatus] = useState<"loading" | "ok" | "blocked">("loading");
   const [nonce, setNonce] = useState(0);
@@ -44,6 +52,12 @@ export function Blog({ winId, payload }: { winId: string; payload?: unknown }) {
         <button style={chromeBtn} onClick={() => setNonce((n) => n + 1)} title="Reload">⟳</button>
         <button style={chromeBtn} onClick={goHome} title="Blog index">⌂</button>
         <span style={address} title={url}>{url}</span>
+        {statsQ.data && (
+          <span style={stats} title={`${statsQ.data.views} views, ${statsQ.data.comments} comments`}>
+            {statsQ.data.views} views · {statsQ.data.comments}{" "}
+            {statsQ.data.comments === 1 ? "comment" : "comments"}
+          </span>
+        )}
         <a style={openBtn} href={url} target="_blank" rel="noopener noreferrer" title="Open in a real browser tab">
           Open ↗
         </a>
@@ -106,6 +120,14 @@ function LoadingPanel() {
     </div>
   );
 }
+
+const stats: React.CSSProperties = {
+  flexShrink: 0,
+  padding: "0 8px",
+  fontSize: 12,
+  opacity: 0.75,
+  whiteSpace: "nowrap",
+};
 
 const chrome: React.CSSProperties = {
   display: "flex",

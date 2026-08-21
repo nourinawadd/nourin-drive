@@ -22,6 +22,11 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     appId: "blog", title: "Blog",
     singleton: true,
   },
+  moderation: {
+    appId: "moderation", title: "Moderation",
+    minWidth: 460, minHeight: 320,
+    singleton: true,
+  },
   browser: {
     appId: "browser", title: "Browser",
     singleton: true,

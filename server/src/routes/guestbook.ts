@@ -4,8 +4,10 @@ import {
   countVisit,
   createEntry,
   deleteEntry,
+  listAllEntries,
   listEntries,
   replyToEntry,
+  setEntryVisibility,
   stats,
 } from "../controllers/guestbookController.js";
 import { requireAdmin } from "../middleware/auth.js";
@@ -23,9 +25,11 @@ const signLimiter = rateLimit({
   message: { error: "You've signed a few times already. Try again a bit later." },
 });
 
+guestbookRouter.get("/admin", requireAdmin, listAllEntries);
 guestbookRouter.get("/", listEntries);
 guestbookRouter.get("/stats", stats);
 guestbookRouter.post("/", signLimiter, createEntry);
 guestbookRouter.post("/visit", countVisit);
 guestbookRouter.patch("/:id/reply", requireAdmin, replyToEntry);
+guestbookRouter.patch("/:id/visibility", requireAdmin, setEntryVisibility);
 guestbookRouter.delete("/:id", requireAdmin, deleteEntry);

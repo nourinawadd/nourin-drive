@@ -36,5 +36,6 @@ export const APP_ICONS: Record<AppId, ComponentType> = {
   properties: DockInfo,
   readme: DockInfo,
   recycle: DockTrash,
+  moderation: DockQuill,
   terminal: DockTerminal,
 };

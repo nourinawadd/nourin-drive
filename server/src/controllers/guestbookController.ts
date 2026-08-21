@@ -7,7 +7,9 @@ const SEQ_KEY = "guestbook-seq";
 
 export async function listEntries(_req: Request, res: Response, next: NextFunction) {
   try {
-    const entries = await GuestbookEntry.find().sort({ createdAt: -1 }).limit(200);
+    const entries = await GuestbookEntry.find({ hidden: { $ne: true } })
+      .sort({ createdAt: -1 })
+      .limit(200);
     res.json(entries);
   } catch (err) { next(err); }
 }
@@ -33,7 +35,7 @@ export async function stats(_req: Request, res: Response, next: NextFunction) {
   try {
     const [visits, signatures] = await Promise.all([
       peek(VISITS_KEY),
-      GuestbookEntry.countDocuments(),
+      GuestbookEntry.countDocuments({ hidden: { $ne: true } }),
     ]);
     res.json({ visits, signatures });
   } catch (err) { next(err); }
@@ -43,7 +45,7 @@ export async function countVisit(_req: Request, res: Response, next: NextFunctio
   try {
     const [visits, signatures] = await Promise.all([
       bump(VISITS_KEY),
-      GuestbookEntry.countDocuments(),
+      GuestbookEntry.countDocuments({ hidden: { $ne: true } }),
     ]);
     res.json({ visits, signatures });
   } catch (err) { next(err); }
@@ -72,5 +74,25 @@ export async function deleteEntry(req: Request, res: Response, next: NextFunctio
     const removed = await GuestbookEntry.findByIdAndDelete(id);
     if (!removed) return res.status(404).json({ error: "not found" });
     res.json({ ok: true });
+  } catch (err) { next(err); }
+}
+
+export async function listAllEntries(_req: Request, res: Response, next: NextFunction) {
+  try {
+    const entries = await GuestbookEntry.find().sort({ createdAt: -1 }).limit(200);
+    res.json(entries);
+  } catch (err) { next(err); }
+}
+
+export async function setEntryVisibility(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { id } = req.params;
+    const { hidden } = req.body ?? {};
+    if (typeof hidden !== "boolean") {
+      return res.status(400).json({ error: "hidden must be true or false" });
+    }
+    const updated = await GuestbookEntry.findByIdAndUpdate(id, { hidden }, { new: true });
+    if (!updated) return res.status(404).json({ error: "not found" });
+    res.json(updated);
   } catch (err) { next(err); }
 }

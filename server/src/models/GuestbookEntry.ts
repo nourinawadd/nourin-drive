@@ -14,6 +14,8 @@ const guestbookSchema = new Schema(
     // counting backwards from the total for those.
     seq: { type: Number, index: true },
 
+    hidden: { type: Boolean, default: false, index: true },
+
     // Webmaster reply, shown indented under the entry.
     reply:     { type: String, trim: true, maxlength: 280 },
     repliedAt: { type: Date },

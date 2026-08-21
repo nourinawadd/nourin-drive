@@ -18,7 +18,8 @@ export type AppId =
   | "profile"
   | "properties"
   | "terminal"
-  | "recycle";
+  | "recycle"
+  | "moderation";
 
 export type WindowInstance = {
   id: string;          // unique per open window

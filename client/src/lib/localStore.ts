@@ -22,6 +22,8 @@ export const KEY_SFX = "wb:sfx";
 /** Desktop appearance chosen in Prefs - the palette and backdrop pattern ids. */
 export const KEY_PREFS = "wb:prefs";
 export const KEY_SESSION = "wb:session";
+/** Admin bearer token, pasted into the Moderation window. */
+export const KEY_ADMIN = "wb:admin";
 /** Seen the About This Site window once, so it stops opening itself. */
 export const KEY_README_SEEN = "wb:readme-seen";
 

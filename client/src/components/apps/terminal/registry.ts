@@ -5,6 +5,7 @@ import { FILE_COMMANDS } from "./commands/files";
 import { DESKTOP_COMMANDS } from "./commands/desktop";
 import { NETWORK_COMMANDS } from "./commands/network";
 import { ssh } from "./commands/ssh";
+import { mod } from "./commands/moderation";
 
 const GROUP_LABELS: Record<CommandGroup, string> = {
   files: "files",
@@ -84,7 +85,9 @@ export const ALIASES: Record<string, string> = {
   connect: "ssh",
 };
 
-const BY_NAME = new Map(COMMANDS.map((c) => [c.name, c]));
+const HIDDEN_COMMANDS: Command[] = [mod];
+
+const BY_NAME = new Map([...COMMANDS, ...HIDDEN_COMMANDS].map((c) => [c.name, c]));
 
 export function lookup(name: string): Command | undefined {
   const key = name.toLowerCase();

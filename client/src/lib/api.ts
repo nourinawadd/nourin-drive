@@ -52,3 +52,76 @@ export function apiErrorMessage(err: unknown, fallback = "something went wrong")
   }
   return err instanceof Error && err.message ? err.message : fallback;
 }
+
+export type PostStats = { views: number; comments: number };
+
+export async function getPostStats(slug: string) {
+  const { data } = await api.get<PostStats>(`/api/blog/${encodeURIComponent(slug)}/stats`);
+  return data;
+}
+
+export type ModeratedEntry = GuestbookEntry & { hidden?: boolean };
+
+export type BlogComment = {
+  _id: string;
+  slug: string;
+  name: string;
+  message: string;
+  seq?: number;
+  hidden?: boolean;
+  reply?: string;
+  repliedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+function auth(token: string) {
+  return { headers: { Authorization: `Bearer ${token}` } };
+}
+
+export async function listAllGuestbook(token: string) {
+  const { data } = await api.get<ModeratedEntry[]>("/api/guestbook/admin", auth(token));
+  return data;
+}
+
+export async function listAllComments(token: string) {
+  const { data } = await api.get<BlogComment[]>("/api/blog/admin/comments", auth(token));
+  return data;
+}
+
+export async function setGuestbookHidden(token: string, id: string, hidden: boolean) {
+  const { data } = await api.patch<ModeratedEntry>(`/api/guestbook/${id}/visibility`, { hidden }, auth(token));
+  return data;
+}
+
+export async function setCommentHidden(token: string, id: string, hidden: boolean) {
+  const { data } = await api.patch<BlogComment>(`/api/blog/comments/${id}/visibility`, { hidden }, auth(token));
+  return data;
+}
+
+export async function replyToGuestbook(token: string, id: string, reply: string) {
+  const { data } = await api.patch<ModeratedEntry>(`/api/guestbook/${id}/reply`, { reply }, auth(token));
+  return data;
+}
+
+export async function replyToComment(token: string, id: string, reply: string) {
+  const { data } = await api.patch<BlogComment>(`/api/blog/comments/${id}/reply`, { reply }, auth(token));
+  return data;
+}
+
+export async function deleteGuestbookEntry(token: string, id: string) {
+  const { data } = await api.delete<{ ok: boolean }>(`/api/guestbook/${id}`, auth(token));
+  return data;
+}
+
+export async function deleteComment(token: string, id: string) {
+  const { data } = await api.delete<{ ok: boolean }>(
+    `/api/blog/comments/${id}?purge=true`,
+    auth(token),
+  );
+  return data;
+}
+
+export function isUnauthorized(err: unknown): boolean {
+  return axios.isAxiosError(err) && err.response?.status === 401;
+}

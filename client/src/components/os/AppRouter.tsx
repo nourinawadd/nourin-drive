@@ -10,6 +10,7 @@ import { Gallery } from "@/components/apps/Gallery";
 import { GamePlayer } from "@/components/apps/GamePlayer";
 import { Games } from "@/components/apps/Games";
 import { Guestbook } from "@/components/apps/Guestbook";
+import { Moderation } from "@/components/apps/moderation/Moderation";
 import { Music } from "@/components/apps/music/Music";
 import { PaletteEditor } from "@/components/apps/prefs/PaletteEditor";
 import { PatternEditor } from "@/components/apps/prefs/PatternEditor";
@@ -35,6 +36,7 @@ export function AppRouter({ win }: { win: WindowInstance }) {
     case "game":        return <GamePlayer winId={win.id} payload={win.payload} />;
     case "games":       return <Games />;
     case "guestbook":   return <Guestbook />;
+    case "moderation":  return <Moderation />;
     case "music":       return <Music winId={win.id} payload={win.payload} />;
     case "prefs":       return <PrefsDrawer />;
     case "prefs-palette": return <PaletteEditor />;

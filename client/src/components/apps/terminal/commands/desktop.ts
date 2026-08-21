@@ -12,7 +12,7 @@ import { runAction } from "./actions";
 
 const APP_IDS = Object.keys(APP_REGISTRY) as AppId[];
 
-const HIDDEN_APPS: AppId[] = ["game", "properties", "prefs-palette", "prefs-pattern"];
+export const HIDDEN_APPS: AppId[] = ["game", "properties", "prefs-palette", "prefs-pattern", "moderation"];
 
 function isAppId(value: string): value is AppId {
   return (APP_IDS as string[]).includes(value);

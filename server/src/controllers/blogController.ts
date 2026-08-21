@@ -108,3 +108,23 @@ export async function hideComment(req: Request, res: Response, next: NextFunctio
     res.json({ ok: true, purged: purge });
   } catch (err) { next(err); }
 }
+
+export async function listAllComments(_req: Request, res: Response, next: NextFunction) {
+  try {
+    const comments = await Comment.find().sort({ createdAt: -1 }).limit(MAX_COMMENTS);
+    res.json(comments);
+  } catch (err) { next(err); }
+}
+
+export async function setCommentVisibility(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { id } = req.params;
+    const { hidden } = req.body ?? {};
+    if (typeof hidden !== "boolean") {
+      return res.status(400).json({ error: "hidden must be true or false" });
+    }
+    const updated = await Comment.findByIdAndUpdate(id, { hidden }, { new: true });
+    if (!updated) return res.status(404).json({ error: "not found" });
+    res.json(updated);
+  } catch (err) { next(err); }
+}
