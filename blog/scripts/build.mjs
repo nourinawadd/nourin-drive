@@ -212,15 +212,19 @@ function postNav(prev, next) {
 }
 
 function ogTags({ title, description, canonical, image, type = "website" }) {
+  const previewImage = image || SITE.image;
   const lines = [
     `<meta property="og:type" content="${esc(type)}">`,
     `<meta property="og:title" content="${esc(title)}">`,
     `<meta property="og:description" content="${esc(description)}">`,
     `<meta property="og:url" content="${esc(canonical)}">`,
     `<meta property="og:site_name" content="${esc(SITE.title)}">`,
-    `<meta name="twitter:card" content="${image ? "summary_large_image" : "summary"}">`,
+    `<meta name="twitter:card" content="${previewImage ? "summary_large_image" : "summary"}">`,
   ];
-  if (image) lines.push(`<meta property="og:image" content="${esc(image)}">`);
+  if (previewImage) {
+    lines.push(`<meta property="og:image" content="${esc(previewImage)}">`);
+    lines.push(`<meta name="twitter:image" content="${esc(previewImage)}">`);
+  }
   return lines.join("\n");
 }
 
