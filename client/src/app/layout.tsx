@@ -13,7 +13,7 @@ const wbFont = VT323({
 const title = "NOURIN-DRIVE:";
 const description = "A personal computer. Everything-Nourin, mounted as an Amiga Workbench desktop.";
 const siteUrl = "https://nourin.is-a.dev";
-const socialBanner = "/banner.jpg";
+const socialBanner = "/banner.jpg?v=2";
 
 const paperFont = IBM_Plex_Mono({
   weight: ["400", "600"],
