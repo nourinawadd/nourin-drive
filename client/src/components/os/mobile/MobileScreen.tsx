@@ -23,11 +23,13 @@ export function MobileScreen() {
           <a className="wb-req-gadget" href={REPO_URL} target="_blank" rel="noreferrer">
             View the Repo
           </a>
-          {ABOUT.links.map((link) => (
-            <a key={link.url} className="wb-req-gadget" href={link.url} target="_blank" rel="noreferrer">
-              {link.label}
-            </a>
-          ))}
+          {ABOUT.links
+            .filter((link) => link.label !== "Sifr Studios")
+            .map((link) => (
+              <a key={link.url} className="wb-req-gadget" href={link.url} target="_blank" rel="noreferrer">
+                {link.label}
+              </a>
+            ))}
         </div>
         <p className="wb-req-note">Come back on a computer for the full desktop.</p>
       </div>
