@@ -75,7 +75,7 @@ const cardBtn: React.CSSProperties = {
 };
 const cover: React.CSSProperties = {
   width: "100%",
-  aspectRatio: "16 / 9",
+  aspectRatio: "630 / 500",
   background: "linear-gradient(135deg, #0055aa, #c33)",
   border: "1px solid var(--wb-black)",
   display: "grid",

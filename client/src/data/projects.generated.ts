@@ -4,6 +4,7 @@
 import type { Project } from "./projects";
 
 export const GENERATED_PROJECTS: Project[] = [
+  { id: "bomb-voyage", name: "Bomb Voyage", category: "games", blurb: "Chaotic four-player party game for the VICTORIS 5.0 jam: solve minigames on your bomb to buy time while dodging opponents in a shrinking arena.", url: "https://berto039.itch.io/bomb-voyage", date: "2026-09" },
   { id: "astracipher", name: "AstraCipher", category: "games", blurb: "2D story-driven top-down platformer for dark-web awareness.", url: "https://sifrstudios.itch.io/astracipher", date: "2024-11" },
   { id: "suhoor-rush", name: "Suhoor Rush", category: "games", blurb: "2D web game blending rapid item collection with narrative, built in 3 days for a jam.", url: "https://sifrstudios.itch.io/suhoor-rush", date: "2025-03" },
   { id: "puppetry", name: "Puppetry", category: "games", blurb: "2D puzzle for a power-themed jam: multi-puppet coordination, built in 9 days.", url: "https://sifrstudios.itch.io/puppetry", date: "2025-01" },

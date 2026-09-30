@@ -9,6 +9,7 @@ export type GameBuild = { src?: string; cover?: string };
 // Keyed by project slug (the content/projects/*.md filename / Project id).
 export const LOCAL_GAMES: Record<string, GameBuild> = {
   "astracipher": { src: "/games/astracipher/index.html", cover: "/games/astracipher/cover.png" },
+  "bomb-voyage": { cover: "/games/bomb-voyage/cover.gif" },
   "puppetry": { cover: "/games/puppetry/cover.png" },
   "suhoor-rush": { src: "/games/suhoor-rush/index.html", cover: "/games/suhoor-rush/cover.png" },
 };
