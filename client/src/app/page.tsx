@@ -22,9 +22,9 @@ import { usePrefsStore } from "@/context/prefsStore";
 import { useWindowStore } from "@/context/windowStore";
 import { findPost } from "@/data/blog";
 import { DEFAULT_SAVER, SAVER_OFF } from "@/data/savers";
-import { playSfx } from "@/lib/sfx";
-import { deepLinkParams, hasDeepLink } from "@/lib/deepLink";
+import { deepLinkParams } from "@/lib/deepLink";
 import { useIdle } from "@/lib/idle";
+import { useReadmeAfterBoot } from "@/lib/readmeIntro";
 
 /**
  * `?doc=<id>` opens the Ereader on that document - the link the reader's Share
@@ -55,28 +55,6 @@ function useDeepLink() {
     const query = params.toString();
     window.history.replaceState(null, "", window.location.pathname + (query ? `?${query}` : ""));
   }, [openApp]);
-}
-
-/**
- * The readme introduces itself a beat after the disk goes in, rather than being
- * there the instant the desktop appears - the pause reads as the machine
- * finishing its boot. Skipped entirely when something else is already open,
- * which is what a shared deep link does.
- */
-const README_DELAY_MS = 2000;
-
-function useReadmeAfterBoot(booted: boolean) {
-  const openApp = useWindowStore((s) => s.openApp);
-  useEffect(() => {
-    if (!booted) return;
-    if (hasDeepLink()) return;
-    const t = setTimeout(() => {
-      if (useWindowStore.getState().windows.length > 0) return;
-      playSfx("open");
-      openApp("readme");
-    }, README_DELAY_MS);
-    return () => clearTimeout(t);
-  }, [booted, openApp]);
 }
 
 function Desktop() {

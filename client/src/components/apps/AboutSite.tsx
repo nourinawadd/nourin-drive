@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ComponentType } from "react";
 import { useWindowStore } from "@/context/windowStore";
 import { useStickyStore } from "@/context/stickyStore";
 import { APP_ICONS } from "@/data/appIcons";
 import { DockStickies, IconFloppySystem } from "@/components/os/icons";
+import { KEY_README_SEEN, writeFlag } from "@/lib/localStore";
 import { playSfx } from "@/lib/sfx";
 import type { AppId } from "@/types/window";
 
@@ -71,6 +72,8 @@ const HINTS: Record<TabId, string> = {
 
 export function AboutSite() {
   const [tab, setTab] = useState<TabId>("about");
+
+  useEffect(() => writeFlag(KEY_README_SEEN, true), []);
 
   return (
     <div style={shell}>
