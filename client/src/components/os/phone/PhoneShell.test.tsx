@@ -92,7 +92,7 @@ describe("PhoneShell", () => {
     boot();
     const apps = screen.getByRole("navigation", { name: "Apps" });
     const labels = [...apps.querySelectorAll("button")].map((b) => b.textContent);
-    expect(labels).toEqual(["Start Here:", "User:", "Blog:", "Guestbook:", "Music:"]);
+    expect(labels).toEqual(["Start Here:", "User:", "Projects:", "Photos:", "Blog:", "Guestbook:", "Music:"]);
   });
 
   it("opens an app full screen on tap, and back returns to the launcher", () => {

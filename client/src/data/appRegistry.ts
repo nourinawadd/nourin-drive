@@ -54,13 +54,13 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
   explorer: {
     appId: "explorer", title: "File Explorer",
     minWidth: 520, minHeight: 320,
-    mobile: "hidden",
+    mobile: "native",
     singleton: true,
   },
   gallery: {
     appId: "gallery", title: "Graphic Design",
     minWidth: 380, minHeight: 320,
-    mobile: "hidden",
+    mobile: "native",
     singleton: true,
   },
   game: {
@@ -131,7 +131,7 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     minWidth: 260, minHeight: 260,
     // Not a singleton: Windows lets you open properties for several items at
     // once, and each window carries its own item in its payload.
-    mobile: "hidden",
+    mobile: "native",
     singleton: false,
   },
   terminal: {

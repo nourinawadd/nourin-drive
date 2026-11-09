@@ -17,7 +17,7 @@ type State = {
   zCounter: number;
 };
 
-type OpenOpts = { payload?: unknown; title?: string };
+export type OpenOpts = { payload?: unknown; title?: string };
 
 type Actions = {
   openApp: (appId: AppId, opts?: OpenOpts) => string;
@@ -35,6 +35,21 @@ type Actions = {
 let nextId = 1;
 const mkId = (appId: AppId) => `${appId}-${nextId++}`;
 
+/**
+ * A chance for the active shell to answer an open itself instead of a window
+ * appearing. Returns true when it handled the open. This is only a seam: the
+ * store holds no shell policy, and nothing is registered on the desktop, so
+ * there `openApp` behaves exactly as it always has. The phone shell registers
+ * components/os/phone/phoneRedirects.ts (a website link becomes a real tab).
+ * It runs synchronously inside openApp, so anything it does still happens
+ * within the tap that asked for it - which is what popup blockers require.
+ */
+export type OpenInterceptor = (appId: AppId, opts?: OpenOpts) => boolean;
+let interceptor: OpenInterceptor | null = null;
+export function setOpenInterceptor(fn: OpenInterceptor | null): void {
+  interceptor = fn;
+}
+
 let nextTabId = 1;
 const mkTabId = () => `tab-${nextTabId++}`;
 
@@ -48,6 +63,10 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
   zCounter: 1,
 
   openApp: (appId, opts) => {
+    // Handled elsewhere (see setOpenInterceptor): no window, so no id. The only
+    // caller that reads the id (the Shell app's `open`) opens the Explorer,
+    // which no interceptor handles.
+    if (interceptor?.(appId, opts)) return "";
     const def = APP_REGISTRY[appId];
 
     // The browser is tabbed: reuse the single window and add a tab rather than

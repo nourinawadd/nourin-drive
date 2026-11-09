@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { AppRouter } from "@/components/os/AppRouter";
 import { AudioEngine } from "@/components/os/AudioEngine";
 import { BootScreen } from "@/components/os/BootScreen";
@@ -10,8 +11,9 @@ import { PhoneFrame } from "@/components/os/phone/PhoneFrame";
 import { PhoneLauncher } from "@/components/os/phone/PhoneLauncher";
 import { PhoneNowPlaying } from "@/components/os/phone/PhoneNowPlaying";
 import { PhoneUnsupported } from "@/components/os/phone/PhoneUnsupported";
+import { phoneOpenInterceptor } from "@/components/os/phone/phoneRedirects";
 import { topWindow } from "@/components/os/phone/phoneWindows";
-import { useWindowStore } from "@/context/windowStore";
+import { setOpenInterceptor, useWindowStore } from "@/context/windowStore";
 import { mobileSupport } from "@/data/appRegistry";
 
 // Nothing on the phone waits for the disk to go in: the readme intro, the
@@ -34,6 +36,14 @@ const noop = () => {};
  */
 export function PhoneShell() {
   const top = useWindowStore((s) => topWindow(s.windows));
+
+  // While the shell is up, some opens become something other than a window
+  // (a website link opens a real tab). Unregistered on unmount so nothing of
+  // the phone's policy can outlive it.
+  useEffect(() => {
+    setOpenInterceptor(phoneOpenInterceptor);
+    return () => setOpenInterceptor(null);
+  }, []);
 
   return (
     <div className="wb-phone wb-desktop-bg">
