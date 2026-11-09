@@ -1312,6 +1312,7 @@ body {
   font-size: 16px;
   text-decoration: none;
   cursor: pointer;
+  touch-action: manipulation;
   box-shadow:
     inset 1px 1px 0 var(--wb-white),
     inset -1px -1px 0 var(--wb-gray-2);
@@ -1335,6 +1336,9 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+  /* Repeated from .wb-phone: some browsers stop collecting touch-action at the
+     nearest scroller, so the root's value alone may not reach taps in here. */
+  touch-action: manipulation;
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 }
@@ -1360,6 +1364,7 @@ body {
   font: inherit;
   cursor: pointer;
   user-select: none;
+  touch-action: manipulation;
 }
 /* Same rule as .wb-drive-icon: the box reserves the icon's exact 2x size and
    centres it; never size the svg from CSS (see icons.tsx). */
@@ -1446,4 +1451,31 @@ body {
   display: inline-grid;
   margin-top: 14px;
   border: 1px solid var(--wb-black);
+}
+
+/* ---- sizing for apps inside the shell ---- */
+/* iOS zooms the whole page in when an input under 16px takes focus, and leaves
+   it zoomed. Apps set their input sizes inline, so only !important can win;
+   scoped to the phone shell, the desktop never sees it. */
+.wb-phone input,
+.wb-phone textarea,
+.wb-phone select {
+  font-size: 16px !important;
+}
+
+/* Opt-in thumb-sized target. Not applied to every button: dense toolbars
+   (Music, Explorer) get their own phone layouts in Phases 3 to 5, and a blanket
+   44px would bloat them first. Converted apps add this where it fits. */
+.wb-phone .wb-phone-tap {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 14px;
+}
+
+/* Anything with a long press (useContextTrigger): no iOS link/image callout and
+   no text selection fighting the press. */
+.wb-phone .wb-pressable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
