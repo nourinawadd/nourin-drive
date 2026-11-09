@@ -12,6 +12,7 @@ import { MobileGate } from "@/components/os/MobileGate";
 import { PrefsEngine } from "@/components/os/PrefsEngine";
 import { KonamiListener } from "@/components/os/KonamiListener";
 import { SfxEngine } from "@/components/os/SfxEngine";
+import { ShellModeProvider } from "@/components/os/ShellModeProvider";
 import { PixelPet } from "@/components/os/pet/PixelPet";
 import { Screensaver } from "@/components/os/Screensaver";
 import { SignalReveal } from "@/components/os/SignalReveal";
@@ -52,6 +53,10 @@ function useDeepLink() {
     params.delete("doc");
     params.delete("post");
     params.delete("photo");
+    // These params come from the query captured at load, which may still hold
+    // `mode` even though lib/shellMode.ts has already stripped it from the
+    // address bar. Without this, writing the rest back would put it right back.
+    params.delete("mode");
     const query = params.toString();
     window.history.replaceState(null, "", window.location.pathname + (query ? `?${query}` : ""));
   }, [openApp]);
@@ -118,8 +123,10 @@ function Desktop() {
 
 export default function Home() {
   return (
-    <MobileGate>
-      <Desktop />
-    </MobileGate>
+    <ShellModeProvider>
+      <MobileGate>
+        <Desktop />
+      </MobileGate>
+    </ShellModeProvider>
   );
 }

@@ -1,39 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { MobileReader } from "@/components/os/mobile/MobileReader";
 import { MobileScreen } from "@/components/os/mobile/MobileScreen";
+import { useShellMode } from "@/components/os/ShellModeProvider";
 import { hasDeepLink } from "@/lib/deepLink";
 
-const NARROW_PX = 820;
-
-type Status = "checking" | "mobile" | "desktop";
-
-function useIsMobile(): Status {
-  const [status, setStatus] = useState<Status>("checking");
-
-  useEffect(() => {
-    const check = () => {
-      const narrow = window.innerWidth < NARROW_PX;
-      const coarse = window.matchMedia("(pointer: coarse)").matches;
-      setStatus(narrow && coarse ? "mobile" : "desktop");
-    };
-    check();
-    window.addEventListener("resize", check);
-    window.addEventListener("orientationchange", check);
-    return () => {
-      window.removeEventListener("resize", check);
-      window.removeEventListener("orientationchange", check);
-    };
-  }, []);
-
-  return status;
-}
+// Chooses what the page is once the shell mode is known. Detection itself
+// lives in lib/shellMode.ts; this only maps the answer to a screen.
 
 export function MobileGate({ children }: { children: React.ReactNode }) {
-  const status = useIsMobile();
+  const mode = useShellMode();
 
-  if (status === "checking") return null;
-  if (status === "mobile") return hasDeepLink() ? <MobileReader /> : <MobileScreen />;
-  return <>{children}</>;
+  // Nothing at all while checking: rendering the desktop as a default would
+  // flash it on every phone before the landing page replaced it.
+  if (mode === null) return null;
+  if (mode === "desktop") return <>{children}</>;
+
+  // `phone` can't be reached while PHONE_SHELL is off, so for now it gets the
+  // lite page too. Phase 1 gives it the phone shell here.
+  return hasDeepLink() ? <MobileReader /> : <MobileScreen />;
 }

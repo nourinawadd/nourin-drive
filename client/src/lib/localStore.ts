@@ -25,6 +25,11 @@ export const KEY_PREFS = "wb:prefs";
 export const KEY_ADMIN = "wb:admin";
 /** Seen the About This Site window once, so it stops opening itself. */
 export const KEY_README_SEEN = "wb:readme-seen";
+/** A `?mode=` shell override (desktop / phone / lite), held for the tab so a
+ *  reload or an in-app URL rewrite doesn't drop you back into detection.
+ *  Session rather than local on purpose: it's a testing switch, and a new tab
+ *  starting fresh is the easiest way out of a forgotten one. */
+export const KEY_SHELL_MODE = "wb:shell-mode";
 
 function store(kind: "local" | "session"): Storage | null {
   if (typeof window === "undefined") return null;
@@ -98,6 +103,32 @@ export function writeSession(key: string, value: boolean): void {
     if (!s) return;
     if (value) s.setItem(key, "1");
     else s.removeItem(key);
+  } catch {
+    /* see writeFlag */
+  }
+}
+
+/**
+ * The session pair for a raw string, for the shell-mode override. The boolean
+ * pair above stores "1" and can't carry a value, and bending it to do so would
+ * make every existing flag read ambiguously. Validation is the caller's job:
+ * this hands back whatever is there, or null when nothing (or no storage) is.
+ */
+export function readSessionString(key: string): string | null {
+  try {
+    return store("session")?.getItem(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** `null` removes the key, so "clear the override" reads naturally at the call site. */
+export function writeSessionString(key: string, value: string | null): void {
+  try {
+    const s = store("session");
+    if (!s) return;
+    if (value === null) s.removeItem(key);
+    else s.setItem(key, value);
   } catch {
     /* see writeFlag */
   }
