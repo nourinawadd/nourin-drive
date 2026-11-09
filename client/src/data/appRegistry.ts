@@ -16,7 +16,8 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
   readme: {
     appId: "readme", title: "About This Site",
     fixed: { width: 1180, height: 520 },
-    mobile: "hidden",
+    // The phone shell's smoke test since Phase 1; laid out properly in Phase 3.
+    mobile: "native",
     singleton: true,
   },
   apis: {

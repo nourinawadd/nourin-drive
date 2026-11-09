@@ -14,6 +14,7 @@ import { KonamiListener } from "@/components/os/KonamiListener";
 import { SfxEngine } from "@/components/os/SfxEngine";
 import { ShellModeProvider } from "@/components/os/ShellModeProvider";
 import { PixelPet } from "@/components/os/pet/PixelPet";
+import { PhoneShell } from "@/components/os/phone/PhoneShell";
 import { Screensaver } from "@/components/os/Screensaver";
 import { SignalReveal } from "@/components/os/SignalReveal";
 import { TopMenubar } from "@/components/os/TopMenubar";
@@ -124,7 +125,7 @@ function Desktop() {
 export default function Home() {
   return (
     <ShellModeProvider>
-      <MobileGate>
+      <MobileGate phone={<PhoneShell />}>
         <Desktop />
       </MobileGate>
     </ShellModeProvider>

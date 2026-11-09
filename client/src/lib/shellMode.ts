@@ -20,8 +20,9 @@ export type ShellOverride = ShellMode;
  */
 export type ShellFlag = "off" | "preview" | "on";
 
-/** Moves to `preview` in Phase 1 and to `on` at launch (Phase 6). */
-export const PHONE_SHELL: ShellFlag = "off";
+/** `preview` since Phase 1: `?mode=phone` reaches the shell, real phones still
+ *  get the lite page. Moves to `on` at launch (Phase 6). */
+export const PHONE_SHELL: ShellFlag = "preview";
 
 /** Below this width, with a coarse pointer, it's a phone. Unchanged from the
  *  original MobileGate rule. */

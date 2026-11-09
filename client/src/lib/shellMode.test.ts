@@ -53,8 +53,8 @@ describe("resolveShellMode", () => {
     expect(resolve({ width: NARROW_PX, coarse: true }, null, "off")).toBe("desktop");
   });
 
-  it("ships with the phone shell off", () => {
-    expect(PHONE_SHELL).toBe("off");
+  it("ships with the phone shell in preview", () => {
+    expect(PHONE_SHELL).toBe("preview");
   });
 });
 
@@ -141,10 +141,18 @@ describe("detectShellMode", () => {
     expect(detectShellMode("?mode=lite")).toBe("lite");
   });
 
-  it("ignores ?mode=phone while the shell is off, but still holds it", () => {
+  // With PHONE_SHELL at "preview", the override is the only way into the shell;
+  // the off-flag behaviour is covered by the resolveShellMode table above.
+  it("opens the phone shell for ?mode=phone and holds it", () => {
     screen(1440, false);
-    expect(detectShellMode("?mode=phone")).toBe("desktop");
+    expect(detectShellMode("?mode=phone")).toBe("phone");
     expect(window.sessionStorage.getItem(KEY_SHELL_MODE)).toBe("phone");
+    expect(detectShellMode("")).toBe("phone");
+  });
+
+  it("still gives real phones the lite page without an override", () => {
+    screen(390, true);
+    expect(detectShellMode("")).toBe("lite");
   });
 
   it("keeps a working override when the param is a typo", () => {
