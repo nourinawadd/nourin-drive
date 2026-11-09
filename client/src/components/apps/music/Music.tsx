@@ -7,6 +7,8 @@ import { useWindowStore } from "@/context/windowStore";
 import { APP_REGISTRY } from "@/data/appRegistry";
 import { defaultSize } from "@/lib/windowBounds";
 import { ContextMenu, type MenuItem } from "@/components/os/ContextMenu";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
+import { useContextTrigger } from "@/lib/useContextTrigger";
 import { PlayerBar } from "./PlayerBar";
 import { PlaylistChips, PlaylistPicker, TrackGrid, TrackList, type SortKey } from "./PlaylistView";
 
@@ -52,7 +54,11 @@ export function Music({ winId, payload }: { winId: string; payload: unknown }) {
   const browse = saved.browse ?? "tracks";
   const sortKey = saved.sortKey ?? "order";
   const sortAsc = saved.sortAsc ?? true;
-  const mini = saved.mini ?? false;
+  // The phone shows one app full screen, so a "mini player" means nothing
+  // there: it's always the full player, and the toggle isn't offered. What the
+  // payload says is left alone for the desktop.
+  const phone = useIsPhone();
+  const mini = phone ? false : saved.mini ?? false;
 
   // Search is deliberately NOT persisted - a filter you can't see the cause of
   // after restoring a window is worse than losing a half-typed query.
@@ -61,6 +67,8 @@ export function Music({ winId, payload }: { winId: string; payload: unknown }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  // Right-click on the desktop, a long press on a phone (see useContextTrigger).
+  const menuTrigger = useContextTrigger((p) => setMenu({ x: p.clientX, y: p.clientY }));
 
   const track = usePlayerStore(currentTrack);
   const playing = usePlayerStore((s) => s.playing);
@@ -190,19 +198,16 @@ export function Music({ winId, payload }: { winId: string; payload: unknown }) {
 
   return (
     <div
-      style={root}
+      style={{ ...root, ...(phone ? rootPhone : null) }}
       ref={bodyRef}
       tabIndex={-1}
       onKeyDown={onKeyDown}
-      onContextMenu={(e) => {
-        if (mini) return;
-        e.preventDefault();
-        setMenu({ x: e.clientX, y: e.clientY });
-      }}
+      // Not in mini mode: there the browser's own menu shows, as it always has.
+      {...(mini ? null : menuTrigger)}
     >
       {!mini && (
         <>
-          <div style={toolbar}>
+          <div style={{ ...toolbar, ...(phone ? toolbarPhone : null) }}>
             <ToolButton active={browse === "tracks"} onClick={() => setState({ browse: "tracks" })}>
               ♪ Tracks
             </ToolButton>
@@ -217,6 +222,8 @@ export function Music({ winId, payload }: { winId: string; payload: unknown }) {
               ▤ List
             </ToolButton>
             <span style={{ flex: 1 }} />
+            {/* Phone: search gets a line of its own under the buttons. */}
+            {phone && <span style={lineBreak} />}
             <span aria-hidden style={{ fontSize: 13, opacity: 0.6 }}>⌕</span>
             <input
               ref={searchRef}
@@ -226,11 +233,11 @@ export function Music({ winId, payload }: { winId: string; payload: unknown }) {
                 if (browse !== "tracks") setState({ browse: "tracks" });
               }}
               placeholder="Title, artist, album"
-              style={searchInput}
+              style={{ ...searchInput, ...(phone ? searchInputPhone : null) }}
               aria-label="Search the music"
             />
             {query && (
-              <button type="button" onClick={() => setQuery("")} style={clearButton} title="Clear search">
+              <button type="button" onClick={() => setQuery("")} style={{ ...clearButton, ...(phone ? clearButtonPhone : null) }} title="Clear search">
                 ×
               </button>
             )}
@@ -274,7 +281,7 @@ export function Music({ winId, payload }: { winId: string; payload: unknown }) {
         </>
       )}
 
-      <PlayerBar mini={mini} onToggleMini={toggleMini} />
+      <PlayerBar mini={mini} onToggleMini={phone ? undefined : toggleMini} compact={phone} />
 
       {menu && <ContextMenu x={menu.x} y={menu.y} items={menuItems} onClose={() => setMenu(null)} />}
     </div>
@@ -288,12 +295,13 @@ function ToolButton({
   onClick: () => void;
   children: React.ReactNode;
 }) {
+  const phone = useIsPhone();
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      style={{ ...toolBtn, ...(active ? toolBtnActive : null) }}
+      style={{ ...toolBtn, ...(phone ? toolBtnPhone : null), ...(active ? toolBtnActive : null) }}
     >
       {children}
     </button>
@@ -365,3 +373,27 @@ const empty: React.CSSProperties = {
   fontFamily: "var(--wb-font)",
   lineHeight: 1.6,
 };
+
+/* ---- phone overrides: spread over the objects above -------------------- */
+// A long press anywhere on the player opens its menu, so iOS's own press
+// behaviours (the link/image callout, word selection) are switched off here...
+const rootPhone: React.CSSProperties = {
+  WebkitTouchCallout: "none",
+  WebkitUserSelect: "none",
+  userSelect: "none",
+};
+// ...and switched back on for the search box: on iOS an input inside a
+// user-select: none ancestor can't take focus or a caret otherwise.
+const searchInputPhone: React.CSSProperties = {
+  flex: 1,
+  minWidth: 0,
+  width: "auto",
+  minHeight: 40,
+  padding: "4px 8px",
+  WebkitUserSelect: "text",
+  userSelect: "text",
+};
+const toolbarPhone: React.CSSProperties = { flexWrap: "wrap", rowGap: 6 };
+const toolBtnPhone: React.CSSProperties = { minHeight: 40, padding: "0 10px", fontSize: 15 };
+const clearButtonPhone: React.CSSProperties = { minWidth: 40, minHeight: 40, fontSize: 16 };
+const lineBreak: React.CSSProperties = { flexBasis: "100%", height: 0 };

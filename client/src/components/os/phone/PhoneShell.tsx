@@ -8,6 +8,7 @@ import { SfxEngine } from "@/components/os/SfxEngine";
 import { PhoneBar } from "@/components/os/phone/PhoneBar";
 import { PhoneFrame } from "@/components/os/phone/PhoneFrame";
 import { PhoneLauncher } from "@/components/os/phone/PhoneLauncher";
+import { PhoneNowPlaying } from "@/components/os/phone/PhoneNowPlaying";
 import { PhoneUnsupported } from "@/components/os/phone/PhoneUnsupported";
 import { topWindow } from "@/components/os/phone/phoneWindows";
 import { useWindowStore } from "@/context/windowStore";
@@ -52,6 +53,10 @@ export function PhoneShell() {
           <PhoneLauncher />
         )}
       </main>
+
+      {/* Under the content, not over it: <main> shrinks to make room, so the bar
+          never covers the bottom of an app. */}
+      <PhoneNowPlaying hidden={top?.appId === "music"} />
 
       <BootScreen onBoot={noop} />
       <AudioEngine />

@@ -16,7 +16,8 @@ type PlayerIcon =
   | "expand"
   | "shrink";
 
-function PlayerGlyph({ icon, size = 15 }: { icon: PlayerIcon; size?: number }) {
+// Exported for the phone shell's now-playing bar, so both draw the same glyphs.
+export function PlayerGlyph({ icon, size = 15 }: { icon: PlayerIcon; size?: number }) {
   const common = {
     fill: "currentColor",
     stroke: "currentColor",
@@ -40,7 +41,19 @@ function PlayerGlyph({ icon, size = 15 }: { icon: PlayerIcon; size?: number }) {
   );
 }
 
-export function PlayerBar({ mini, onToggleMini }: { mini: boolean; onToggleMini: () => void }) {
+/**
+ * `onToggleMini` is optional because the phone has no mini player: without it
+ * the toggle isn't rendered. `compact` is the phone layout: thumb-sized
+ * transport, bigger type, and no volume slider (iOS ignores `audio.volume`;
+ * the phone's own buttons do that job).
+ */
+export function PlayerBar({
+  mini, onToggleMini, compact = false,
+}: {
+  mini: boolean;
+  onToggleMini?: () => void;
+  compact?: boolean;
+}) {
   const track: Track | null = usePlayerStore(currentTrack);
   const playing = usePlayerStore((s) => s.playing);
   const time = usePlayerStore((s) => s.time);
@@ -60,16 +73,18 @@ export function PlayerBar({ mini, onToggleMini }: { mini: boolean; onToggleMini:
   const cycleRepeat = usePlayerStore((s) => s.cycleRepeat);
 
   const total = duration || track?.duration || 0;
+  // The same object on the desktop, so nothing there changes.
+  const btn = compact ? { ...ctrlBtn, ...ctrlBtnPhone } : ctrlBtn;
 
   return (
     <div style={{ ...bar, ...(mini ? barMini : null) }}>
       <div style={nowPlaying}>
         <span
-          style={{ ...barThumb, ...(track ? cover(track) : { background: "var(--wb-gray-3)" }) }}
+          style={{ ...barThumb, ...(compact ? barThumbPhone : null), ...(track ? cover(track) : { background: "var(--wb-gray-3)" }) }}
         />
         <span style={barMeta}>
-          <strong style={barTitle}>{track ? track.title : "..."}</strong>
-          <span style={barArtist}>
+          <strong style={{ ...barTitle, ...(compact ? barTitlePhone : null) }}>{track ? track.title : "..."}</strong>
+          <span style={{ ...barArtist, ...(compact ? barArtistPhone : null) }}>
             {error
               ? "file not found"
               : track
@@ -95,11 +110,11 @@ export function PlayerBar({ mini, onToggleMini }: { mini: boolean; onToggleMini:
         <span style={timeText}>{formatDuration(total || undefined)}</span>
       </div>
 
-      <div style={controls}>
+      <div style={{ ...controls, ...(compact ? controlsPhone : null) }}>
         {!mini && (
           <button
             type="button"
-            style={{ ...ctrlBtn, ...(shuffle ? ctrlOn : null) }}
+            style={{ ...btn, ...(shuffle ? ctrlOn : null) }}
             onClick={toggleShuffle}
             aria-pressed={shuffle}
             aria-label={`Shuffle ${shuffle ? "on" : "off"}`}
@@ -108,25 +123,25 @@ export function PlayerBar({ mini, onToggleMini }: { mini: boolean; onToggleMini:
           <PlayerGlyph icon="shuffle" />
           </button>
         )}
-        <button type="button" style={ctrlBtn} onClick={() => prev()} aria-label="Previous track" title="Previous">
+        <button type="button" style={btn} onClick={() => prev()} aria-label="Previous track" title="Previous">
          <PlayerGlyph icon="previous" />
         </button>
         <button
           type="button"
-          style={{ ...ctrlBtn, ...playBtn }}
+          style={{ ...btn, ...playBtn }}
           onClick={toggle}
           aria-label={playing ? "Pause" : "Play"}
           title={playing ? "Pause" : "Play"}
         >
           {playing ? <PlayerGlyph icon="pause" size={17} /> : <PlayerGlyph icon="play" size={17} />}
         </button>
-        <button type="button" style={ctrlBtn} onClick={() => next()} aria-label="Next track" title="Next">
+        <button type="button" style={btn} onClick={() => next()} aria-label="Next track" title="Next">
          <PlayerGlyph icon="next" />
         </button>
         {!mini && (
           <button
             type="button"
-            style={{ ...ctrlBtn, ...(repeat !== "off" ? ctrlOn : null) }}
+            style={{ ...btn, ...(repeat !== "off" ? ctrlOn : null) }}
             onClick={cycleRepeat}
             aria-pressed={repeat !== "off"}
             aria-label={`Repeat: ${repeat}`}
@@ -135,7 +150,7 @@ export function PlayerBar({ mini, onToggleMini }: { mini: boolean; onToggleMini:
             {repeat === "one" ? <PlayerGlyph icon="repeatOne" /> : <PlayerGlyph icon="repeat" />}
           </button>
         )}
-        {!mini && (
+        {!mini && !compact && (
           <span style={volWrap}>
             <span style={volumeIcon} aria-hidden>
               <PlayerGlyph icon="volume" size={14} />
@@ -152,15 +167,17 @@ export function PlayerBar({ mini, onToggleMini }: { mini: boolean; onToggleMini:
             />
           </span>
         )}
-        <button
-          type="button"
-          style={{ ...ctrlBtn, marginLeft: "auto" }}
-          onClick={onToggleMini}
-          aria-label={mini ? "Expand player" : "Shrink to mini player"}
-          title={mini ? "Expand player" : "Shrink to mini player"}
-        >
-          {mini ? <PlayerGlyph icon="expand" /> : <PlayerGlyph icon="shrink" />}
-        </button>
+        {onToggleMini && (
+          <button
+            type="button"
+            style={{ ...btn, marginLeft: "auto" }}
+            onClick={onToggleMini}
+            aria-label={mini ? "Expand player" : "Shrink to mini player"}
+            title={mini ? "Expand player" : "Shrink to mini player"}
+          >
+            {mini ? <PlayerGlyph icon="expand" /> : <PlayerGlyph icon="shrink" />}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -240,3 +257,16 @@ const volWrap: React.CSSProperties = {
   gap: 4,
   marginLeft: "auto",
 };
+
+/* ---- phone (compact) overrides: spread over the objects above ---------- */
+const ctrlBtnPhone: React.CSSProperties = {
+  minWidth: 44,
+  minHeight: 44,
+  display: "grid",
+  placeItems: "center",
+  padding: "0 10px",
+};
+const controlsPhone: React.CSSProperties = { justifyContent: "center", gap: 8 };
+const barThumbPhone: React.CSSProperties = { width: 48, height: 48 };
+const barTitlePhone: React.CSSProperties = { fontSize: 16 };
+const barArtistPhone: React.CSSProperties = { fontSize: 14 };
