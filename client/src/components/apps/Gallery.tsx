@@ -1,17 +1,27 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PHOTOS, type Photo } from "@/data/gallery";
 import { ShareDialog } from "@/components/os/ShareDialog";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
 import { copyLink, shareLink, triggerDownload } from "@/lib/share";
 
 type GalleryPayload = { focusId?: string };
+
+// A swipe has to travel this far sideways, and further sideways than up or
+// down, before it counts: anything less is a wobble or the start of a scroll.
+const SWIPE_PX = 48;
 
 export function Gallery({ payload }: { payload?: unknown }) {
   const initial = (payload as GalleryPayload | undefined)?.focusId ?? null;
   const [cat, setCat] = useState<string>("All");
   const [lightbox, setLightbox] = useState<string | null>(initial);
   const [toast, setToast] = useState<{ url: string; copied: boolean } | null>(null);
+  // Phone: two-column grid, thumb-sized controls, and a lightbox that fills the
+  // frame and steps through photos with a sideways swipe. The keyboard arrows
+  // stay as they are for the desktop.
+  const phone = useIsPhone();
+  const swipe = useRef<{ id: number; x: number; y: number } | null>(null);
 
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(PHOTOS.map((p) => p.category)))],
@@ -41,6 +51,30 @@ export function Gallery({ payload }: { payload?: unknown }) {
     return shown[next].id;
   }
 
+  // Touch only, so a mouse dragging across the image on the desktop (or a
+  // touchscreen laptop in desktop mode, where these aren't attached at all)
+  // can't flip photos. pointercancel - the browser deciding it's a scroll -
+  // simply drops the gesture.
+  const swipeHandlers = {
+    onPointerDown: (e: React.PointerEvent) => {
+      if (e.pointerType !== "touch") return;
+      swipe.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
+    },
+    onPointerUp: (e: React.PointerEvent) => {
+      const s = swipe.current;
+      swipe.current = null;
+      if (!s || s.id !== e.pointerId) return;
+      const dx = e.clientX - s.x;
+      const dy = e.clientY - s.y;
+      if (Math.abs(dx) < SWIPE_PX || Math.abs(dx) <= Math.abs(dy)) return;
+      // Swiping left brings the next photo in from the right.
+      setLightbox((id) => step(id, dx < 0 ? 1 : -1));
+    },
+    onPointerCancel: () => {
+      swipe.current = null;
+    },
+  };
+
   const focused: Photo | undefined = lightbox
     ? PHOTOS.find((p) => p.id === lightbox)
     : undefined;
@@ -63,27 +97,32 @@ export function Gallery({ payload }: { payload?: unknown }) {
           <button
             key={c}
             onClick={() => setCat(c)}
-            style={{ ...tab, ...(cat === c ? tabActive : null) }}
+            style={{ ...tab, ...(phone ? tabPhone : null), ...(cat === c ? tabActive : null) }}
           >
             {c}
           </button>
         ))}
       </div>
 
-      <div style={grid}>
+      <div style={{ ...grid, ...(phone ? gridPhone : null) }}>
         {shown.map((p) => (
           <button key={p.id} onClick={() => setLightbox(p.id)} style={tile} title={p.title}>
             <img src={p.src} alt={p.title} loading="lazy" style={thumb} />
-            <div style={caption}>{p.title}</div>
+            <div style={{ ...caption, ...(phone ? captionPhone : null) }}>{p.title}</div>
           </button>
         ))}
       </div>
 
       {focused && (
-        <div style={overlay} onClick={() => setLightbox(null)}>
-          <div style={lightboxPanel} onClick={(e) => e.stopPropagation()}>
-            <img src={focused.src} alt={focused.title} style={lightboxImg} />
-            <div style={{ marginTop: 8, flexShrink: 0, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ ...overlay, ...(phone ? overlayPhone : null) }} onClick={() => setLightbox(null)}>
+          <div style={{ ...lightboxPanel, ...(phone ? lightboxPanelPhone : null) }} onClick={(e) => e.stopPropagation()}>
+            <img
+              src={focused.src}
+              alt={focused.title}
+              style={{ ...lightboxImg, ...(phone ? lightboxImgPhone : null) }}
+              {...(phone ? swipeHandlers : null)}
+            />
+            <div style={{ marginTop: 8, flexShrink: 0, display: "flex", justifyContent: "space-between", alignItems: "center", ...(phone ? metaRowPhone : null) }}>
               <div>
                 <strong>{focused.title}</strong>
                 <div style={{ fontSize: 13, opacity: 0.7 }}>
@@ -91,24 +130,24 @@ export function Gallery({ payload }: { payload?: unknown }) {
                   {focused.date ? ` · ${focused.date}` : ""}
                 </div>
               </div>
-              <div style={{ display: "flex", gap: 4 }}>
+              <div style={{ display: "flex", gap: 4, ...(phone ? controlsPhone : null) }}>
                 <button
-                  style={actionBtn}
+                  style={{ ...actionBtn, ...(phone ? btnPhone : null) }}
                   title="Save this image"
                   onClick={() => triggerDownload(focused.src, fileNameOf(focused.src))}
                 >
                   Save
                 </button>
                 <button
-                  style={actionBtn}
+                  style={{ ...actionBtn, ...(phone ? btnPhone : null) }}
                   title="Copy a link to this image"
                   onClick={async () => setToast(await copyLink(shareLink("photo", focused.id)))}
                 >
                   Share
                 </button>
-                <button style={navBtn} onClick={() => setLightbox(step(lightbox, -1))}>‹</button>
-                <button style={navBtn} onClick={() => setLightbox(step(lightbox, 1))}>›</button>
-                <button style={navBtn} onClick={() => setLightbox(null)}>×</button>
+                <button style={{ ...navBtn, ...(phone ? btnPhone : null) }} onClick={() => setLightbox(step(lightbox, -1))}>‹</button>
+                <button style={{ ...navBtn, ...(phone ? btnPhone : null) }} onClick={() => setLightbox(step(lightbox, 1))}>›</button>
+                <button style={{ ...navBtn, ...(phone ? btnPhone : null) }} onClick={() => setLightbox(null)}>×</button>
               </div>
             </div>
             {toast && (
@@ -235,3 +274,24 @@ const empty: React.CSSProperties = {
   lineHeight: 1.6,
   fontFamily: "var(--wb-font)",
 };
+
+/* ---- phone overrides: spread over the desktop objects above ----------- */
+const tabPhone: React.CSSProperties = { minHeight: 44, padding: "0 14px", fontSize: 15 };
+// Two columns at 360px: ~165px tiles keep the 4:3 thumbnails readable.
+const gridPhone: React.CSSProperties = { gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 6, padding: 2 };
+const captionPhone: React.CSSProperties = { fontSize: 14 };
+// The lightbox takes the whole frame: a dark stage, the image as large as it
+// fits, controls along the bottom. Vertical drags stay the browser's
+// (touch-action: pan-y); sideways ones are the swipe.
+const overlayPhone: React.CSSProperties = { background: "var(--wb-black)", placeItems: "stretch" };
+const lightboxPanelPhone: React.CSSProperties = {
+  width: "100%",
+  height: "100%",
+  padding: 6,
+  border: "none",
+  boxShadow: "none",
+};
+const lightboxImgPhone: React.CSSProperties = { touchAction: "pan-y", border: "none" };
+const metaRowPhone: React.CSSProperties = { flexWrap: "wrap", gap: 8, fontSize: 15 };
+const controlsPhone: React.CSSProperties = { gap: 6, flexWrap: "wrap" };
+const btnPhone: React.CSSProperties = { minWidth: 44, minHeight: 44, fontSize: 18 };
