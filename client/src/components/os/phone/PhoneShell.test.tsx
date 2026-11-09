@@ -6,7 +6,12 @@ import { PhoneShell } from "@/components/os/phone/PhoneShell";
 import { useWindowStore } from "@/context/windowStore";
 import { hasDeepLink } from "@/lib/deepLink";
 
-vi.mock("@/components/os/ShellModeProvider", () => ({ useShellMode: vi.fn() }));
+// useIsPhone is defined on top of the mocked useShellMode: the real one would
+// call the real (unmocked) useShellMode inside the module and always see null.
+vi.mock("@/components/os/ShellModeProvider", () => {
+  const useShellMode = vi.fn();
+  return { useShellMode, useIsPhone: () => useShellMode() === "phone" };
+});
 // Keep the real module (SfxEngine's store needs its setters) but silence the
 // two calls that would reach for Web Audio, which jsdom doesn't have.
 vi.mock("@/lib/sfx", async (importOriginal) => ({
@@ -83,11 +88,11 @@ describe("PhoneShell", () => {
   };
   const tile = () => screen.getByRole("button", { name: /Start Here:/ });
 
-  it("shows a launcher with only the enabled apps", () => {
+  it("shows a launcher with only the enabled apps, in drive order", () => {
     boot();
     const apps = screen.getByRole("navigation", { name: "Apps" });
-    expect(apps.querySelectorAll("button")).toHaveLength(1);
-    expect(tile()).toBeTruthy();
+    const labels = [...apps.querySelectorAll("button")].map((b) => b.textContent);
+    expect(labels).toEqual(["Start Here:", "User:", "Blog:", "Guestbook:", "Music:"]);
   });
 
   it("opens an app full screen on tap, and back returns to the launcher", () => {

@@ -10,6 +10,7 @@ import {
   type GuestbookEntry,
 } from "@/lib/api";
 import { markSigned } from "@/components/os/GuestbookStand";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
 
 const EMOJIS = ["★", "♥", "✿", "☻", "♪", "✦", "☼", "✈", "✧", "♫"];
 
@@ -33,6 +34,9 @@ export function Guestbook() {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [emoji, setEmoji] = useState<string>("");
+  // Phone: the 16px input size comes from the shell's CSS (iOS zooms on focus
+  // below that); here the controls grow to thumb size and the rows stack.
+  const phone = useIsPhone();
 
   const entriesQ = useQuery({ queryKey: ["guestbook"], queryFn: listGuestbook });
   // Same key the desktop stand uses, so react-query serves both from one fetch.
@@ -68,7 +72,7 @@ export function Guestbook() {
         </div>
       </div>
 
-      <div style={counterLine}>
+      <div style={{ ...counterLine, ...(phone ? counterLinePhone : null) }}>
         <span>
           <strong>{total}</strong> signature{total === 1 ? "" : "s"} in the book
         </span>
@@ -80,16 +84,16 @@ export function Guestbook() {
       </div>
 
       <form onSubmit={submit} style={form}>
-        <div style={row}>
+        <div style={{ ...row, ...(phone ? rowPhone : null) }}>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="your name"
             maxLength={40}
-            style={{ ...input, flex: 1 }}
+            style={{ ...input, flex: 1, ...(phone ? inputPhone : null) }}
             aria-label="Your name"
           />
-          <button type="submit" disabled={mutation.isPending} style={signBtn}>
+          <button type="submit" disabled={mutation.isPending} style={{ ...signBtn, ...(phone ? signBtnPhone : null) }}>
             {mutation.isPending ? "signing…" : "✎ Sign"}
           </button>
         </div>
@@ -99,10 +103,10 @@ export function Guestbook() {
           placeholder="leave a message"
           maxLength={280}
           rows={3}
-          style={{ ...input, resize: "vertical" }}
+          style={{ ...input, resize: "vertical", ...(phone ? inputPhone : null) }}
           aria-label="Your message"
         />
-        <div style={emojiRow}>
+        <div style={{ ...emojiRow, ...(phone ? emojiRowPhone : null) }}>
           <span style={emojiLabel}>pick a mark:</span>
           {EMOJIS.map((e) => (
             <button
@@ -112,6 +116,7 @@ export function Guestbook() {
               aria-pressed={emoji === e}
               style={{
                 ...emojiChip,
+                ...(phone ? emojiChipPhone : null),
                 background: emoji === e ? "var(--wb-orange)" : "var(--wb-white)",
               }}
             >
@@ -151,9 +156,11 @@ function AsciiRule() {
 
 function EntryRow({ entry, fallbackNumber }: { entry: GuestbookEntry; fallbackNumber: number }) {
   const number = entry.seq ?? fallbackNumber;
+  const phone = useIsPhone();
   return (
     <div style={entryStyle}>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" }}>
+      {/* On a phone the date drops under the name rather than squeezing it. */}
+      <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline", ...(phone ? entryHeadPhone : null) }}>
         <div>
           <span className="wb-gb-seq">#{number}</span>{" "}
           <strong style={{ fontSize: 15 }}>
@@ -222,3 +229,12 @@ const listWrap: React.CSSProperties = {
 };
 const msg: React.CSSProperties = { padding: 8, fontSize: 14, opacity: 0.6 };
 const entryStyle: React.CSSProperties = { padding: "6px 2px" };
+
+/* ---- phone overrides: spread over the desktop objects above ----------- */
+const counterLinePhone: React.CSSProperties = { flexWrap: "wrap", gap: "2px 12px", fontSize: 15 };
+const rowPhone: React.CSSProperties = { flexDirection: "column" };
+const inputPhone: React.CSSProperties = { minHeight: 44, padding: "8px 10px" };
+const signBtnPhone: React.CSSProperties = { minHeight: 44, width: "100%", fontSize: 16 };
+const emojiRowPhone: React.CSSProperties = { gap: 6 };
+const emojiChipPhone: React.CSSProperties = { minWidth: 44, minHeight: 44, fontSize: 18 };
+const entryHeadPhone: React.CSSProperties = { flexDirection: "column", gap: 2 };

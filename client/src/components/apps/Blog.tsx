@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BLOG_URL, findPost, postUrl } from "@/data/blog";
 import { useWindowStore } from "@/context/windowStore";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
 import { getPostStats } from "@/lib/api";
 
 const LOAD_TIMEOUT_MS = 4000;
@@ -16,7 +17,52 @@ function urlFor(payload: BlogPayload | undefined): string {
   return `${BLOG_URL}/`;
 }
 
-export function Blog({ winId, payload }: { winId: string; payload?: unknown }) {
+type BlogProps = { winId: string; payload?: unknown };
+
+/**
+ * The blog is its own site. The desktop frames it in a window; a phone hands
+ * off instead (Blog is a `fallback` app there): an iframe inside a phone-sized
+ * frame is a worse reading experience than the site itself, which is already
+ * responsive. Same wrapper shape as ContextMenu, so the frame's hooks (stats
+ * query, load timer) never run on a phone.
+ */
+export function Blog(props: BlogProps) {
+  const phone = useIsPhone();
+  return phone ? <BlogHandoff payload={props.payload} /> : <BlogFrame {...props} />;
+}
+
+/**
+ * A card with a link rather than an automatic jump: a tap on a real link is
+ * never popup-blocked, and opening a new tab leaves the shell (and whatever is
+ * playing) where it was.
+ */
+function BlogHandoff({ payload }: { payload?: unknown }) {
+  const p = payload as BlogPayload | undefined;
+  const url = urlFor(p);
+  const post = p?.slug ? findPost(p.slug) : undefined;
+
+  return (
+    <div className="wb-phone-card">
+      <h2>{post ? post.title : "The blog lives on its own site"}</h2>
+      <p>
+        {post
+          ? "This post is on the blog, which has its own site that reads better on a phone."
+          : "Everything I've been chewing on lately, on a site that reads better on a phone."}
+      </p>
+      <a
+        className="wb-phone-gadget"
+        style={handoffLink}
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {post ? "Read the post ↗" : "Read the blog ↗"}
+      </a>
+    </div>
+  );
+}
+
+function BlogFrame({ winId, payload }: BlogProps) {
   const patchPayload = useWindowStore((s) => s.patchPayload);
 
   const p = payload as BlogPayload | undefined;
@@ -199,6 +245,16 @@ const panel: React.CSSProperties = {
   padding: 14,
   textAlign: "center",
   boxShadow: "4px 4px 0 var(--wb-black)",
+};
+
+// Same look as the card's other gadgets, sized as the one thing to tap.
+const handoffLink: React.CSSProperties = {
+  display: "inline-grid",
+  marginTop: 14,
+  padding: "0 18px",
+  border: "1px solid var(--wb-black)",
+  background: "var(--wb-orange)",
+  fontSize: 17,
 };
 
 const openTabBtn: React.CSSProperties = {

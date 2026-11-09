@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { ABOUT, type Entry } from "@/data/about";
 import { exportCvPdf } from "@/components/apps/cv/exportPdf";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
 
 // NOURIN-NET - a monochrome "social information network" profile screen (styled
 // exactly after the NETLINK reference) rendered over the extended CV. The left
@@ -49,6 +50,10 @@ const SYSTEM_MESSAGE =
   `Welcome to ${NET_NAME}. This profile runs inside a retro desktop environment, ` +
   `explore the other drives for projects, games, music and more. ` +
   `Use EXPORT PDF in the sidebar to download the full CV.`;
+// On a phone the sidebar is a strip of tabs along the top, with export last.
+const SYSTEM_MESSAGE_PHONE =
+  `Welcome to ${NET_NAME}. Swipe the tabs along the top for each section; ` +
+  `EXPORT PDF at the end of them downloads the full CV.`;
 
 /* ── tabs ─────────────────────────────────────────────────────────────── */
 type TabId =
@@ -118,51 +123,60 @@ export function Profile() {
   const [tab, setTab] = useState<TabId>("profile");
   const { date, time, uptime } = useClock();
   const active = TABS.find((t) => t.id === tab)!;
+  // Phone: the sidebar folds into a tab strip over the content, and the purely
+  // decorative chrome (fake menu bar, status bar) goes, since at phone width
+  // it could only be clipped. See useIsPhone for the override pattern.
+  const phone = useIsPhone();
 
   return (
     <div style={screen}>
       {/* title strip */}
-      <div style={titleStrip}>
+      <div style={{ ...titleStrip, ...(phone ? titleStripPhone : null) }}>
         <span style={{ color: FG }}>{NET_TITLE}</span>
         <span style={{ color: DIM }}>{date}&nbsp;&nbsp;{time}</span>
       </div>
 
       {/* menu bar */}
-      <div style={menuBar}>
-        {["File", "Edit", "View", "Network", "Message", "Options", "Help"].map((m) => (
-          <span key={m} style={menuItem}>{m}</span>
-        ))}
-      </div>
+      {!phone && (
+        <div style={menuBar}>
+          {["File", "Edit", "View", "Network", "Message", "Options", "Help"].map((m) => (
+            <span key={m} style={menuItem}>{m}</span>
+          ))}
+        </div>
+      )}
 
       {/* work area: sidebar + main */}
-      <div style={workArea}>
-        <Sidebar tab={tab} setTab={setTab} />
-        <div style={mainScroll}>
+      <div style={{ ...workArea, ...(phone ? workAreaPhone : null) }}>
+        <Sidebar tab={tab} setTab={setTab} phone={phone} />
+        <div style={{ ...mainScroll, ...(phone ? mainScrollPhone : null) }}>
           <div style={mainHeaderBar}>USER PROFILE {tab !== "profile" && <>· {active.label}</>}</div>
           {tab === "profile" ? <Dashboard setTab={setTab} /> : <SectionView tab={tab} label={active.label} />}
         </div>
       </div>
 
       {/* system message */}
-      <div style={sysMsg}>
+      <div style={{ ...sysMsg, ...(phone ? sysMsgPhone : null) }}>
         <span style={sysMsgTag}>SYSTEM MESSAGE</span>
-        <span style={{ color: DIM }}>{SYSTEM_MESSAGE}</span>
+        <span style={{ color: DIM }}>{phone ? SYSTEM_MESSAGE_PHONE : SYSTEM_MESSAGE}</span>
       </div>
 
       {/* status bar */}
-      <div style={statusBar}>
-        <span>CONNECTED TO {NET_NAME}</span>
-        <span style={{ color: DIM }}>UPTIME: {uptime}</span>
-        <span>USERS ONLINE: 1</span>
-      </div>
+      {!phone && (
+        <div style={statusBar}>
+          <span>CONNECTED TO {NET_NAME}</span>
+          <span style={{ color: DIM }}>UPTIME: {uptime}</span>
+          <span>USERS ONLINE: 1</span>
+        </div>
+      )}
     </div>
   );
 }
 
 /* ── sidebar ──────────────────────────────────────────────────────────── */
-function Sidebar({ tab, setTab }: { tab: TabId; setTab: (t: TabId) => void }) {
+function Sidebar({ tab, setTab, phone }: { tab: TabId; setTab: (t: TabId) => void; phone: boolean }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState(false);
+  const activeChip = useRef<HTMLButtonElement>(null);
 
   async function onExport() {
     setBusy(true);
@@ -174,6 +188,50 @@ function Sidebar({ tab, setTab }: { tab: TabId; setTab: (t: TabId) => void }) {
     } finally {
       setBusy(false);
     }
+  }
+
+  // "VIEW ALL" on the dashboard can switch to a tab that's scrolled out of the
+  // strip; bring it into view so the strip always shows where you are.
+  // (Optional call: jsdom has no scrollIntoView.)
+  useEffect(() => {
+    if (phone) activeChip.current?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+  }, [phone, tab]);
+
+  // Phone: the same tabs and export, as one row that scrolls sideways above the
+  // content. The brand block is dropped; the title strip already names it.
+  if (phone) {
+    return (
+      <div>
+        <div style={strip} role="tablist" aria-label="Profile sections">
+          {TABS.map((t) => {
+            const on = tab === t.id;
+            const count = COUNTS[t.id];
+            return (
+              <button
+                key={t.id}
+                ref={on ? activeChip : undefined}
+                type="button"
+                role="tab"
+                aria-selected={on}
+                onClick={() => setTab(t.id)}
+                style={{ ...stripItem, ...(on ? navItemOn : null) }}
+              >
+                <span style={{ color: on ? BG : FG, display: "inline-flex" }}><Ico>{NAV_ICON[t.id]}</Ico></span>
+                <span>{t.label}</span>
+                {count != null && <span style={{ color: on ? BG : DIM, fontSize: 13 }}>({count})</span>}
+              </button>
+            );
+          })}
+          <button type="button" onClick={onExport} disabled={busy} style={{ ...stripItem, ...stripExport, opacity: busy ? 0.6 : 1 }}>
+            <span style={{ display: "inline-flex" }}>
+              <Ico><path d="M8 3v7" /><path d="M5 7l3 3 3-3" /><path d="M3.5 12.5h9" /></Ico>
+            </span>
+            <span>{busy ? "BUILDING…" : "EXPORT PDF"}</span>
+          </button>
+        </div>
+        {err && <div style={{ color: "#a11", fontSize: 14, padding: "4px 8px" }}>Export failed. Try again.</div>}
+      </div>
+    );
   }
 
   return (
@@ -220,12 +278,17 @@ function Sidebar({ tab, setTab }: { tab: TabId; setTab: (t: TabId) => void }) {
 
 /* ── dashboard (PROFILE tab) ──────────────────────────────────────────── */
 function Dashboard({ setTab }: { setTab: (t: TabId) => void }) {
+  // Phone: every panel takes a full row (STATS' fixed 172px would sit in a
+  // ragged half-row otherwise), identity labels sit over their values, and the
+  // links and VIEW ALL buttons grow to tap size.
+  const phone = useIsPhone();
+  const fullRow = phone ? panelPhone : null;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       {/* row 1: user profile + stats */}
       <div style={row}>
-        <Panel title="USER PROFILE" style={{ flex: 1, minWidth: 260 }}>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "stretch" }}>
+        <Panel title="USER PROFILE" style={{ flex: 1, minWidth: 260, ...fullRow }}>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "stretch", ...(phone ? { justifyContent: "center" } : null) }}>
             <FaceBox />
             <div style={{ flex: 1, minWidth: 170 }}>
               <div style={{ fontSize: 23, fontWeight: "bold", letterSpacing: 1 }}>{ABOUT.name.toUpperCase()}</div>
@@ -237,19 +300,19 @@ function Dashboard({ setTab }: { setTab: (t: TabId) => void }) {
               <div style={quoteBox}>&ldquo;{QUOTE}&rdquo;</div>
               <div style={{ marginTop: 8 }}>
                 {IDENTITY.map((r) => (
-                  <div key={r.label} style={idRow}>
-                    <span style={idKey}>{r.label}:</span>
+                  <div key={r.label} style={{ ...idRow, ...(phone ? idRowPhone : null) }}>
+                    <span style={{ ...idKey, ...(phone ? idKeyPhone : null) }}>{r.label}:</span>
                     <span>{r.value}</span>
                   </div>
                 ))}
               </div>
               <div style={bioBlock}>
-                <div style={idKey}>BIO</div>
+                <div style={{ ...idKey, ...(phone ? idKeyPhone : null) }}>BIO</div>
                 {ABOUT.bio.map((text, i) => (
-                  <p key={i} style={bioPara}>{text}</p>
+                  <p key={i} style={{ ...bioPara, ...(phone ? bioParaPhone : null) }}>{text}</p>
                 ))}
               </div>
-              <div style={contactRow}>
+              <div style={{ ...contactRow, ...(phone ? contactRowPhone : null) }}>
                 <a href={`mailto:${ABOUT.email}`} style={link}>{ABOUT.email}</a>
                 {ABOUT.links.map((l) => (
                   <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" style={link}>{l.label} ↗</a>
@@ -259,7 +322,7 @@ function Dashboard({ setTab }: { setTab: (t: TabId) => void }) {
           </div>
         </Panel>
 
-        <Panel title="STATS" style={{ width: 172, flexShrink: 0 }}>
+        <Panel title="STATS" style={{ width: 172, flexShrink: 0, ...(phone ? { width: "100%" } : null) }}>
           {STATS.map((s) => (
             <div key={s.label} style={statRow}>
               <span style={{ color: DIM }}>{s.label}:</span>
@@ -271,7 +334,7 @@ function Dashboard({ setTab }: { setTab: (t: TabId) => void }) {
 
       {/* row 2: featured projects + education */}
       <div style={row}>
-        <Panel title="FEATURED PROJECTS" style={{ flex: 1.2, minWidth: 240 }}>
+        <Panel title="FEATURED PROJECTS" style={{ flex: 1.2, minWidth: 240, ...fullRow }}>
           {FEATURED.map((p, i) => (
             <div key={p.title} style={{ marginBottom: i === FEATURED.length - 1 ? 0 : 10 }}>
               <div style={{ color: DIM, fontSize: 13 }}>{p.meta}</div>
@@ -284,7 +347,7 @@ function Dashboard({ setTab }: { setTab: (t: TabId) => void }) {
           <ViewAll onClick={() => setTab("projects")}>VIEW ALL PROJECTS ▶</ViewAll>
         </Panel>
 
-        <Panel title="EDUCATION" style={{ flex: 1, minWidth: 200 }}>
+        <Panel title="EDUCATION" style={{ flex: 1, minWidth: 200, ...fullRow }}>
           {ABOUT.education.map((e, i) => (
             <div key={e.title} style={{ marginBottom: i === ABOUT.education.length - 1 ? 0 : 10 }}>
               <div style={{ fontWeight: "bold" }}>{e.title}</div>
@@ -368,8 +431,9 @@ function Panel({ title, style, children }: { title: string; style?: CSSPropertie
 }
 
 function ViewAll({ onClick, children }: { onClick: () => void; children: ReactNode }) {
+  const phone = useIsPhone();
   return (
-    <button type="button" onClick={onClick} style={viewAll}>{children}</button>
+    <button type="button" onClick={onClick} style={{ ...viewAll, ...(phone ? viewAllPhone : null) }}>{children}</button>
   );
 }
 
@@ -588,3 +652,41 @@ const statusBar: CSSProperties = {
   fontSize: 13,
   flexShrink: 0,
 };
+
+/* ── phone overrides: spread over the desktop objects above ──────────── */
+const titleStripPhone: CSSProperties = { flexWrap: "wrap", gap: "0 8px", fontSize: 14 };
+const workAreaPhone: CSSProperties = { flexDirection: "column" };
+const mainScrollPhone: CSSProperties = { padding: 8 };
+const sysMsgPhone: CSSProperties = { flexWrap: "wrap", gap: "2px 8px", fontSize: 14 };
+
+// The sidebar as a sideways-scrolling strip: tabs at thumb height, export last.
+const strip: CSSProperties = {
+  display: "flex",
+  overflowX: "auto",
+  overscrollBehaviorX: "contain",
+  borderBottom: `1px solid ${LINE}`,
+  flexShrink: 0,
+};
+const stripItem: CSSProperties = {
+  ...navItem,
+  flex: "0 0 auto",
+  width: "auto",
+  minHeight: 44,
+  padding: "0 12px",
+  borderBottom: "none",
+  borderRight: `1px solid ${DIV}`,
+  whiteSpace: "nowrap",
+};
+const stripExport: CSSProperties = {
+  fontWeight: "bold",
+  letterSpacing: 0.5,
+  borderLeft: `1px solid ${LINE_HI}`,
+  borderRight: "none",
+};
+
+const panelPhone: CSSProperties = { flex: "1 1 100%", minWidth: 0 };
+const idRowPhone: CSSProperties = { flexDirection: "column", gap: 0, marginTop: 6 };
+const idKeyPhone: CSSProperties = { width: "auto", fontSize: 13, letterSpacing: 0.5 };
+const bioParaPhone: CSSProperties = { fontSize: 16 };
+const contactRowPhone: CSSProperties = { gap: 14, fontSize: 15, lineHeight: 2 };
+const viewAllPhone: CSSProperties = { minHeight: 44, fontSize: 15 };

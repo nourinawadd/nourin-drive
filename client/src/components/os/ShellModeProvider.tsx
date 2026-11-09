@@ -35,3 +35,17 @@ export function ShellModeProvider({ children }: { children: React.ReactNode }) {
 export function useShellMode(): ShellMode | null {
   return useContext(ShellModeContext);
 }
+
+/**
+ * True only inside the phone shell. This is what apps branch their layout on,
+ * and the pattern every converted app follows (Phase 3 onward): the desktop's
+ * inline style objects stay exactly as they are, and phone-only overrides are
+ * spread on top, e.g. `style={{ ...row, ...(phone ? rowPhone : null) }}`, with
+ * the `*Phone` objects at the bottom of the file beside the originals. Spreading
+ * null is a no-op, so the desktop's computed styles can't change. Inline styles
+ * can't take media queries, and the shell's width isn't the question anyway:
+ * a narrow desktop window must keep the desktop layout.
+ */
+export function useIsPhone(): boolean {
+  return useShellMode() === "phone";
+}

@@ -27,7 +27,9 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
   },
   blog: {
     appId: "blog", title: "Blog",
-    mobile: "hidden",
+    // A fallback since Phase 3: the phone hands off to the blog's own site
+    // (BlogHandoff) instead of framing it.
+    mobile: "fallback",
     singleton: true,
   },
   moderation: {
@@ -74,13 +76,13 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
   },
   guestbook: {
     appId: "guestbook", title: "Guestbook",
-    mobile: "hidden",
+    mobile: "native",
     singleton: true,
   },
   music: {
     appId: "music", title: "Music Player",
     minWidth: 260, minHeight: 116,
-    mobile: "hidden",
+    mobile: "native",
     singleton: true,
   },
   prefs: {
@@ -121,7 +123,7 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
   profile: {
     appId: "profile", title: "User Profile",
     minWidth: 480, minHeight: 400,
-    mobile: "hidden",
+    mobile: "native",
     singleton: true,
   },
   properties: {

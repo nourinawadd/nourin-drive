@@ -5,9 +5,12 @@ import type { ComponentType } from "react";
 import { useWindowStore } from "@/context/windowStore";
 import { useStickyStore } from "@/context/stickyStore";
 import { APP_ICONS } from "@/data/appIcons";
+import { mobileSupport } from "@/data/appRegistry";
 import { DockStickies, IconFloppySystem } from "@/components/os/icons";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
 import { KEY_README_SEEN, writeFlag } from "@/lib/localStore";
 import { playSfx } from "@/lib/sfx";
+import { useActivate } from "@/lib/useActivate";
 import type { AppId } from "@/types/window";
 
 const INTRO = [
@@ -16,10 +19,18 @@ const INTRO = [
   "Have a poke around.",
 ];
 
-type Item = { name: string; line: string; appId?: AppId; Icon: ComponentType };
+// `phoneLine` only where the desktop line describes something the phone lays out
+// differently.
+type Item = { name: string; line: string; phoneLine?: string; appId?: AppId; Icon: ComponentType };
 
 const ITEMS: Item[] = [
-  { name: "User Profile", line: "The CV. Education, experience, skills, and everything I've shipped. Export it as a PDF from the sidebar.", appId: "profile", Icon: APP_ICONS.profile },
+  {
+    name: "User Profile",
+    line: "The CV. Education, experience, skills, and everything I've shipped. Export it as a PDF from the sidebar.",
+    phoneLine: "The CV. Education, experience, skills, and everything I've shipped. Export it as a PDF from the end of its tabs.",
+    appId: "profile",
+    Icon: APP_ICONS.profile,
+  },
   { name: "File Explorer", line: "Every project as a folder, with the write-up inside it.", appId: "explorer", Icon: APP_ICONS.explorer },
   { name: "Games", line: "Small games I made, playable right here in the window.", appId: "games", Icon: APP_ICONS.games },
   { name: "Graphic Design", line: "Posters, covers, and illustration work.", appId: "gallery", Icon: APP_ICONS.gallery },
@@ -35,14 +46,28 @@ const ITEMS: Item[] = [
   { name: "Recycle Bin", line: "Nothing important in here. Look anyway.", appId: "recycle", Icon: APP_ICONS.recycle },
 ];
 
+// On a phone, every app is still listed so visitors can see what the site has,
+// but Sticky Notes goes: it's an action rather than an app, and nothing in the
+// phone shell renders stickies. Apps that only work on the desktop stay in the
+// list, marked, and open the shell's "needs a computer" screen when tapped.
+const PHONE_ITEMS = ITEMS.filter((item) => item.appId !== undefined);
+
 const GETTING_AROUND = [
-  "Double-click a drive on the right to open it. The dock along the bottom does the same for the ones I reach for most.",
+  "Double-click a drive on the left to open it. The dock along the bottom does the same for the ones I reach for most.",
   "Drag anything. Windows move by their title bar, icons go wherever you drop them.",
   "Minimise a window and it shrinks to an icon down the left edge. Double-click that to bring it back.",
   "Right-click an icon or a file for Properties.",
   "Right-click the desktop itself for a new sticky, a tidy up and the palettes.",
   "Icons ▸ Clean Up puts every icon back where it started.",
   "The Window menu does the obvious: cascade, minimise all, restore all.",
+];
+
+const GETTING_AROUND_PHONE = [
+  "Tap a drive to open it. Hold one for its options.",
+  "One thing at a time: Back, top left, closes it and shows whatever was open before.",
+  "Music keeps playing when you leave the player. The bar along the bottom brings it back.",
+  "Some drives need a mouse and a big screen. They'll say so.",
+  "Desktop, top right, switches to the full Workbench. It's cramped on a phone, but it's all there.",
 ];
 
 const CREDITS =
@@ -70,14 +95,21 @@ const HINTS: Record<TabId, string> = {
   credits: "Workbench 3.31",
 };
 
+const HINTS_PHONE: Record<TabId, string> = {
+  ...HINTS,
+  inside: `${PHONE_ITEMS.length} items · tap to open`,
+  around: "It's a desktop, folded up small.",
+};
+
 export function AboutSite() {
   const [tab, setTab] = useState<TabId>("about");
+  const phone = useIsPhone();
 
   useEffect(() => writeFlag(KEY_README_SEEN, true), []);
 
   return (
     <div style={shell}>
-      <div style={tabRow} role="tablist">
+      <div style={{ ...tabRow, ...(phone ? tabRowPhone : null) }} role="tablist">
         {TABS.map((t) => {
           const active = t.id === tab;
           return (
@@ -90,7 +122,7 @@ export function AboutSite() {
                 if (!active) playSfx("menu");
                 setTab(t.id);
               }}
-              style={{ ...tabBtn, ...(active ? tabBtnActive : null) }}
+              style={{ ...tabBtn, ...(phone ? tabBtnPhone : null), ...(active ? tabBtnActive : null) }}
             >
               {t.label}
             </button>
@@ -105,7 +137,9 @@ export function AboutSite() {
         {tab === "credits" && <CreditsPage />}
       </div>
 
-      <div style={statusBar}>{HINTS[tab]}</div>
+      <div style={{ ...statusBar, ...(phone ? statusBarPhone : null) }}>
+        {(phone ? HINTS_PHONE : HINTS)[tab]}
+      </div>
     </div>
   );
 }
@@ -122,6 +156,7 @@ const SPECS: { label: string; value: string }[] = [
 ];
 
 function AboutPage() {
+  const phone = useIsPhone();
   return (
     <div style={page}>
       <div style={banner}>
@@ -137,11 +172,11 @@ function AboutPage() {
       <div style={columns}>
         <div style={proseCol}>
           {INTRO.map((text, i) => (
-            <p key={i} style={para}>{text}</p>
+            <p key={i} style={{ ...para, ...(phone ? paraPhone : null) }}>{text}</p>
           ))}
         </div>
 
-        <div style={specPanel}>
+        <div style={{ ...specPanel, ...(phone ? specPanelPhone : null) }}>
           <div style={specTitle}>SYSTEM</div>
           <div style={specBody}>
             {SPECS.map((s) => (
@@ -165,6 +200,10 @@ function InsidePage() {
   const openApp = useWindowStore((s) => s.openApp);
   const addSticky = useStickyStore((s) => s.add);
   const [selected, setSelected] = useState<string | null>(null);
+  const phone = useIsPhone();
+  // Desktop: click selects, double-click opens, exactly as before. Phone: one
+  // tap opens (see lib/useActivate).
+  const activate = useActivate();
 
   function open(item: Item) {
     playSfx("launch");
@@ -173,25 +212,34 @@ function InsidePage() {
   }
 
   return (
-    <div style={grid}>
-      {ITEMS.map((item) => {
+    <div style={{ ...grid, ...(phone ? gridPhone : null) }}>
+      {(phone ? PHONE_ITEMS : ITEMS).map((item) => {
         const active = selected === item.name;
+        // Still tappable: the shell answers with its "needs a computer" screen,
+        // which says why better than a dead tile would.
+        const desktopOnly = phone && item.appId !== undefined && mobileSupport(item.appId) === "hidden";
+        const line = phone && item.phoneLine ? item.phoneLine : item.line;
         return (
           <div
             key={item.name}
             style={cell}
-            title={item.line}
-            onClick={() => {
-              if (!active) playSfx("select");
-              setSelected(item.name);
-            }}
-            onDoubleClick={() => open(item)}
+            title={line}
+            {...activate({
+              onSelect: () => {
+                // On a phone the tap opens straight away; the launch sound
+                // covers it, and a select blip on top would just be noise.
+                if (!active && !phone) playSfx("select");
+                setSelected(item.name);
+              },
+              onOpen: () => open(item),
+            })}
           >
-            <div style={tile}>
+            <div style={{ ...tile, ...(desktopOnly ? tileDesktopOnly : null) }}>
               <item.Icon />
             </div>
             <div style={{ ...cellLabel, ...(active ? cellLabelActive : null) }}>{item.name}</div>
-            <div style={cellLine}>{item.line}</div>
+            <div style={{ ...cellLine, ...(phone ? cellLinePhone : null) }}>{line}</div>
+            {desktopOnly && <div style={desktopOnlyTag}>ON A COMPUTER</div>}
           </div>
         );
       })}
@@ -200,10 +248,11 @@ function InsidePage() {
 }
 
 function AroundPage() {
+  const phone = useIsPhone();
   return (
     <div style={page}>
-      <ul style={ul}>
-        {GETTING_AROUND.map((text, i) => (
+      <ul style={{ ...ul, ...(phone ? ulPhone : null) }}>
+        {(phone ? GETTING_AROUND_PHONE : GETTING_AROUND).map((text, i) => (
           <li key={i} style={li}>{text}</li>
         ))}
       </ul>
@@ -212,11 +261,12 @@ function AroundPage() {
 }
 
 function CreditsPage() {
+  const phone = useIsPhone();
   return (
     <div style={page}>
-      <p style={para}>{CREDITS}</p>
+      <p style={{ ...para, ...(phone ? paraPhone : null) }}>{CREDITS}</p>
       <div style={noticeHead}>Before you go</div>
-      <ul style={ul}>
+      <ul style={{ ...ul, ...(phone ? ulPhone : null) }}>
         {NOTICES.map((text, i) => (
           <li key={i} style={li}>{text}</li>
         ))}
@@ -409,4 +459,25 @@ const noticeHead: React.CSSProperties = {
   color: "var(--wb-white)",
   padding: "1px 6px",
   display: "inline-block",
+};
+
+/* ---- phone overrides: spread over the desktop objects above ----------- */
+// Tabs and text a thumb and an un-zoomed eye can use; the spec panel drops
+// under the prose instead of squeezing beside it; two tiles per row at 360px.
+const tabRowPhone: React.CSSProperties = { gap: 3 };
+const tabBtnPhone: React.CSSProperties = { minHeight: 44, padding: "0 12px", fontSize: 16 };
+const statusBarPhone: React.CSSProperties = { fontSize: 14, padding: "4px 8px" };
+const paraPhone: React.CSSProperties = { fontSize: 16 };
+const specPanelPhone: React.CSSProperties = { width: "100%" };
+const gridPhone: React.CSSProperties = { gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", padding: 6 };
+const cellLinePhone: React.CSSProperties = { fontSize: 14 };
+const ulPhone: React.CSSProperties = { fontSize: 16 };
+const tileDesktopOnly: React.CSSProperties = { opacity: 0.45 };
+const desktopOnlyTag: React.CSSProperties = {
+  marginTop: 2,
+  padding: "0 4px",
+  fontSize: 12,
+  letterSpacing: 1,
+  color: "var(--wb-white)",
+  background: "var(--wb-gray-3)",
 };
