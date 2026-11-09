@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FS_ROOT, countItems, findFolder, pathTo,
   type FileAction, type FsFolder, type FsNode,
@@ -12,6 +12,10 @@ import { useWindowStore } from "@/context/windowStore";
 import { FileIcon, FolderIcon } from "@/components/os/icons";
 import { ContextMenu, type MenuItem } from "@/components/os/ContextMenu";
 import type { PropertiesPayload } from "@/components/apps/Properties";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
+import { useShellText } from "@/lib/shellText";
+import { useActivate } from "@/lib/useActivate";
+import { useContextTrigger, type ContextPoint } from "@/lib/useContextTrigger";
 
 type ViewMode = "list" | "icons";
 type SortKey = "natural" | "name" | "type" | "date";
@@ -51,6 +55,15 @@ export function Explorer({ winId, payload }: { winId: string; payload: unknown }
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [menu, setMenu] = useState<Menu | null>(null);
+  // Phone: no tree pane and no menu bar (everything in them is in the toolbar
+  // and the long-press menu); a breadcrumb trail replaces both the tree and the
+  // address box. The payload shape is untouched - the Shell app's `open`
+  // command writes it too.
+  const phone = useIsPhone();
+  const hint = useShellText({
+    desktop: "double-click to open · right-click for properties",
+    phone: "tap to open · hold for properties",
+  });
 
   const folder = findFolder(state.folderId) ?? FS_ROOT;
   const trail = pathTo(folder.id) ?? [FS_ROOT];
@@ -150,17 +163,18 @@ export function Explorer({ winId, payload }: { winId: string; payload: unknown }
 
   const parent = trail.length > 1 ? trail[trail.length - 2] : null;
 
-  function onNodeContextMenu(e: React.MouseEvent, node: FsNode) {
-    e.preventDefault();
-    e.stopPropagation();
+  // Menus come from useContextTrigger: a right-click on the desktop, a long
+  // press on a phone. The trigger does the preventDefault itself, and when a
+  // file's menu and the pane's menu both see the same event, the innermost
+  // (the file) claims it - which replaces the stopPropagation this used to do.
+  function onNodeMenu(point: ContextPoint, node: FsNode) {
     setSelectedId(node.id);
-    setMenu({ x: e.clientX, y: e.clientY, node });
+    setMenu({ x: point.clientX, y: point.clientY, node });
   }
 
-  function onBackgroundContextMenu(e: React.MouseEvent) {
-    e.preventDefault();
-    setMenu({ x: e.clientX, y: e.clientY, node: null });
-  }
+  const backgroundMenu = useContextTrigger((point) =>
+    setMenu({ x: point.clientX, y: point.clientY, node: null }),
+  );
 
   const menuItems: MenuItem[] = menu?.node
     ? [
@@ -179,15 +193,17 @@ export function Explorer({ winId, payload }: { winId: string; payload: unknown }
 
   return (
     <div style={shell}>
-      <MenuBar
-        view={view}
-        canGoUp={!!parent}
-        onUp={() => parent && navigate(parent.id)}
-        onView={(v) => setState({ view: v })}
-        onProperties={() => openProperties(folder)}
-      />
+      {!phone && (
+        <MenuBar
+          view={view}
+          canGoUp={!!parent}
+          onUp={() => parent && navigate(parent.id)}
+          onView={(v) => setState({ view: v })}
+          onProperties={() => openProperties(folder)}
+        />
+      )}
 
-      <div style={toolbar}>
+      <div style={{ ...toolbar, ...(phone ? toolbarPhone : null) }}>
         <ToolButton disabled={!parent} onClick={() => parent && navigate(parent.id)}>
           ↑ Up
         </ToolButton>
@@ -198,28 +214,36 @@ export function Explorer({ winId, payload }: { winId: string; payload: unknown }
         <ToolButton active={view === "icons"} onClick={() => setState({ view: "icons" })}>
           ▦ Icons
         </ToolButton>
-        <span style={{ ...toolDivider, marginLeft: "auto" }} />
-        <span style={addressLabel}>Address:</span>
-        <span style={address} title={folder.path}>{folder.path}</span>
+        {!phone && (
+          <>
+            <span style={{ ...toolDivider, marginLeft: "auto" }} />
+            <span style={addressLabel}>Address:</span>
+            <span style={address} title={folder.path}>{folder.path}</span>
+          </>
+        )}
       </div>
 
-      <div style={panes}>
-        <aside style={treePane}>
-          <div style={paneHeader}>All Folders</div>
-          <div style={{ padding: "2px 0" }}>
-            <TreeBranch
-              node={FS_ROOT}
-              rails={[]}
-              isLast
-              currentId={folder.id}
-              expanded={expanded}
-              onToggle={toggle}
-              onSelect={navigate}
-            />
-          </div>
-        </aside>
+      {phone && <Breadcrumbs trail={trail} onNavigate={navigate} />}
 
-        <section style={listPane} onContextMenu={onBackgroundContextMenu}>
+      <div style={{ ...panes, ...(phone ? panesPhone : null) }}>
+        {!phone && (
+          <aside style={treePane}>
+            <div style={paneHeader}>All Folders</div>
+            <div style={{ padding: "2px 0" }}>
+              <TreeBranch
+                node={FS_ROOT}
+                rails={[]}
+                isLast
+                currentId={folder.id}
+                expanded={expanded}
+                onToggle={toggle}
+                onSelect={navigate}
+              />
+            </div>
+          </aside>
+        )}
+
+        <section style={listPane} {...backgroundMenu}>
           <div style={paneHeader}>Contents of &apos;{folder.name}&apos;</div>
 
           {view === "list" ? (
@@ -231,7 +255,7 @@ export function Explorer({ winId, payload }: { winId: string; payload: unknown }
               onSort={sortBy}
               onSelect={setSelectedId}
               onOpen={openNode}
-              onContext={onNodeContextMenu}
+              onContext={onNodeMenu}
             />
           ) : (
             <IconView
@@ -239,16 +263,16 @@ export function Explorer({ winId, payload }: { winId: string; payload: unknown }
               selectedId={selectedId}
               onSelect={setSelectedId}
               onOpen={openNode}
-              onContext={onNodeContextMenu}
+              onContext={onNodeMenu}
             />
           )}
         </section>
       </div>
 
-      <div style={statusBar}>
+      <div style={{ ...statusBar, ...(phone ? statusBarPhone : null) }}>
         <span>{items.length} object(s)</span>
         <span style={{ marginLeft: "auto", opacity: 0.7 }}>
-          double-click to open · right-click for properties
+          {hint}
         </span>
       </div>
 
@@ -374,15 +398,19 @@ function ListView({
   onSort: (k: SortKey) => void;
   onSelect: (id: string) => void;
   onOpen: (n: FsNode) => void;
-  onContext: (e: React.MouseEvent, n: FsNode) => void;
+  onContext: (point: ContextPoint, n: FsNode) => void;
 }) {
   const arrow = (k: SortKey) => (k === sortKey ? (sortAsc ? " ▲" : " ▼") : "");
+  // Phone rows are a single column (type and date ride under the name), so the
+  // header is just three equal sort buttons rather than column headings.
+  const phone = useIsPhone();
+  const col = (desktop: React.CSSProperties) => (phone ? { ...colButton, ...colButtonPhone } : { ...colButton, ...desktop });
   return (
     <div style={{ flex: 1, overflow: "auto", minHeight: 0 }}>
       <div style={listHeader}>
-        <button style={{ ...colButton, flex: 3 }} onClick={() => onSort("name")}>Name{arrow("name")}</button>
-        <button style={{ ...colButton, flex: 2 }} onClick={() => onSort("type")}>Type{arrow("type")}</button>
-        <button style={{ ...colButton, width: 84, flex: "0 0 84px", justifyContent: "flex-end" }} onClick={() => onSort("date")}>
+        <button style={col({ flex: 3 })} onClick={() => onSort("name")}>Name{arrow("name")}</button>
+        <button style={col({ flex: 2 })} onClick={() => onSort("type")}>Type{arrow("type")}</button>
+        <button style={col({ width: 84, flex: "0 0 84px", justifyContent: "flex-end" })} onClick={() => onSort("date")}>
           Modified{arrow("date")}
         </button>
       </div>
@@ -390,34 +418,82 @@ function ListView({
       {items.length === 0 ? (
         <div style={emptyNote}>This folder is empty.</div>
       ) : (
-        items.map((n) => {
-          const selected = selectedId === n.id;
-          return (
-            <div
-              key={n.id}
-              onClick={() => onSelect(n.id)}
-              onDoubleClick={() => onOpen(n)}
-              onContextMenu={(e) => onContext(e, n)}
-              style={{ ...listRow, background: selected ? "var(--wb-orange)" : undefined }}
-            >
-              <span style={{ flex: 3, display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
-                <span style={{ display: "inline-flex", flexShrink: 0 }}>
-                  {n.kind === "folder"
-                    ? <FolderIcon scale={2} />
-                    : <FileIcon category={n.iconCat} scale={2} />}
-                </span>
-                <span style={ellipsis}>{n.name}</span>
-              </span>
-              <span style={{ flex: 2, minWidth: 0, ...ellipsis }}>
-                {n.kind === "folder" ? "File Folder" : n.typeLabel}
-              </span>
-              <span style={{ width: 84, flex: "0 0 84px", textAlign: "right", opacity: 0.75 }}>
-                {n.kind === "file" ? n.date ?? "" : ""}
-              </span>
-            </div>
-          );
-        })
+        items.map((n) => (
+          <ListRow
+            key={n.id}
+            node={n}
+            selected={selectedId === n.id}
+            onSelect={onSelect}
+            onOpen={onOpen}
+            onContext={onContext}
+          />
+        ))
       )}
+    </div>
+  );
+}
+
+type ItemProps = {
+  node: FsNode;
+  selected: boolean;
+  onSelect: (id: string) => void;
+  onOpen: (n: FsNode) => void;
+  onContext: (point: ContextPoint, n: FsNode) => void;
+};
+
+// One component per row (and per icon, below) because useActivate and
+// useContextTrigger are hooks, and a hook can't be called per item inside the
+// list's .map(). On the desktop the handlers are exactly the old ones: click
+// selects, double-click opens, right-click opens the menu.
+function ListRow({ node: n, selected, onSelect, onOpen, onContext }: ItemProps) {
+  const activate = useActivate();
+  const menu = useContextTrigger((point) => onContext(point, n));
+  const phone = useIsPhone();
+
+  // Phone: one column at thumb height. The fixed 84px Modified column can't fit
+  // beside a readable name at 360px, so type and date drop under it.
+  if (phone) {
+    const type = n.kind === "folder" ? "File Folder" : n.typeLabel;
+    const date = n.kind === "file" ? n.date : undefined;
+    return (
+      <div
+        {...activate({ onSelect: () => onSelect(n.id), onOpen: () => onOpen(n) })}
+        {...menu}
+        style={{ ...listRow, ...listRowPhone, background: selected ? "var(--wb-orange)" : undefined }}
+      >
+        <span style={{ display: "inline-flex", flexShrink: 0 }}>
+          {n.kind === "folder"
+            ? <FolderIcon scale={2} />
+            : <FileIcon category={n.iconCat} scale={2} />}
+        </span>
+        <span style={rowText}>
+          <span style={ellipsis}>{n.name}</span>
+          <span style={{ ...ellipsis, ...rowSub }}>{date ? `${type} · ${date}` : type}</span>
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      {...activate({ onSelect: () => onSelect(n.id), onOpen: () => onOpen(n) })}
+      {...menu}
+      style={{ ...listRow, background: selected ? "var(--wb-orange)" : undefined }}
+    >
+      <span style={{ flex: 3, display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
+        <span style={{ display: "inline-flex", flexShrink: 0 }}>
+          {n.kind === "folder"
+            ? <FolderIcon scale={2} />
+            : <FileIcon category={n.iconCat} scale={2} />}
+        </span>
+        <span style={ellipsis}>{n.name}</span>
+      </span>
+      <span style={{ flex: 2, minWidth: 0, ...ellipsis }}>
+        {n.kind === "folder" ? "File Folder" : n.typeLabel}
+      </span>
+      <span style={{ width: 84, flex: "0 0 84px", textAlign: "right", opacity: 0.75 }}>
+        {n.kind === "file" ? n.date ?? "" : ""}
+      </span>
     </div>
   );
 }
@@ -431,39 +507,51 @@ function IconView({
   selectedId: string | null;
   onSelect: (id: string) => void;
   onOpen: (n: FsNode) => void;
-  onContext: (e: React.MouseEvent, n: FsNode) => void;
+  onContext: (point: ContextPoint, n: FsNode) => void;
 }) {
+  const phone = useIsPhone();
   if (items.length === 0) return <div style={emptyNote}>This folder is empty.</div>;
   return (
-    <div style={iconGrid}>
-      {items.map((n) => {
-        const selected = selectedId === n.id;
-        return (
-          <button
-            key={n.id}
-            onClick={() => onSelect(n.id)}
-            onDoubleClick={() => onOpen(n)}
-            onContextMenu={(e) => onContext(e, n)}
-            style={iconCell}
-          >
-            <span style={{ display: "inline-flex" }}>
-              {n.kind === "folder"
-                ? <FolderIcon scale={4} />
-                : <FileIcon category={n.iconCat} scale={4} />}
-            </span>
-            <span
-              style={{
-                ...iconLabel,
-                background: selected ? "var(--wb-orange)" : "transparent",
-                outline: selected ? "1px dotted var(--wb-black)" : "none",
-              }}
-            >
-              {n.name}
-            </span>
-          </button>
-        );
-      })}
+    <div style={{ ...iconGrid, ...(phone ? iconGridPhone : null) }}>
+      {items.map((n) => (
+        <IconCell
+          key={n.id}
+          node={n}
+          selected={selectedId === n.id}
+          onSelect={onSelect}
+          onOpen={onOpen}
+          onContext={onContext}
+        />
+      ))}
     </div>
+  );
+}
+
+function IconCell({ node: n, selected, onSelect, onOpen, onContext }: ItemProps) {
+  const activate = useActivate();
+  const menu = useContextTrigger((point) => onContext(point, n));
+  const phone = useIsPhone();
+  return (
+    <button
+      {...activate({ onSelect: () => onSelect(n.id), onOpen: () => onOpen(n) })}
+      {...menu}
+      style={{ ...iconCell, ...(phone ? iconCellPhone : null) }}
+    >
+      <span style={{ display: "inline-flex" }}>
+        {n.kind === "folder"
+          ? <FolderIcon scale={4} />
+          : <FileIcon category={n.iconCat} scale={4} />}
+      </span>
+      <span
+        style={{
+          ...iconLabel,
+          background: selected ? "var(--wb-orange)" : "transparent",
+          outline: selected ? "1px dotted var(--wb-black)" : "none",
+        }}
+      >
+        {n.name}
+      </span>
+    </button>
   );
 }
 
@@ -558,12 +646,14 @@ function ToolButton({
   disabled?: boolean;
   active?: boolean;
 }) {
+  const phone = useIsPhone();
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       style={{
         ...toolButton,
+        ...(phone ? toolButtonPhone : null),
         ...(active ? toolButtonActive : null),
         opacity: disabled ? 0.4 : 1,
         cursor: disabled ? "default" : "pointer",
@@ -571,6 +661,43 @@ function ToolButton({
     >
       {children}
     </button>
+  );
+}
+
+/**
+ * Phone only: the path from the root to here, each step a button back up. It
+ * stands in for both the tree pane and the address box, which can't fit at
+ * phone width. A long trail scrolls sideways and keeps its last crumb (where
+ * you are) in view.
+ */
+function Breadcrumbs({ trail, onNavigate }: { trail: FsFolder[]; onNavigate: (id: string) => void }) {
+  const ref = useRef<HTMLElement>(null);
+  const here = trail[trail.length - 1]?.id;
+
+  useEffect(() => {
+    const el = ref.current;
+    if (el) el.scrollLeft = el.scrollWidth;
+  }, [here]);
+
+  return (
+    <nav ref={ref} aria-label="Folder path" style={crumbs}>
+      {trail.map((f, i) => {
+        const current = i === trail.length - 1;
+        return (
+          <Fragment key={f.id}>
+            {i > 0 && <span aria-hidden style={crumbSep}>›</span>}
+            <button
+              type="button"
+              aria-current={current ? "page" : undefined}
+              onClick={() => onNavigate(f.id)}
+              style={{ ...crumb, ...(current ? crumbCurrent : null) }}
+            >
+              {f.name}
+            </button>
+          </Fragment>
+        );
+      })}
+    </nav>
   );
 }
 
@@ -878,3 +1005,44 @@ const ellipsis: React.CSSProperties = {
   whiteSpace: "nowrap",
   minWidth: 0,
 };
+
+/* ── phone overrides: spread over the desktop objects above ────────────── */
+// Thumb-sized controls and text an un-zoomed eye can read. Long presses open
+// menus here, so iOS's own press behaviours (text selection, the callout) are
+// switched off on the things you press.
+const noPressUi: React.CSSProperties = { WebkitUserSelect: "none", WebkitTouchCallout: "none" };
+const toolbarPhone: React.CSSProperties = { gap: 6, padding: "4px" };
+const toolButtonPhone: React.CSSProperties = { minHeight: 44, padding: "0 12px", fontSize: 15 };
+const panesPhone: React.CSSProperties = { padding: 2, gap: 0 };
+const colButtonPhone: React.CSSProperties = { flex: 1, minHeight: 40, padding: "0 8px", fontSize: 14 };
+const listRowPhone: React.CSSProperties = { ...noPressUi, minHeight: 52, padding: "6px 8px", gap: 10, fontSize: 15 };
+const rowText: React.CSSProperties = { flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 };
+const rowSub: React.CSSProperties = { fontSize: 13, opacity: 0.7 };
+const iconGridPhone: React.CSSProperties = { gridTemplateColumns: "repeat(auto-fill, minmax(132px, 1fr))", padding: 6 };
+const iconCellPhone: React.CSSProperties = { ...noPressUi, padding: "8px 2px", fontSize: 15 };
+const statusBarPhone: React.CSSProperties = { fontSize: 13, padding: "4px 8px", flexWrap: "wrap" };
+
+const crumbs: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  overflowX: "auto",
+  overscrollBehaviorX: "contain",
+  padding: "0 4px",
+  background: "var(--wb-white)",
+  borderBottom: "1px solid var(--wb-black)",
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+};
+const crumb: React.CSSProperties = {
+  flexShrink: 0,
+  minHeight: 44,
+  padding: "0 8px",
+  border: "none",
+  background: "transparent",
+  fontFamily: "var(--wb-font)",
+  fontSize: 15,
+  color: "var(--wb-black)",
+  cursor: "pointer",
+};
+const crumbCurrent: React.CSSProperties = { fontWeight: "bold" };
+const crumbSep: React.CSSProperties = { flexShrink: 0, opacity: 0.5 };

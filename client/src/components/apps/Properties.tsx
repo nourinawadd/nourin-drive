@@ -2,6 +2,7 @@
 
 import { useWindowStore } from "@/context/windowStore";
 import { FileIcon, FolderIcon, type IconCategory } from "@/components/os/icons";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
 
 // Everything the dialog needs, captured when it is opened. Kept flat and
 // serialisable because it rides along in the window payload.
@@ -21,12 +22,16 @@ export function Properties({ winId, payload }: { winId: string; payload: unknown
   const closeWin = useWindowStore((s) => s.closeWin);
   const p = (payload ?? {}) as Partial<PropertiesPayload>;
   const close = () => closeWin(winId);
+  // Phone: the same dialog full screen, with readable type and buttons a thumb
+  // can hit. The window's Back gadget closes it too, but OK and Cancel stay
+  // because they're what a dialog is expected to have.
+  const phone = useIsPhone();
 
   return (
-    <div style={shell}>
+    <div style={{ ...shell, ...(phone ? shellPhone : null) }}>
       {/* single-tab strip - the tab is decorative, but the shape is the point */}
       <div style={tabStrip}>
-        <div style={tab}>General</div>
+        <div style={{ ...tab, ...(phone ? tabPhone : null) }}>General</div>
       </div>
 
       <div style={sheet}>
@@ -36,7 +41,7 @@ export function Properties({ winId, payload }: { winId: string; payload: unknown
               ? <FolderIcon scale={3} />
               : <FileIcon category={p.iconCat ?? "blog"} scale={3} />}
           </span>
-          <span style={nameText}>{p.name ?? "Unknown"}</span>
+          <span style={{ ...nameText, ...(phone ? nameTextPhone : null) }}>{p.name ?? "Unknown"}</span>
         </div>
 
         <Rule />
@@ -51,25 +56,28 @@ export function Properties({ winId, payload }: { winId: string; payload: unknown
             <Rule />
             <div style={{ display: "flex", gap: 6 }}>
               <span style={fieldKey}>Comments:</span>
-              <span style={{ flex: 1, lineHeight: 1.45 }}>{p.blurb}</span>
+              <span style={{ flex: 1, lineHeight: 1.45, ...(phone ? valuePhone : null) }}>{p.blurb}</span>
             </div>
           </>
         )}
       </div>
 
-      <div style={buttonRow}>
-        <button style={button} onClick={close}>OK</button>
-        <button style={button} onClick={close}>Cancel</button>
+      <div style={{ ...buttonRow, ...(phone ? buttonRowPhone : null) }}>
+        <button style={{ ...button, ...(phone ? buttonPhone : null) }} onClick={close}>OK</button>
+        <button style={{ ...button, ...(phone ? buttonPhone : null) }} onClick={close}>Cancel</button>
       </div>
     </div>
   );
 }
 
 function Field({ label, value }: { label: string; value: string }) {
+  const phone = useIsPhone();
   return (
     <div style={{ display: "flex", gap: 6, marginBottom: 4 }}>
       <span style={fieldKey}>{label}:</span>
-      <span style={{ flex: 1, wordBreak: "break-word" }}>{value}</span>
+      {/* Locations are backslash paths with no spaces to break at, so on a
+          phone they may wrap anywhere rather than push the sheet sideways. */}
+      <span style={{ flex: 1, wordBreak: "break-word", ...(phone ? valuePhone : null) }}>{value}</span>
     </div>
   );
 }
@@ -149,3 +157,11 @@ const button: React.CSSProperties = {
   color: "var(--wb-black)",
   cursor: "pointer",
 };
+
+/* ---- phone overrides: spread over the desktop objects above ----------- */
+const shellPhone: React.CSSProperties = { padding: 4, fontSize: 15 };
+const tabPhone: React.CSSProperties = { fontSize: 15, padding: "4px 14px 5px" };
+const nameTextPhone: React.CSSProperties = { fontSize: 17 };
+const valuePhone: React.CSSProperties = { minWidth: 0, overflowWrap: "anywhere" };
+const buttonRowPhone: React.CSSProperties = { gap: 8 };
+const buttonPhone: React.CSSProperties = { flex: 1, minHeight: 44, fontSize: 16 };
