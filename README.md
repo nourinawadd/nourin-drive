@@ -8,8 +8,9 @@ windows open, drag, resize and stack. everything i make ends up in here somewher
 
 the name is an amiga volume. the desktop mounts `User:`, `Projects:`, `Games:`,
 `Music:`, `Library:` and `Trash:`, and the site is one more drive in that set.
-everything-nourin, mounted. on a phone it drops to a plain landing page instead,
-the desktop needs a mouse and keyboard.
+everything-nourin, mounted. on a phone it opens a phone shell instead, most of
+the same apps one at a time, full screen, with back. how that works is in
+[`docs/mobile-guide.md`](docs/mobile-guide.md).
 
 ```
 https://nourin.is-a.dev        the desktop (next.js / mern)
