@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { MobileReader } from "@/components/os/mobile/MobileReader";
 import { MobileScreen } from "@/components/os/mobile/MobileScreen";
 import { useShellMode } from "@/components/os/ShellModeProvider";
+import { DevCrash, PhoneErrorBoundary } from "@/components/os/phone/PhoneErrorBoundary";
 import { mobileSupport } from "@/data/appRegistry";
 import { deepLinkApps, hasDeepLink } from "@/lib/deepLink";
 
@@ -19,6 +20,9 @@ type Props = {
   phone: ReactNode;
 };
 
+/** The line the lite page shows when it's standing in for a crashed shell. */
+export const SHELL_CRASH_NOTICE = "The phone version hit a problem, so here's the simple one.";
+
 export function MobileGate({ children, phone }: Props) {
   const mode = useShellMode();
 
@@ -26,6 +30,18 @@ export function MobileGate({ children, phone }: Props) {
   // flash it on every phone before the landing page replaced it.
   if (mode === null) return null;
   if (mode === "desktop") return <>{children}</>;
+
+  // Every path into the phone shell goes through here, so a render crash
+  // anywhere in it lands on the lite page with a notice instead of a blank
+  // screen. The lite page is `position: fixed` over the whole viewport, so it
+  // covers anything the shell left behind (the phone bar is unmounted with
+  // the rest, and the shell's effects clean up as they would on any unmount).
+  const shell = (
+    <PhoneErrorBoundary fallback={<MobileScreen notice={SHELL_CRASH_NOTICE} />}>
+      {process.env.NODE_ENV !== "production" && <DevCrash at="shell" />}
+      {phone}
+    </PhoneErrorBoundary>
+  );
 
   // A shared ?doc= / ?photo= / ?post= link. Lite mode keeps the lite reader,
   // its safety net. The phone shell opens the link itself (useDeepLink), as
@@ -35,7 +51,7 @@ export function MobileGate({ children, phone }: Props) {
   if (hasDeepLink()) {
     const shellCanShow =
       mode === "phone" && deepLinkApps().every((appId) => mobileSupport(appId) !== "hidden");
-    return shellCanShow ? <>{phone}</> : <MobileReader />;
+    return shellCanShow ? shell : <MobileReader />;
   }
-  return mode === "phone" ? <>{phone}</> : <MobileScreen />;
+  return mode === "phone" ? shell : <MobileScreen />;
 }

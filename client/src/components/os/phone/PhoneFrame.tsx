@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { DevCrash, PhoneErrorBoundary } from "@/components/os/phone/PhoneErrorBoundary";
 import { useWindowStore } from "@/context/windowStore";
 import type { WindowInstance } from "@/types/window";
 
@@ -63,8 +64,32 @@ export function PhoneFrame({ win, children }: Props) {
           {win.title}
         </h1>
       </div>
-      <div className="wb-window-body">{children}</div>
+      {/* Its own safety net, inside the one around the whole shell: an app that
+          crashes while rendering gets a card here, and the bar, Back and the
+          launcher keep working. The frame is keyed per window (PhoneShell), so
+          the next app opened gets a fresh boundary instead of this one's
+          failed state. */}
+      <div className="wb-window-body">
+        <PhoneErrorBoundary fallback={<AppProblem onBack={() => close(win.id)} />}>
+          {process.env.NODE_ENV !== "production" && <DevCrash at="app" />}
+          {children}
+        </PhoneErrorBoundary>
+      </div>
     </section>
+  );
+}
+
+/** What an app's body shows after it crashed. Back does what the title bar's
+ *  gadget does, so the way out is the same one the visitor already knows. */
+function AppProblem({ onBack }: { onBack: () => void }) {
+  return (
+    <div className="wb-phone-card">
+      <h2>This app hit a problem</h2>
+      <p>Go back and try again, or open it on a computer.</p>
+      <button type="button" className="wb-phone-gadget" onClick={onBack}>
+        Back
+      </button>
+    </div>
   );
 }
 

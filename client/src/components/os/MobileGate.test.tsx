@@ -1,6 +1,6 @@
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { MobileGate } from "@/components/os/MobileGate";
+import { MobileGate, SHELL_CRASH_NOTICE } from "@/components/os/MobileGate";
 import { useShellMode } from "@/components/os/ShellModeProvider";
 import { PhoneShell } from "@/components/os/phone/PhoneShell";
 import { useWindowStore } from "@/context/windowStore";
@@ -25,8 +25,20 @@ vi.mock("@/lib/sfx", async (importOriginal) => ({
   playSfx: vi.fn(),
   unlockSfx: vi.fn(),
 }));
+// The shell counts a visit (useCountVisit); keep that off the network.
+vi.mock("@/lib/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api")>()),
+  pingGuestbookVisit: vi.fn(() => Promise.resolve({})),
+}));
 vi.mock("@/components/os/mobile/MobileReader", () => ({ MobileReader: () => <div>lite reader</div> }));
-vi.mock("@/components/os/mobile/MobileScreen", () => ({ MobileScreen: () => <div>lite landing</div> }));
+vi.mock("@/components/os/mobile/MobileScreen", () => ({
+  MobileScreen: ({ notice }: { notice?: string }) => (
+    <div>
+      lite landing
+      {notice && <p>{notice}</p>}
+    </div>
+  ),
+}));
 // The shell test is about which window the link opens, not how the Ereader
 // draws (which needs layout jsdom doesn't have).
 vi.mock("@/components/os/AppRouter", () => ({
@@ -45,6 +57,25 @@ const gate = () =>
       <div>desktop</div>
     </MobileGate>,
   );
+
+function Boom(): never {
+  throw new Error("boom");
+}
+
+/** React and jsdom both report a caught render error; the crash tests expect
+ *  it. React's copy goes to console.error, and jsdom prints its own unless the
+ *  window's error event is cancelled. */
+function quietly(run: () => void) {
+  const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+  const cancel = (event: ErrorEvent) => event.preventDefault();
+  window.addEventListener("error", cancel);
+  try {
+    run();
+  } finally {
+    window.removeEventListener("error", cancel);
+    spy.mockRestore();
+  }
+}
 
 beforeEach(() => {
   at("");
@@ -107,6 +138,76 @@ describe("MobileGate", () => {
     at("?doc=poems/home");
     gate();
     expect(screen.getByText("lite reader")).toBeTruthy();
+  });
+});
+
+describe("MobileGate safety net", () => {
+  it("shows the lite page with a notice when the phone shell crashes", () => {
+    vi.mocked(useShellMode).mockReturnValue("phone");
+    quietly(() => {
+      render(
+        <MobileGate phone={<Boom />}>
+          <div>desktop</div>
+        </MobileGate>,
+      );
+    });
+    expect(screen.getByText("lite landing")).toBeTruthy();
+    expect(screen.getByText(SHELL_CRASH_NOTICE)).toBeTruthy();
+  });
+
+  it("catches a crash in a shell opened from a deep link too", () => {
+    vi.mocked(useShellMode).mockReturnValue("phone");
+    at("?doc=poems/home");
+    quietly(() => {
+      render(
+        <MobileGate phone={<Boom />}>
+          <div>desktop</div>
+        </MobileGate>,
+      );
+    });
+    expect(screen.getByText(SHELL_CRASH_NOTICE)).toBeTruthy();
+  });
+
+  it("lands on the lite page with the notice for ?crash=shell (outside production)", () => {
+    vi.mocked(useShellMode).mockReturnValue("phone");
+    at("?crash=shell");
+    quietly(() => {
+      gate();
+    });
+    expect(screen.getByText(SHELL_CRASH_NOTICE)).toBeTruthy();
+    expect(screen.queryByText("phone shell")).toBeNull();
+  });
+
+  it("ignores ?crash= outside the phone shell", () => {
+    at("?crash=shell");
+    vi.mocked(useShellMode).mockReturnValue("desktop");
+    gate();
+    expect(screen.getByText("desktop")).toBeTruthy();
+    cleanup();
+    vi.mocked(useShellMode).mockReturnValue("lite");
+    gate();
+    expect(screen.queryByText(SHELL_CRASH_NOTICE)).toBeNull();
+  });
+
+  it("puts no boundary around the desktop, so its crashes behave as before", () => {
+    vi.mocked(useShellMode).mockReturnValue("desktop");
+    quietly(() => {
+      expect(() =>
+        render(
+          <MobileGate phone={<div>phone shell</div>}>
+            <Boom />
+          </MobileGate>,
+        ),
+      ).toThrow("boom");
+    });
+    expect(screen.queryByText("lite landing")).toBeNull();
+  });
+
+  it("shows the plain lite page, without the notice, in lite mode", () => {
+    vi.mocked(useShellMode).mockReturnValue("lite");
+    gate();
+    expect(screen.getByText("lite landing")).toBeTruthy();
+    expect(screen.queryByText(SHELL_CRASH_NOTICE)).toBeNull();
   });
 });
 
