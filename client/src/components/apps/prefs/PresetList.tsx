@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
 import { playSfx } from "@/lib/sfx";
 
 export type PresetRow = {
@@ -23,6 +24,9 @@ export function PresetList({
   hint: string;
   footer?: ReactNode;
 }) {
+  // Phone: rows a thumb can pick out, and a hint line that may wrap rather
+  // than run off the edge.
+  const phone = useIsPhone();
   return (
     <div style={shell}>
       <div style={listPane}>
@@ -33,7 +37,7 @@ export function PresetList({
               key={row.id}
               type="button"
               aria-pressed={active}
-              style={{ ...rowStyle, ...(active ? rowActive : null) }}
+              style={{ ...rowStyle, ...(phone ? rowPhone : null), ...(active ? rowActive : null) }}
               onClick={() => {
                 if (active) return;
                 playSfx("select");
@@ -51,7 +55,7 @@ export function PresetList({
         })}
       </div>
       {footer}
-      <div style={statusBar}>{hint}</div>
+      <div style={{ ...statusBar, ...(phone ? statusBarPhone : null) }}>{hint}</div>
     </div>
   );
 }
@@ -125,3 +129,7 @@ const statusBar: React.CSSProperties = {
   borderTop: "1px solid var(--wb-black)",
   boxShadow: "inset 0 1px 0 var(--wb-white)",
 };
+
+/* ---- phone overrides: spread over the desktop objects above ----------- */
+const rowPhone: React.CSSProperties = { minHeight: 52 };
+const statusBarPhone: React.CSSProperties = { padding: "6px 8px", fontSize: 13, lineHeight: 1.3 };

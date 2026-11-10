@@ -48,7 +48,7 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     minWidth: 480, minHeight: 360,
     // Not a singleton: reading two things at once is the whole point of having
     // a window manager, and each window carries its own document + page.
-    mobile: "hidden",
+    mobile: "native",
     singleton: false,
   },
   explorer: {
@@ -71,7 +71,9 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
   },
   games: {
     appId: "games", title: "Games",
-    mobile: "hidden",
+    // A fallback since Phase 5: the list works on a phone, but Play opens the
+    // game's itch.io page in a tab (phoneRedirects) instead of a WebGL window.
+    mobile: "fallback",
     singleton: true,
   },
   guestbook: {
@@ -89,21 +91,23 @@ export const APP_REGISTRY: Record<AppId, AppDef> = {
     appId: "prefs", title: "Prefs",
     minWidth: 260, minHeight: 200,
     preferred: { width: 360, height: 260 },
-    mobile: "hidden",
+    // Native since Phase 5, offering only Palette and WBPattern; ScreenSaver
+    // and Pet are desktop features and stay hidden.
+    mobile: "native",
     singleton: true,
   },
   "prefs-palette": {
     appId: "prefs-palette", title: "Palette",
     minWidth: 380, minHeight: 240,
     preferred: { width: 580, height: 400 },
-    mobile: "hidden",
+    mobile: "native",
     singleton: true,
   },
   "prefs-pattern": {
     appId: "prefs-pattern", title: "WBPattern",
     minWidth: 380, minHeight: 240,
     preferred: { width: 580, height: 300 },
-    mobile: "hidden",
+    mobile: "native",
     singleton: true,
   },
   "prefs-screensaver": {

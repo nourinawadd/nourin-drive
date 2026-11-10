@@ -8,7 +8,10 @@ import { DEFAULT_PALETTE, DEFAULT_PATTERN } from "@/data/prefs";
 import { DEFAULT_IDLE, DEFAULT_SAVER } from "@/data/savers";
 import { DEFAULT_DELAY, DEFAULT_PET } from "@/data/pets";
 import { DockPhoto } from "@/components/os/icons";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
+import { mobileSupport } from "@/data/appRegistry";
 import { playSfx } from "@/lib/sfx";
+import { useActivate } from "@/lib/useActivate";
 import type { AppId } from "@/types/window";
 
 type Tool = { id: string; name: string; appId: AppId; Icon: ComponentType };
@@ -31,6 +34,13 @@ export function PrefsDrawer() {
   const pet = usePrefsStore((s) => s.pet);
   const petDelay = usePrefsStore((s) => s.petDelay);
   const [selected, setSelected] = useState<string | null>(null);
+  // Phone: only the tools the phone can open (Palette and WBPattern;
+  // ScreenSaver and Pet are desktop features), larger cells, and a thumb-sized
+  // Reset. Reset still restores everything, ScreenSaver and Pet included: it's
+  // one store, and "Modified" may honestly mean a saver chosen on this
+  // browser's desktop.
+  const phone = useIsPhone();
+  const tools = phone ? TOOLS.filter((t) => mobileSupport(t.appId) !== "hidden") : TOOLS;
 
   const isDefault =
     palette === DEFAULT_PALETTE &&
@@ -42,46 +52,26 @@ export function PrefsDrawer() {
 
   return (
     <div style={shell}>
-      <div style={iconGrid}>
-        {TOOLS.map((t) => {
-          const active = selected === t.id;
-          return (
-            <button
-              key={t.id}
-              style={iconCell}
-              onClick={() => {
-                if (!active) playSfx("select");
-                setSelected(t.id);
-              }}
-              onDoubleClick={() => {
-                playSfx("launch");
-                openApp(t.appId);
-              }}
-            >
-              <span style={{ display: "inline-flex" }}>
-                <t.Icon />
-              </span>
-              <span
-                style={{
-                  ...iconLabel,
-                  background: active ? "var(--wb-orange)" : "transparent",
-                  outline: active ? "1px dotted var(--wb-black)" : "none",
-                }}
-              >
-                {t.name}
-              </span>
-            </button>
-          );
-        })}
+      <div style={{ ...iconGrid, ...(phone ? iconGridPhone : null) }}>
+        {tools.map((t) => (
+          <ToolIcon
+            key={t.id}
+            tool={t}
+            active={selected === t.id}
+            phone={phone}
+            onSelect={() => setSelected(t.id)}
+            onOpen={() => openApp(t.appId)}
+          />
+        ))}
       </div>
 
-      <div style={footer}>
+      <div style={{ ...footer, ...(phone ? footerPhone : null) }}>
         <span style={{ opacity: 0.7 }}>
           {isDefault ? "Factory settings" : "Modified"}
         </span>
         <button
           type="button"
-          style={{ ...resetBtn, opacity: isDefault ? 0.5 : 1 }}
+          style={{ ...resetBtn, ...(phone ? resetBtnPhone : null), opacity: isDefault ? 0.5 : 1 }}
           disabled={isDefault}
           onClick={() => {
             playSfx("menu");
@@ -92,6 +82,53 @@ export function PrefsDrawer() {
         </button>
       </div>
     </div>
+  );
+}
+
+/**
+ * One tool in the drawer. The Workbench rule through useActivate: on the
+ * desktop a click selects (with its sound) and a double-click opens, exactly as
+ * the drawer always did; on a phone one tap opens it, and only the launch sound
+ * plays, since the selection is never seen before the tool covers the screen.
+ */
+function ToolIcon({
+  tool, active, phone, onSelect, onOpen,
+}: {
+  tool: Tool;
+  active: boolean;
+  phone: boolean;
+  onSelect: () => void;
+  onOpen: () => void;
+}) {
+  const activate = useActivate();
+  const select = () => {
+    if (!active) playSfx("select");
+    onSelect();
+  };
+  return (
+    <button
+      style={{ ...iconCell, ...(phone ? iconCellPhone : null) }}
+      {...activate({
+        onSelect: phone ? undefined : select,
+        onOpen: () => {
+          playSfx("launch");
+          onOpen();
+        },
+      })}
+    >
+      <span style={{ display: "inline-flex" }}>
+        <tool.Icon />
+      </span>
+      <span
+        style={{
+          ...iconLabel,
+          background: active ? "var(--wb-orange)" : "transparent",
+          outline: active ? "1px dotted var(--wb-black)" : "none",
+        }}
+      >
+        {tool.name}
+      </span>
+    </button>
   );
 }
 
@@ -155,3 +192,9 @@ const resetBtn: React.CSSProperties = {
   boxShadow: "inset 1px 1px 0 var(--wb-white), inset -1px -1px 0 var(--wb-gray-2)",
   cursor: "pointer",
 };
+
+/* ---- phone overrides: spread over the desktop objects above ----------- */
+const iconGridPhone: React.CSSProperties = { gridTemplateColumns: "repeat(2, 1fr)", gap: 8, padding: 12 };
+const iconCellPhone: React.CSSProperties = { minHeight: 88, justifyContent: "center", gap: 6, padding: 10, fontSize: 16 };
+const footerPhone: React.CSSProperties = { flexWrap: "wrap", padding: "6px 8px", fontSize: 14 };
+const resetBtnPhone: React.CSSProperties = { minHeight: 44, padding: "0 14px", fontSize: 15 };

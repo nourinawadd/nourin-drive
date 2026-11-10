@@ -3,15 +3,22 @@
 import { PROJECTS } from "@/data/projects";
 import { LOCAL_GAMES } from "@/data/games.generated";
 import { useWindowStore } from "@/context/windowStore";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
 
 const games = PROJECTS.filter((p) => p.category === "games");
 
 export function Games() {
   const openApp = useWindowStore((s) => s.openApp);
+  // Phone: one card per row and larger text. Play is the same call; the phone
+  // shell redirects a `game` open to the game's itch.io page (phoneRedirects),
+  // so every card says it opens there, and the separate itch link would just be
+  // a second button doing the same thing. A build with no itch page lands on
+  // "needs a computer", which the hint says up front.
+  const phone = useIsPhone();
 
   return (
     <div style={{ height: "100%", overflow: "auto" }}>
-      <div style={grid}>
+      <div style={{ ...grid, ...(phone ? gridPhone : null) }}>
         {games.length === 0 && (
           <div style={{ padding: 12, fontSize: 13, opacity: 0.6 }}>
             no games yet. add one with `npm run add`.
@@ -23,9 +30,14 @@ export function Games() {
             if (build?.src) openApp("game", { payload: { src: build.src, name: g.name }, title: g.name });
             else if (g.url) window.open(g.url, "_blank", "noopener,noreferrer");
           };
+          const hint = !phone
+            ? build?.src ? "plays here ▶" : "opens in a new tab ↗"
+            : g.url ? "opens on itch ↗"
+            : build?.src ? "needs a computer"
+            : "opens in a new tab ↗";
           return (
             <div key={g.id} style={card}>
-              <button onClick={play} style={cardBtn} title={build?.src ? "Play here" : g.url ?? ""}>
+              <button onClick={play} style={cardBtn} title={build?.src && !phone ? "Play here" : g.url ?? ""}>
                 <div style={cover}>
                   {build?.cover ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -35,14 +47,14 @@ export function Games() {
                   )}
                 </div>
                 <div style={meta}>
-                  <strong style={{ fontSize: 14 }}>{g.name}</strong>
-                  <span style={{ fontSize: 12, opacity: 0.7 }}>{g.blurb ?? ""}</span>
-                  <span style={{ fontSize: 12, opacity: 0.5 }}>
-                    {build?.src ? "plays here ▶" : "opens in a new tab ↗"}
+                  <strong style={{ fontSize: 14, ...(phone ? namePhone : null) }}>{g.name}</strong>
+                  <span style={{ fontSize: 12, opacity: 0.7, ...(phone ? blurbPhone : null) }}>{g.blurb ?? ""}</span>
+                  <span style={{ fontSize: 12, opacity: 0.5, ...(phone ? hintPhone : null) }}>
+                    {hint}
                   </span>
                 </div>
               </button>
-              {build?.src && g.url && (
+              {!phone && build?.src && g.url && (
                 <a href={g.url} target="_blank" rel="noopener noreferrer" style={itchLink}>
                   view on itch ↗
                 </a>
@@ -95,3 +107,10 @@ const itchLink: React.CSSProperties = {
   textDecoration: "underline",
   alignSelf: "flex-start",
 };
+
+/* ---- phone overrides: spread over the desktop objects above ----------- */
+// One column: minmax(300px) would overflow a 320px phone.
+const gridPhone: React.CSSProperties = { gridTemplateColumns: "minmax(0, 1fr)", gap: 10 };
+const namePhone: React.CSSProperties = { fontSize: 16 };
+const blurbPhone: React.CSSProperties = { fontSize: 14, lineHeight: 1.35 };
+const hintPhone: React.CSSProperties = { fontSize: 13, opacity: 0.6 };
