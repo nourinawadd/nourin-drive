@@ -1480,6 +1480,18 @@ body {
   user-select: none;
 }
 
+/* A sideways-swipe surface (useSwipe) and everything in it: vertical drags and
+   pinches stay the browser's, sideways ones are the swipe. On the whole subtree,
+   not just the surface, because the Ereader's text columns are themselves a
+   sideways scroller the reader drives from its page number - left to the
+   browser, a finger would slide them to halfway between two pages and leave the
+   folio behind. The reader only adds the class while swiping applies, so a PDF
+   zoomed past the page width still pans. */
+.wb-phone .wb-phone-swipe,
+.wb-phone .wb-phone-swipe * {
+  touch-action: pan-y pinch-zoom;
+}
+
 /* ---- now playing (music bar under the content) ---- */
 /* A flex child of .wb-phone after <main>, so main shrinks to make room rather
    than the bar covering the bottom of an app. Same raised grey as the gadgets. */

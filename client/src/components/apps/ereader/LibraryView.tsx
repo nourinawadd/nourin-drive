@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
 import { LIBRARY, SHELVES, formatBytes, formatLabel, type LibraryDoc } from "@/data/library";
 import { DocCover } from "./DocCover";
 import { downloadDoc } from "./actions";
@@ -16,16 +18,27 @@ export function ShelfChips({
   counts: Map<string, number>;
 }) {
   const options = [ALL_SHELVES, ...SHELVES];
+  // Phone: one row that scrolls sideways instead of wrapping into a block of
+  // chips above the list. Home's "see all" can land on a shelf whose chip is
+  // past the edge, so the active one is brought into view. (Optional call:
+  // jsdom has no scrollIntoView.)
+  const phone = useIsPhone();
+  const activeChip = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (phone) activeChip.current?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+  }, [phone, shelf]);
+
   return (
-    <div style={chipRow}>
+    <div style={{ ...chipRow, ...(phone ? chipRowPhone : null) }}>
       {options.map((name) => {
         const active = name === shelf;
         const count = name === ALL_SHELVES ? LIBRARY.length : counts.get(name) ?? 0;
         return (
           <button
             key={name}
+            ref={phone && active ? activeChip : undefined}
             onClick={() => onSelect(name)}
-            style={{ ...chip, ...(active ? chipActive : null) }}
+            style={{ ...chip, ...(phone ? chipPhone : null), ...(active ? chipActive : null) }}
           >
             {name}
             <span style={{ marginLeft: 6, opacity: 0.65 }}>{count}</span>
@@ -45,6 +58,8 @@ export function DocCard({
   onRead: (doc: LibraryDoc) => void;
   onShare: (doc: LibraryDoc) => void;
 }) {
+  // Phone: the same card, with buttons a thumb can hit and text a step larger.
+  const phone = useIsPhone();
   return (
     <div style={card}>
       <div style={{ display: "flex", gap: 10, padding: 8, minWidth: 0 }}>
@@ -53,30 +68,30 @@ export function DocCard({
         </button>
 
         <div style={{ minWidth: 0, flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
-          <div style={cardTitle} title={doc.title}>{doc.title}</div>
-          <div style={cardMeta}>
+          <div style={{ ...cardTitle, ...(phone ? cardTitlePhone : null) }} title={doc.title}>{doc.title}</div>
+          <div style={{ ...cardMeta, ...(phone ? cardMetaPhone : null) }}>
             {doc.author ? `by ${doc.author}` : "Nourin Awad"}
             {doc.date ? ` · ${doc.date}` : ""}
           </div>
-          <div style={cardMeta}>
+          <div style={{ ...cardMeta, ...(phone ? cardMetaPhone : null) }}>
             {doc.shelf} · {formatLabel(doc.format)} · {formatBytes(doc.bytes)}
           </div>
-          {doc.blurb && <div style={cardBlurb}>{doc.blurb}</div>}
-          {doc.note && <div style={{ ...cardMeta, fontStyle: "italic" }}>{doc.note}</div>}
+          {doc.blurb && <div style={{ ...cardBlurb, ...(phone ? cardMetaPhone : null) }}>{doc.blurb}</div>}
+          {doc.note && <div style={{ ...cardMeta, ...(phone ? cardMetaPhone : null), fontStyle: "italic" }}>{doc.note}</div>}
 
           <div style={{ flex: 1 }} />
-          <div style={{ display: "flex", gap: 4, marginTop: 4 }}>
-            <button onClick={() => downloadDoc({ kind: "library", doc })} style={miniButton} title="Download the original file">
+          <div style={{ display: "flex", gap: 4, marginTop: 4, ...(phone ? cardActionsPhone : null) }}>
+            <button onClick={() => downloadDoc({ kind: "library", doc })} style={{ ...miniButton, ...(phone ? miniButtonPhone : null) }} title="Download the original file">
               Download
             </button>
-            <button onClick={() => onShare(doc)} style={miniButton} title="Copy a link to this document">
+            <button onClick={() => onShare(doc)} style={{ ...miniButton, ...(phone ? miniButtonPhone : null) }} title="Copy a link to this document">
               Share
             </button>
           </div>
         </div>
       </div>
 
-      <button onClick={() => onRead(doc)} style={readButton}>
+      <button onClick={() => onRead(doc)} style={{ ...readButton, ...(phone ? readButtonPhone : null) }}>
         Read
       </button>
     </div>
@@ -93,9 +108,12 @@ export function DocGrid({
   onShare: (doc: LibraryDoc) => void;
   empty: string;
 }) {
+  // Phone: one card per row. 268px cards don't fit two across, and auto-fill
+  // would let a single one overflow the width.
+  const phone = useIsPhone();
   if (!docs.length) return <div style={emptyNote}>{empty}</div>;
   return (
-    <div style={grid}>
+    <div style={{ ...grid, ...(phone ? gridPhone : null) }}>
       {docs.map((doc) => (
         <DocCard key={doc.id} doc={doc} onRead={onRead} onShare={onShare} />
       ))}
@@ -112,6 +130,7 @@ export function HomeView({
   onShare: (doc: LibraryDoc) => void;
   onOpenShelf: (shelf: string) => void;
 }) {
+  const phone = useIsPhone();
   if (!LIBRARY.length) return <EmptyLibrary />;
 
   // The generator already orders each shelf newest-first; this just interleaves
@@ -134,7 +153,7 @@ export function HomeView({
           <section key={shelf}>
             <h2 style={sectionHeading}>
               {shelf}
-              <button onClick={() => onOpenShelf(shelf)} style={seeAll}>see all</button>
+              <button onClick={() => onOpenShelf(shelf)} style={{ ...seeAll, ...(phone ? seeAllPhone : null) }}>see all</button>
             </h2>
             <DocGrid docs={docs} onRead={onRead} onShare={onShare} empty="" />
           </section>
@@ -152,6 +171,7 @@ export function ShelvesView({
   counts: Map<string, number>;
   onOpenShelf: (shelf: string) => void;
 }) {
+  const phone = useIsPhone();
   if (!LIBRARY.length) return <EmptyLibrary />;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -159,7 +179,7 @@ export function ShelvesView({
       {SHELVES.map((shelf) => {
         const docs = LIBRARY.filter((d) => d.shelf === shelf);
         return (
-          <button key={shelf} onClick={() => onOpenShelf(shelf)} style={shelfRow}>
+          <button key={shelf} onClick={() => onOpenShelf(shelf)} style={{ ...shelfRow, ...(phone ? shelfRowPhone : null) }}>
             <div style={{ display: "flex", gap: 3 }}>
               {docs.slice(0, 3).map((d) => (
                 <DocCover key={d.id} doc={d} width={34} />
@@ -363,3 +383,21 @@ const infoPara: React.CSSProperties = {
   fontSize: 15,
   lineHeight: 1.55,
 };
+
+/* ---- phone overrides: spread over the desktop objects above ----------- */
+const chipRowPhone: React.CSSProperties = {
+  flexWrap: "nowrap",
+  overflowX: "auto",
+  overscrollBehaviorX: "contain",
+  gap: 6,
+  marginBottom: 8,
+};
+const chipPhone: React.CSSProperties = { flexShrink: 0, minHeight: 44, padding: "0 14px", fontSize: 15 };
+const gridPhone: React.CSSProperties = { gridTemplateColumns: "minmax(0, 1fr)" };
+const cardTitlePhone: React.CSSProperties = { fontSize: 15 };
+const cardMetaPhone: React.CSSProperties = { fontSize: 13 };
+const cardActionsPhone: React.CSSProperties = { gap: 8, marginTop: 6 };
+const miniButtonPhone: React.CSSProperties = { minHeight: 44, padding: "0 14px", fontSize: 14 };
+const readButtonPhone: React.CSSProperties = { minHeight: 44, fontSize: 15 };
+const seeAllPhone: React.CSSProperties = { minHeight: 44, padding: "0 8px", fontSize: 14 };
+const shelfRowPhone: React.CSSProperties = { minHeight: 52, padding: 8 };

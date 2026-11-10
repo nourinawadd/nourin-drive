@@ -1,16 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PHOTOS, type Photo } from "@/data/gallery";
 import { ShareDialog } from "@/components/os/ShareDialog";
 import { useIsPhone } from "@/components/os/ShellModeProvider";
 import { copyLink, shareLink, triggerDownload } from "@/lib/share";
+import { useSwipe } from "@/lib/useSwipe";
 
 type GalleryPayload = { focusId?: string };
-
-// A swipe has to travel this far sideways, and further sideways than up or
-// down, before it counts: anything less is a wobble or the start of a scroll.
-const SWIPE_PX = 48;
 
 export function Gallery({ payload }: { payload?: unknown }) {
   const initial = (payload as GalleryPayload | undefined)?.focusId ?? null;
@@ -21,7 +18,6 @@ export function Gallery({ payload }: { payload?: unknown }) {
   // frame and steps through photos with a sideways swipe. The keyboard arrows
   // stay as they are for the desktop.
   const phone = useIsPhone();
-  const swipe = useRef<{ id: number; x: number; y: number } | null>(null);
 
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(PHOTOS.map((p) => p.category)))],
@@ -51,29 +47,13 @@ export function Gallery({ payload }: { payload?: unknown }) {
     return shown[next].id;
   }
 
-  // Touch only, so a mouse dragging across the image on the desktop (or a
-  // touchscreen laptop in desktop mode, where these aren't attached at all)
-  // can't flip photos. pointercancel - the browser deciding it's a scroll -
-  // simply drops the gesture.
-  const swipeHandlers = {
-    onPointerDown: (e: React.PointerEvent) => {
-      if (e.pointerType !== "touch") return;
-      swipe.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
-    },
-    onPointerUp: (e: React.PointerEvent) => {
-      const s = swipe.current;
-      swipe.current = null;
-      if (!s || s.id !== e.pointerId) return;
-      const dx = e.clientX - s.x;
-      const dy = e.clientY - s.y;
-      if (Math.abs(dx) < SWIPE_PX || Math.abs(dx) <= Math.abs(dy)) return;
-      // Swiping left brings the next photo in from the right.
-      setLightbox((id) => step(id, dx < 0 ? 1 : -1));
-    },
-    onPointerCancel: () => {
-      swipe.current = null;
-    },
-  };
+  // Phone only (null on the desktop, so nothing is attached there); what
+  // counts as a swipe lives in lib/useSwipe. Swiping left brings the next
+  // photo in from the right.
+  const swipeHandlers = useSwipe({
+    enabled: phone,
+    onSwipe: (dir) => setLightbox((id) => step(id, dir)),
+  });
 
   const focused: Photo | undefined = lightbox
     ? PHOTOS.find((p) => p.id === lightbox)
@@ -120,7 +100,7 @@ export function Gallery({ payload }: { payload?: unknown }) {
               src={focused.src}
               alt={focused.title}
               style={{ ...lightboxImg, ...(phone ? lightboxImgPhone : null) }}
-              {...(phone ? swipeHandlers : null)}
+              {...swipeHandlers}
             />
             <div style={{ marginTop: 8, flexShrink: 0, display: "flex", justifyContent: "space-between", alignItems: "center", ...(phone ? metaRowPhone : null) }}>
               <div>

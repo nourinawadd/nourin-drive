@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { isShortForm, type LibraryDoc } from "@/data/library";
 import { useSeek } from "@/lib/useSeek";
+import { useSwipe } from "@/lib/useSwipe";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
 import { TextPane } from "./TextPane";
 import { downloadDoc, fetchBody, type InlineDoc, type ReadableDoc } from "./actions";
 
@@ -152,62 +154,85 @@ export function ReaderView({
   const title = doc.title;
   const author = isLibrary ? (item.doc as LibraryDoc).author : undefined;
 
+  // ── phone ────────────────────────────────────────────────────────────
+  // The toolbar wraps into two rows (back and title, then zoom and the file
+  // actions) with 44px buttons, and Spread goes: the pane is always narrower
+  // than SPREAD_MIN_WIDTH on a phone, so it could only ever be a dead button.
+  //
+  // Pages also turn by a sideways swipe on the page. Not for short pieces,
+  // which have no pages and just scroll, and not for a PDF zoomed past 100%,
+  // where the same sideways drag has to pan across the enlarged page; the
+  // edge buttons still turn it then. Text never needs panning, since zoom
+  // reflows it into more pages instead.
+  const phone = useIsPhone();
+  const swipeOn = phone && paged && (!isPdf || zoom <= 1);
+  const swipe = useSwipe({ enabled: swipeOn, onSwipe: (dir) => goto(page + dir * step) });
+  const tool = phone ? { ...toolButton, ...toolButtonPhone } : toolButton;
+
   return (
     <div ref={shell} tabIndex={-1} style={readerShell}>
       {/* ── toolbar ── */}
-      <div style={toolbar}>
-        <button onClick={onBack} style={toolButton}>&lsaquo; Library</button>
+      <div style={{ ...toolbar, ...(phone ? toolbarPhone : null) }}>
+        <button onClick={onBack} style={tool}>&lsaquo; Library</button>
         <div style={toolDivider} />
-        <div style={{ ...titleStrip, minWidth: 0 }}>
+        <div style={{ ...titleStrip, minWidth: 0, ...(phone ? titleStripPhone : null) }}>
           <strong style={ellipsis}>{title}</strong>
           {author && <span style={{ opacity: 0.7, flexShrink: 0 }}>· {author}</span>}
         </div>
-        <div style={{ flex: 1 }} />
+        {phone ? <div style={rowBreakPhone} /> : <div style={{ flex: 1 }} />}
 
         <button
           onClick={() => onZoom(ZOOM_STEPS[Math.max(0, zoomIndex - 1)])}
           disabled={zoomIndex === 0}
-          style={{ ...toolButton, opacity: zoomIndex === 0 ? 0.4 : 1 }}
+          style={{ ...tool, opacity: zoomIndex === 0 ? 0.4 : 1 }}
           title="Smaller"
         >
           −
         </button>
-        <span style={{ fontSize: 12, minWidth: 34, textAlign: "center" }}>
+        <span style={{ fontSize: 12, minWidth: 34, textAlign: "center", ...(phone ? zoomReadoutPhone : null) }}>
           {Math.round(zoom * 100)}%
         </span>
         <button
           onClick={() => onZoom(ZOOM_STEPS[Math.min(ZOOM_STEPS.length - 1, zoomIndex + 1)])}
           disabled={zoomIndex === ZOOM_STEPS.length - 1}
-          style={{ ...toolButton, opacity: zoomIndex === ZOOM_STEPS.length - 1 ? 0.4 : 1 }}
+          style={{ ...tool, opacity: zoomIndex === ZOOM_STEPS.length - 1 ? 0.4 : 1 }}
           title="Larger"
         >
           +
         </button>
 
-        <div style={toolDivider} />
-        <button
-          onClick={() => onSpread(!spread)}
-          disabled={shortForm || !canSpread}
-          style={{
-            ...toolButton,
-            ...(columns === 2 ? toolButtonActive : null),
-            opacity: shortForm || !canSpread ? 0.4 : 1,
-          }}
-          title={
-            shortForm ? "Short pieces are read in one column"
-              : canSpread ? "Two-page spread"
-              : "Widen the window for a two-page spread"
-          }
-        >
-          Spread
-        </button>
+        {/* Phone: no Spread (see above), and the file actions sit at the right
+            end of the second row. */}
+        {phone ? (
+          <div style={{ flex: 1 }} />
+        ) : (
+          <>
+            <div style={toolDivider} />
+            <button
+              onClick={() => onSpread(!spread)}
+              disabled={shortForm || !canSpread}
+              style={{
+                ...toolButton,
+                ...(columns === 2 ? toolButtonActive : null),
+                opacity: shortForm || !canSpread ? 0.4 : 1,
+              }}
+              title={
+                shortForm ? "Short pieces are read in one column"
+                  : canSpread ? "Two-page spread"
+                  : "Widen the window for a two-page spread"
+              }
+            >
+              Spread
+            </button>
 
-        <div style={toolDivider} />
-        <button onClick={() => downloadDoc(item)} style={toolButton}>Download</button>
+            <div style={toolDivider} />
+          </>
+        )}
+        <button onClick={() => downloadDoc(item)} style={tool}>Download</button>
         <button
           onClick={() => isLibrary && onShare(item.doc as LibraryDoc)}
           disabled={!isLibrary}
-          style={{ ...toolButton, opacity: isLibrary ? 1 : 0.4 }}
+          style={{ ...tool, opacity: isLibrary ? 1 : 0.4 }}
           title={isLibrary ? "Copy a link to this document" : "This one only exists in the Recycle Bin"}
         >
           Share
@@ -215,7 +240,12 @@ export function ReaderView({
       </div>
 
       {/* ── page ── */}
-      <div ref={paneRef} style={paneWrap}>
+      <div
+        ref={paneRef}
+        style={paneWrap}
+        className={swipeOn ? "wb-phone-swipe" : undefined}
+        {...swipe}
+      >
         {format === "pdf" && isLibrary ? (
           <PdfPane
             src={(item.doc as LibraryDoc).src}
@@ -280,6 +310,9 @@ function EdgeButton({
   onClick: () => void;
   disabled: boolean;
 }) {
+  // Phone: a full 44px wide, and taller, so the page can be turned by a thumb
+  // when swiping is off (a zoomed PDF) or simply not what the reader tries.
+  const phone = useIsPhone();
   return (
     <button
       onClick={onClick}
@@ -287,7 +320,10 @@ function EdgeButton({
       aria-label={side === "left" ? "Previous page" : "Next page"}
       style={{
         ...edgeButton,
-        [side]: 6,
+        ...(phone ? edgeButtonPhone : null),
+        // Flush with the edge on a phone: 44px fits inside the page's margin
+        // there, where 6px in would cover the first letters of each line.
+        [side]: phone ? 0 : 6,
         opacity: disabled ? 0.25 : 0.85,
         cursor: disabled ? "default" : "pointer",
       }}
@@ -314,10 +350,13 @@ function StatusBar({
   const percent = paged
     ? Math.round((last / Math.max(1, total)) * 100)
     : Math.min(100, Math.max(0, scrollPercent ?? 0));
+  // Phone: the 132px reserved for the page readout would squeeze the progress
+  // track to nothing at 360px, so it sizes to its text and the row may wrap.
+  const phone = useIsPhone();
 
   return (
-    <div style={statusBar}>
-      <span style={{ minWidth: 132 }}>
+    <div style={{ ...statusBar, ...(phone ? statusBarPhone : null) }}>
+      <span style={{ minWidth: 132, ...(phone ? pageReadoutPhone : null) }}>
         {paged
           ? last > first
             ? `Pages ${first}–${last} of ${total}`
@@ -435,3 +474,14 @@ const progressFill: React.CSSProperties = {
   background: "var(--wb-orange)",
   boxShadow: "inset 0 1px 0 var(--wb-yellow)",
 };
+
+/* ---- phone overrides: spread over the desktop objects above ----------- */
+const toolbarPhone: React.CSSProperties = { flexWrap: "wrap", rowGap: 4, padding: 4 };
+const toolButtonPhone: React.CSSProperties = { minHeight: 44, minWidth: 44, padding: "0 12px", fontSize: 15 };
+const titleStripPhone: React.CSSProperties = { flex: 1, maxWidth: "none", fontSize: 15 };
+// A zero-height full-width item: everything after it starts the second row.
+const rowBreakPhone: React.CSSProperties = { flexBasis: "100%", height: 0 };
+const zoomReadoutPhone: React.CSSProperties = { fontSize: 14, minWidth: 44 };
+const edgeButtonPhone: React.CSSProperties = { width: 44, height: 64, fontSize: 26 };
+const statusBarPhone: React.CSSProperties = { flexWrap: "wrap", rowGap: 2, fontSize: 13, padding: "4px 8px" };
+const pageReadoutPhone: React.CSSProperties = { minWidth: 0 };

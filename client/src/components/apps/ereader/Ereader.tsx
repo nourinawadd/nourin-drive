@@ -9,6 +9,7 @@ import { ALL_SHELVES, DocGrid, HomeView, InfoView, ShelfChips, ShelvesView } fro
 import { ReaderView } from "./ReaderView";
 import { shareDoc, type InlineDoc, type ReadableDoc } from "./actions";
 import { ShareDialog } from "@/components/os/ShareDialog";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
 
 export type EreaderPayload = {
   /** Open straight into a library document (Explorer, deep links, Share). */
@@ -39,6 +40,11 @@ export function Ereader({ winId, payload }: { winId: string; payload: unknown })
   // after restoring a window is worse than losing a half-typed query.
   const [query, setQuery] = useState("");
   const [toast, setToast] = useState<{ url: string; copied: boolean } | null>(null);
+  // Phone: the window is the whole screen, so the 74px rail would take a fifth
+  // of the width from the one thing on it. It folds into a row of four tabs
+  // across the top (like Profile's strip) and steps aside while a document is
+  // open, where the reader's own "‹ Library" is the way back.
+  const phone = useIsPhone();
 
   const setState = useCallback(
     (patch: EreaderPayload) => patchPayload(winId, patch),
@@ -93,29 +99,53 @@ export function Ereader({ winId, payload }: { winId: string; payload: unknown })
   const readerOpen = view === "read";
 
   return (
-    <div style={shell}>
-      {/* ── left rail ── */}
-      <nav style={rail} aria-label="Library sections">
-        {RAIL.map((it) => {
-          const active = view === it.id;
-          return (
-            <button
-              key={it.id}
-              onClick={() => setState({ view: it.id })}
-              style={{ ...railItem, ...(active ? railItemActive : null) }}
-              title={it.label}
-            >
-              <it.Icon />
-              <span>{it.label}</span>
-            </button>
-          );
-        })}
-      </nav>
+    <div style={{ ...shell, ...(phone ? shellPhone : null) }}>
+      {phone ? (
+        /* ── phone: the rail as a tab strip ── */
+        !readerOpen && (
+          <div style={tabStripPhone} role="tablist" aria-label="Library sections">
+            {RAIL.map((it) => {
+              const active = view === it.id;
+              return (
+                <button
+                  key={it.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setState({ view: it.id })}
+                  style={{ ...railItem, ...tabPhone, ...(active ? railItemActive : null) }}
+                >
+                  <it.Icon />
+                  <span>{it.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )
+      ) : (
+        /* ── left rail ── */
+        <nav style={rail} aria-label="Library sections">
+          {RAIL.map((it) => {
+            const active = view === it.id;
+            return (
+              <button
+                key={it.id}
+                onClick={() => setState({ view: it.id })}
+                style={{ ...railItem, ...(active ? railItemActive : null) }}
+                title={it.label}
+              >
+                <it.Icon />
+                <span>{it.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+      )}
 
       {/* ── main column ── */}
       <div style={main}>
         {!readerOpen && (
-          <div style={searchBand}>
+          <div style={{ ...searchBand, ...(phone ? searchBandPhone : null) }}>
             <span aria-hidden style={{ fontSize: 14, opacity: 0.6 }}>⌕</span>
             <input
               value={query}
@@ -126,18 +156,18 @@ export function Ereader({ winId, payload }: { winId: string; payload: unknown })
                 if (view !== "library") setState({ view: "library" });
               }}
               placeholder="Title, author, shelf, or topic"
-              style={searchInput}
+              style={{ ...searchInput, ...(phone ? searchInputPhone : null) }}
               aria-label="Search the library"
             />
             {query && (
-              <button onClick={() => setQuery("")} style={clearButton} title="Clear search">
+              <button onClick={() => setQuery("")} style={{ ...clearButton, ...(phone ? clearButtonPhone : null) }} title="Clear search">
                 ×
               </button>
             )}
           </div>
         )}
 
-        <div style={readerOpen ? readerBody : body}>
+        <div style={readerOpen ? readerBody : { ...body, ...(phone ? bodyPhone : null) }}>
           {readerOpen ? (
             item ? (
               <ReaderView
@@ -298,3 +328,31 @@ const backButton: React.CSSProperties = {
   color: "var(--wb-black)",
   cursor: "pointer",
 };
+
+/* ---- phone overrides: spread over the desktop objects above ----------- */
+const shellPhone: React.CSSProperties = { flexDirection: "column" };
+// Four equal tabs fill the width (about 85px each at 360px), icon beside the
+// label so the strip stays one 44px row.
+const tabStripPhone: React.CSSProperties = {
+  display: "flex",
+  gap: 2,
+  padding: 4,
+  flexShrink: 0,
+  background: "var(--wb-gray)",
+  borderBottom: "1px solid var(--wb-black)",
+  boxShadow: "inset 0 -1px 0 var(--wb-white)",
+};
+const tabPhone: React.CSSProperties = {
+  flex: "1 1 0",
+  minWidth: 0,
+  minHeight: 44,
+  flexDirection: "row",
+  justifyContent: "center",
+  gap: 6,
+  padding: "0 4px",
+  fontSize: 14,
+};
+const searchBandPhone: React.CSSProperties = { padding: "6px 8px", gap: 8 };
+const searchInputPhone: React.CSSProperties = { minHeight: 44 };
+const clearButtonPhone: React.CSSProperties = { width: 44, height: 44, fontSize: 18 };
+const bodyPhone: React.CSSProperties = { padding: 8 };
