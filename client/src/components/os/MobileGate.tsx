@@ -4,7 +4,8 @@ import type { ReactNode } from "react";
 import { MobileReader } from "@/components/os/mobile/MobileReader";
 import { MobileScreen } from "@/components/os/mobile/MobileScreen";
 import { useShellMode } from "@/components/os/ShellModeProvider";
-import { hasDeepLink } from "@/lib/deepLink";
+import { mobileSupport } from "@/data/appRegistry";
+import { deepLinkApps, hasDeepLink } from "@/lib/deepLink";
 
 // Chooses what the page is once the shell mode is known. Detection itself
 // lives in lib/shellMode.ts; this only maps the answer to a screen.
@@ -26,8 +27,15 @@ export function MobileGate({ children, phone }: Props) {
   if (mode === null) return null;
   if (mode === "desktop") return <>{children}</>;
 
-  // A shared ?doc= / ?photo= / ?post= link goes to the lite reader in both
-  // phone modes for now; opening deep links inside the shell is Phase 5.
-  if (hasDeepLink()) return <MobileReader />;
+  // A shared ?doc= / ?photo= / ?post= link. Lite mode keeps the lite reader,
+  // its safety net. The phone shell opens the link itself (useDeepLink), as
+  // long as every app the link opens is one the phone offers; a link into an
+  // app the shell hides would only land on "needs a computer", so the lite
+  // reader, which can show any of them as a page, takes it instead.
+  if (hasDeepLink()) {
+    const shellCanShow =
+      mode === "phone" && deepLinkApps().every((appId) => mobileSupport(appId) !== "hidden");
+    return shellCanShow ? <>{phone}</> : <MobileReader />;
+  }
   return mode === "phone" ? <>{phone}</> : <MobileScreen />;
 }

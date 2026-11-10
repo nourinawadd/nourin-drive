@@ -21,47 +21,10 @@ import { TopMenubar } from "@/components/os/TopMenubar";
 import { WindowLayer } from "@/components/os/WindowLayer";
 import { WindowSwitcher } from "@/components/os/WindowSwitcher";
 import { usePrefsStore } from "@/context/prefsStore";
-import { useWindowStore } from "@/context/windowStore";
-import { findPost } from "@/data/blog";
 import { DEFAULT_SAVER, SAVER_OFF } from "@/data/savers";
-import { deepLinkParams } from "@/lib/deepLink";
+import { useDeepLink } from "@/lib/useDeepLink";
 import { useIdle } from "@/lib/idle";
 import { useReadmeAfterBoot } from "@/lib/readmeIntro";
-
-/**
- * `?doc=<id>` opens the Ereader on that document - the link the reader's Share
- * button hands out. `?post=<slug>` does the same for a blog post, and
- * `?photo=<id>` opens the Gallery lightbox. The param is
- * stripped afterwards so a reload doesn't reopen the window (and so the URL
- * stays clean once you're in the desktop).
- */
-function useDeepLink() {
-  const openApp = useWindowStore((s) => s.openApp);
-  useEffect(() => {
-    const params = deepLinkParams();
-    const docId = params.get("doc");
-    const postSlug = params.get("post");
-    const photoId = params.get("photo");
-    if (!docId && !postSlug && !photoId) return;
-
-    if (docId) openApp("ereader", { payload: { docId, view: "read" } });
-    if (photoId) openApp("gallery", { payload: { focusId: photoId } });
-    if (postSlug) {
-      const post = findPost(postSlug);
-      openApp("blog", { payload: { slug: postSlug }, title: post ? post.title : "Blog" });
-    }
-
-    params.delete("doc");
-    params.delete("post");
-    params.delete("photo");
-    // These params come from the query captured at load, which may still hold
-    // `mode` even though lib/shellMode.ts has already stripped it from the
-    // address bar. Without this, writing the rest back would put it right back.
-    params.delete("mode");
-    const query = params.toString();
-    window.history.replaceState(null, "", window.location.pathname + (query ? `?${query}` : ""));
-  }, [openApp]);
-}
 
 function Desktop() {
   const [booted, setBooted] = useState(false);

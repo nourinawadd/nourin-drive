@@ -13,8 +13,10 @@ import { PhoneNowPlaying } from "@/components/os/phone/PhoneNowPlaying";
 import { PhoneUnsupported } from "@/components/os/phone/PhoneUnsupported";
 import { phoneOpenInterceptor } from "@/components/os/phone/phoneRedirects";
 import { topWindow } from "@/components/os/phone/phoneWindows";
+import { usePhoneHistory } from "@/components/os/phone/usePhoneHistory";
 import { setOpenInterceptor, useWindowStore } from "@/context/windowStore";
 import { mobileSupport } from "@/data/appRegistry";
+import { useDeepLink } from "@/lib/useDeepLink";
 
 // Nothing on the phone waits for the disk to go in: the readme intro, the
 // screensaver and the pet are desktop features and aren't mounted here. The
@@ -44,6 +46,18 @@ export function PhoneShell() {
     setOpenInterceptor(phoneOpenInterceptor);
     return () => setOpenInterceptor(null);
   }, []);
+
+  // A shared link opens its app here the same way it does on the desktop
+  // (MobileGate only lets one through when the shell can show its app). Called
+  // after the interceptor so the opens go through the same phone policy as a
+  // tap would. The boot screen skips itself for a deep link, so the visitor
+  // lands on the document, with the launcher one Back away.
+  useDeepLink();
+
+  // Hardware and browser Back close the top app, like the back gadget. Its
+  // first entry is pushed on the render after the deep link's windows open,
+  // so it carries the URL useDeepLink has already cleaned.
+  usePhoneHistory();
 
   return (
     <div className="wb-phone wb-desktop-bg">
