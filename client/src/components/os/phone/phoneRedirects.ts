@@ -1,4 +1,5 @@
 import type { OpenInterceptor } from "@/context/windowStore";
+import { trackAppOpen } from "@/lib/analytics";
 import { LOCAL_GAMES } from "@/data/games.generated";
 import { PROJECTS } from "@/data/projects";
 
@@ -26,6 +27,11 @@ import { PROJECTS } from "@/data/projects";
 // LOCAL_GAMES, then that project's `url`. A build with no itch page falls
 // through to "needs a computer", because linking a phone straight at the raw
 // build would download all of it to show a game it can't play.
+//
+// A redirected open still counts as an app_open (never a reused window, since
+// none is involved). openApp tracks only the opens it handles, and returns
+// before that for these, so without this a phone's game and website taps would
+// never show up in analytics at all.
 
 /** The itch.io page for a local game build, found by the build's `src`. */
 function itchUrlFor(src: string | undefined): string | undefined {
@@ -39,12 +45,14 @@ export const phoneOpenInterceptor: OpenInterceptor = (appId, opts) => {
     const url = (opts?.payload as { initialUrl?: string } | undefined)?.initialUrl;
     if (!url) return false;
     window.open(url, "_blank", "noopener,noreferrer");
+    trackAppOpen(appId, false);
     return true;
   }
   if (appId === "game") {
     const url = itchUrlFor((opts?.payload as { src?: string } | undefined)?.src);
     if (!url) return false;
     window.open(url, "_blank", "noopener,noreferrer");
+    trackAppOpen(appId, false);
     return true;
   }
   return false;

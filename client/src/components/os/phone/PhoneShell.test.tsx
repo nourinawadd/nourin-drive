@@ -1,8 +1,10 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { BootScreen } from "@/components/os/BootScreen";
 import { useShellMode } from "@/components/os/ShellModeProvider";
 import { PhoneShell } from "@/components/os/phone/PhoneShell";
 import { useWindowStore } from "@/context/windowStore";
+import { pingGuestbookVisit } from "@/lib/api";
 
 // useIsPhone is defined on top of the mocked useShellMode: the real one would
 // call the real (unmocked) useShellMode inside the module and always see null.
@@ -16,6 +18,11 @@ vi.mock("@/lib/sfx", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/sfx")>()),
   playSfx: vi.fn(),
   unlockSfx: vi.fn(),
+}));
+// The shell counts a visit (useCountVisit); keep that off the network.
+vi.mock("@/lib/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api")>()),
+  pingGuestbookVisit: vi.fn(() => Promise.resolve({})),
 }));
 vi.mock("@/lib/deepLink", () => ({ hasDeepLink: vi.fn(() => false), deepLinkParams: () => new URLSearchParams() }));
 
@@ -39,6 +46,28 @@ describe("PhoneShell", () => {
     fireEvent.click(screen.getByRole("button", { name: /insert the workbench disk/i }));
   };
   const tile = () => screen.getByRole("button", { name: /Start Here:/ });
+
+  it("asks to tap the disk on the phone, and to click it on the desktop", () => {
+    render(<PhoneShell />);
+    expect(screen.getByText("tap the disk to continue")).toBeTruthy();
+    cleanup();
+
+    vi.mocked(useShellMode).mockReturnValue("desktop");
+    render(<BootScreen onBoot={() => {}} />);
+    expect(screen.getByText("click the disk to continue")).toBeTruthy();
+  });
+
+  it("counts the visit once per browser session, as the desktop's stand does", () => {
+    window.sessionStorage.clear();
+    vi.mocked(pingGuestbookVisit).mockClear();
+    render(<PhoneShell />);
+    expect(pingGuestbookVisit).toHaveBeenCalledTimes(1);
+
+    // A remount in the same session (or a reload of the tab) doesn't count again.
+    cleanup();
+    render(<PhoneShell />);
+    expect(pingGuestbookVisit).toHaveBeenCalledTimes(1);
+  });
 
   it("shows a launcher with only the enabled apps, in drive order", () => {
     boot();

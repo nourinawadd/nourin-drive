@@ -1244,8 +1244,8 @@ body {
 }
 
 /* ------- phone shell ------------------------------------------------- */
-/* Everything below is only ever matched inside the phone shell (`?mode=phone`
-   while PHONE_SHELL is "preview"). Nothing on the desktop renders these
+/* Everything below is only ever matched inside the phone shell (narrow touch
+   screens, or `?mode=phone`). Nothing on the desktop renders these
    classes, so the desktop can't pick any of it up. One app at a time, full
    screen under a fixed bar; touch targets are 44px or more throughout,
    because that's the smallest thing a thumb hits reliably. */

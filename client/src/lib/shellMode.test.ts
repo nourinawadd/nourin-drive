@@ -53,8 +53,8 @@ describe("resolveShellMode", () => {
     expect(resolve({ width: NARROW_PX, coarse: true }, null, "off")).toBe("desktop");
   });
 
-  it("ships with the phone shell in preview", () => {
-    expect(PHONE_SHELL).toBe("preview");
+  it("ships with the phone shell on", () => {
+    expect(PHONE_SHELL).toBe("on");
   });
 });
 
@@ -117,7 +117,7 @@ describe("detectShellMode", () => {
 
   it("detects a phone and a desktop with no query", () => {
     screen(390, true);
-    expect(detectShellMode("")).toBe("lite");
+    expect(detectShellMode("")).toBe("phone");
     screen(1440, false);
     expect(detectShellMode("")).toBe("desktop");
     expect(window.sessionStorage.getItem(KEY_SHELL_MODE)).toBeNull();
@@ -131,9 +131,9 @@ describe("detectShellMode", () => {
     // A reload with the param gone (stripped, or an in-app navigation).
     expect(detectShellMode("")).toBe("desktop");
 
-    expect(detectShellMode("?mode=auto")).toBe("lite");
+    expect(detectShellMode("?mode=auto")).toBe("phone");
     expect(window.sessionStorage.getItem(KEY_SHELL_MODE)).toBeNull();
-    expect(detectShellMode("")).toBe("lite");
+    expect(detectShellMode("")).toBe("phone");
   });
 
   it("shows the lite page on a desktop with ?mode=lite", () => {
@@ -141,8 +141,9 @@ describe("detectShellMode", () => {
     expect(detectShellMode("?mode=lite")).toBe("lite");
   });
 
-  // With PHONE_SHELL at "preview", the override is the only way into the shell;
-  // the off-flag behaviour is covered by the resolveShellMode table above.
+  // The shipped flag is "on"; the "off" and "preview" behaviour is covered by
+  // the resolveShellMode table above. A phone override still works on a
+  // desktop-sized screen, which is how the shell is tried from a computer.
   it("opens the phone shell for ?mode=phone and holds it", () => {
     screen(1440, false);
     expect(detectShellMode("?mode=phone")).toBe("phone");
@@ -150,9 +151,22 @@ describe("detectShellMode", () => {
     expect(detectShellMode("")).toBe("phone");
   });
 
-  it("still gives real phones the lite page without an override", () => {
+  it("gives real phones the phone shell without an override", () => {
     screen(390, true);
+    expect(detectShellMode("")).toBe("phone");
+  });
+
+  it("still gives a phone the lite page or the desktop when asked", () => {
+    screen(390, true);
+    expect(detectShellMode("?mode=lite")).toBe("lite");
     expect(detectShellMode("")).toBe("lite");
+    expect(detectShellMode("?mode=desktop")).toBe("desktop");
+    expect(detectShellMode("")).toBe("desktop");
+  });
+
+  it("keeps the desktop for a narrow window driven by a mouse", () => {
+    screen(600, false);
+    expect(detectShellMode("")).toBe("desktop");
   });
 
   it("keeps a working override when the param is a typo", () => {
@@ -199,7 +213,7 @@ describe("detectShellMode", () => {
     const set = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new Error("blocked");
     });
-    expect(detectShellMode("")).toBe("lite");
+    expect(detectShellMode("")).toBe("phone");
     expect(detectShellMode("?mode=desktop")).toBe("desktop");
     get.mockRestore();
     set.mockRestore();

@@ -3,6 +3,10 @@ import { phoneOpenInterceptor } from "@/components/os/phone/phoneRedirects";
 import { setOpenInterceptor, useWindowStore } from "@/context/windowStore";
 import { LOCAL_GAMES } from "@/data/games.generated";
 import { PROJECTS } from "@/data/projects";
+import { trackAppOpen } from "@/lib/analytics";
+
+// Counted, not sent: the tests check who tracks an open, and how many times.
+vi.mock("@/lib/analytics", () => ({ trackAppOpen: vi.fn() }));
 
 const apps = () => useWindowStore.getState().windows.map((w) => w.appId);
 const site = { payload: { initialUrl: "https://example.com/" } };
@@ -20,6 +24,7 @@ describe("phoneOpenInterceptor", () => {
   beforeEach(() => {
     useWindowStore.setState({ windows: [], focusedId: null, zCounter: 1 });
     open = vi.spyOn(window, "open").mockImplementation(() => null);
+    vi.mocked(trackAppOpen).mockClear();
   });
 
   afterEach(() => {
@@ -74,5 +79,29 @@ describe("phoneOpenInterceptor", () => {
     expect(useWindowStore.getState().openApp("game", game)).toBe("");
     expect(apps()).toEqual([]);
     expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  it("counts a redirected open once, as a new app_open", () => {
+    setOpenInterceptor(phoneOpenInterceptor);
+    useWindowStore.getState().openApp("browser", site);
+    expect(trackAppOpen).toHaveBeenCalledTimes(1);
+    expect(trackAppOpen).toHaveBeenCalledWith("browser", false);
+
+    vi.mocked(trackAppOpen).mockClear();
+    useWindowStore.getState().openApp("game", game);
+    expect(trackAppOpen).toHaveBeenCalledTimes(1);
+    expect(trackAppOpen).toHaveBeenCalledWith("game", false);
+  });
+
+  it("doesn't track an open it lets through, since the store tracks those", () => {
+    expect(phoneOpenInterceptor("explorer")).toBe(false);
+    expect(phoneOpenInterceptor("browser")).toBe(false);
+    expect(phoneOpenInterceptor("game", { payload: { src: "/games/nope/index.html" } })).toBe(false);
+    expect(trackAppOpen).not.toHaveBeenCalled();
+
+    // Let through to the store, it's tracked exactly once, by the store.
+    setOpenInterceptor(phoneOpenInterceptor);
+    useWindowStore.getState().openApp("explorer");
+    expect(trackAppOpen).toHaveBeenCalledTimes(1);
   });
 });

@@ -26,6 +26,25 @@ export const STAND_RESERVE = 220;
 const ODO_DIGITS = 6;
 
 /**
+ * Counts this visitor in the guestbook's "you are visitor" number. The stand
+ * calls it on the desktop, and the phone shell calls it too, since the phone
+ * has no stand but its visitors are still visitors. Both share the one session
+ * key, so a tab that switches shells is still counted once.
+ */
+export function useCountVisit() {
+  // One increment per browser session. Without the guard a refresh would inflate
+  // the count, and React's dev-mode double-effect would double it on every load.
+  useEffect(() => {
+    if (readSession(KEY_VISIT_COUNTED)) return;
+    writeSession(KEY_VISIT_COUNTED, true);
+    pingGuestbookVisit().catch(() => {
+      // Counter is cosmetic. If the server is down, let the session flag stand
+      // so we don't retry on every remount.
+    });
+  }, []);
+}
+
+/**
  * The always-there invitation to sign the guestbook.
  *
  * Lives at z-index 900 - the dock/taskbar tier - rather than down at z1 with
@@ -58,16 +77,7 @@ export function GuestbookStand() {
     return () => window.clearInterval(id);
   }, []);
 
-  // One increment per browser session. Without the guard a refresh would inflate
-  // the count, and React's dev-mode double-effect would double it on every load.
-  useEffect(() => {
-    if (readSession(KEY_VISIT_COUNTED)) return;
-    writeSession(KEY_VISIT_COUNTED, true);
-    pingGuestbookVisit().catch(() => {
-      // Counter is cosmetic. If the server is down, let the session flag stand
-      // so we don't retry on every remount.
-    });
-  }, []);
+  useCountVisit();
 
   const statsQ = useQuery({
     queryKey: ["guestbook", "stats"],

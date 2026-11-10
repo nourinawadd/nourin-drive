@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { setShellMode } from "@/lib/analytics";
 import { detectShellMode, type ShellMode } from "@/lib/shellMode";
 
 // Holds the shell mode for the whole page so the gate, and later the phone
@@ -20,8 +21,12 @@ export function ShellModeProvider({ children }: { children: React.ReactNode }) {
   // Once per load, deliberately with no resize or orientation listeners - see
   // the note at the top of lib/shellMode.ts. Rotating a phone must never swap
   // the shell underneath it.
+  // The analytics tag is set in the same effect, before the mode reaches
+  // anything that could open an app, so every app_open carries it.
   useEffect(() => {
-    setMode(detectShellMode());
+    const detected = detectShellMode();
+    setShellMode(detected);
+    setMode(detected);
   }, []);
 
   return <ShellModeContext.Provider value={mode}>{children}</ShellModeContext.Provider>;

@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useIsPhone } from "@/components/os/ShellModeProvider";
 import { hasDeepLink } from "@/lib/deepLink";
 
 export function BootScreen({ onBoot }: { onBoot: () => void }) {
   const [visible, setVisible] = useState(true);
+  // The phone shell mounts this same screen, and nobody clicks on a phone.
+  // Everywhere else (the desktop) the mode isn't "phone", so it still says click.
+  const phone = useIsPhone();
 
   function boot() {
     setVisible(false);
@@ -35,7 +39,9 @@ export function BootScreen({ onBoot }: { onBoot: () => void }) {
         </button>
         <p>Insert Workbench disk</p>
         <p>in any drive</p>
-        <div className="wb-boot-hint">click the disk to continue</div>
+        <div className="wb-boot-hint">
+          {phone ? "tap the disk to continue" : "click the disk to continue"}
+        </div>
       </div>
     </div>
   );

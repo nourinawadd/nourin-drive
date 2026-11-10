@@ -49,6 +49,27 @@ describe("usePhoneHistory", () => {
     expect(push).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps what's already in the current entry, so Next's marker travels with ours", () => {
+    // What Next's app router leaves on the entry the page loaded on.
+    window.history.replaceState({ __NA: true, __PRIVATE_NEXTJS_INTERNALS_TREE: ["tree"] }, "");
+    render(<Host />);
+    open("explorer");
+    open("properties");
+    expect(entry(1)).toEqual({
+      __NA: true,
+      __PRIVATE_NEXTJS_INTERNALS_TREE: ["tree"],
+      wbPhone: 1,
+      load: expect.any(String),
+    });
+    expect(entry(2)).toMatchObject({ __NA: true, __PRIVATE_NEXTJS_INTERNALS_TREE: ["tree"], wbPhone: 2 });
+    expect(entry(2).load).toBe(entry(1).load);
+
+    // Depth still comes from our own keys, with Next's alongside them.
+    pop(entry(1));
+    expect(apps()).toEqual(["explorer"]);
+    window.history.replaceState(null, "");
+  });
+
   it("closes the top window on Back", () => {
     render(<Host />);
     open("explorer");

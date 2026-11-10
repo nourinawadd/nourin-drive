@@ -1,9 +1,10 @@
 import { KEY_SHELL_MODE, readSessionString, writeSessionString } from "@/lib/localStore";
 
-// Which shell a visitor gets: today's desktop, the phone shell (Phase 1 onward),
-// or the lite landing page that phones have had all along. Everything that
-// branches on "is this a phone" should ask here rather than measuring the
-// window itself, so there is exactly one rule and one override to test with.
+// Which shell a visitor gets: the desktop, the phone shell (what phones get by
+// default since the launch), or the lite page (the simple version, and the
+// fallback if the phone shell crashes). Everything that branches on "is this a
+// phone" should ask here rather than measuring the window itself, so there is
+// exactly one rule and one override to test with.
 //
 // The decision is made once per page load. Re-checking on resize used to swap a
 // large phone in landscape (wider than NARROW_PX) to the full desktop and back,
@@ -20,9 +21,10 @@ export type ShellOverride = ShellMode;
  */
 export type ShellFlag = "off" | "preview" | "on";
 
-/** `preview` since Phase 1: `?mode=phone` reaches the shell, real phones still
- *  get the lite page. Moves to `on` at launch (Phase 6). */
-export const PHONE_SHELL: ShellFlag = "preview";
+/** `on` since the launch: narrow touch screens get the phone shell without a
+ *  query. `?mode=lite` and `?mode=desktop` still override it for the tab, and
+ *  turning it back to `preview` is the one-line way to roll the launch back. */
+export const PHONE_SHELL: ShellFlag = "on";
 
 /** Below this width, with a coarse pointer, it's a phone. Unchanged from the
  *  original MobileGate rule. */

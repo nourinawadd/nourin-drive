@@ -20,6 +20,18 @@ import { useWindowStore } from "@/context/windowStore";
 // lands on anything else - the entry the page loaded on, or one left behind by
 // a reload mid-stack - counts as depth 0: such leftovers just cost a few no-op
 // presses of Back before it leaves the site, which is the honest worst case.
+//
+// Each entry also carries whatever Next.js keeps in the current one, because
+// Next's app router owns history too. It handles every popstate, and reloads
+// the page for an entry without its `__NA` marker, which here would reboot the
+// shell on Back. It also patches pushState: a state that already has `__NA` is
+// passed straight through, while anything else gets Next's state copied in and
+// a same-URL router restore dispatched. Our entries used to get the marker only
+// through that copy, which works only once Next's patch is installed (an effect
+// of its own). Spreading the current state in makes every entry valid by
+// itself, whenever it's pushed, and skips the pointless restore. Next 16
+// (node_modules/next/dist/client/components/app-router.js); re-check Back after
+// a Next upgrade.
 
 /** Tells this load's entries from a previous load's, which survive a reload. */
 const LOAD = Math.random().toString(36).slice(2);
@@ -47,7 +59,17 @@ export function usePhoneHistory(): void {
     if (open > depth.current) {
       // An app opened (one at a time from a tap; a deep link can open several).
       for (let k = depth.current + 1; k <= open; k++) {
-        window.history.pushState({ wbPhone: k, load: LOAD } satisfies Entry, "", window.location.href);
+        window.history.pushState(
+          {
+            // `history.state` is `any` in the DOM types; naming it keeps the
+            // `satisfies` below an actual check on our two keys.
+            ...(window.history.state as Record<string, unknown> | null),
+            wbPhone: k,
+            load: LOAD,
+          } satisfies Entry,
+          "",
+          window.location.href,
+        );
       }
       depth.current = open;
     } else if (open < depth.current) {

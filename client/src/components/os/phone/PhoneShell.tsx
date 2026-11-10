@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { AppRouter } from "@/components/os/AppRouter";
 import { AudioEngine } from "@/components/os/AudioEngine";
 import { BootScreen } from "@/components/os/BootScreen";
+import { useCountVisit } from "@/components/os/GuestbookStand";
 import { PrefsEngine } from "@/components/os/PrefsEngine";
 import { SfxEngine } from "@/components/os/SfxEngine";
 import { PhoneBar } from "@/components/os/phone/PhoneBar";
@@ -53,6 +54,11 @@ export function PhoneShell() {
   // tap would. The boot screen skips itself for a deep link, so the visitor
   // lands on the document, with the launcher one Back away.
   useDeepLink();
+
+  // The guestbook's visitor counter. On the desktop the stand counts the visit;
+  // the phone has no stand, so the shell does it, with the same one-per-session
+  // guard.
+  useCountVisit();
 
   // Hardware and browser Back close the top app, like the back gadget. Its
   // first entry is pushed on the render after the deep link's windows open,
