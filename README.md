@@ -34,9 +34,7 @@ leave it alone for a minute and a half and a screensaver comes on, the boing
 ball or a starfield. prefs can also give you a desktop pet: a cat, a duck or a
 crab. this one is the cat, climbing onto a window.
 
-<img src="docs/media/boing.gif" width="32%" alt="the boing ball screensaver, a red and white checkered ball bouncing over a purple grid">
-<img src="docs/media/starfield.gif" width="32%" alt="the starfield screensaver, coloured streaks flying out from the centre on black">
-<img src="docs/media/pet.gif" width="32%" alt="a small orange pixel cat walks in along the bottom of the screen, climbs the side of a window and sits on its title bar">
+<img src="docs/media/boing.gif" width="270" alt="the boing ball screensaver, a red and white checkered ball bouncing over a purple grid"> <img src="docs/media/starfield.gif" width="270" alt="the starfield screensaver, coloured streaks flying out from the centre on black"> <img src="docs/media/pet.gif" width="270" alt="a small orange pixel cat walks in along the bottom of the screen, climbs the side of a window and sits on its title bar">
 
 ## ✦ apps
 
@@ -76,10 +74,7 @@ on a phone it opens a phone shell instead, most of the same apps one at a
 time, full screen, with back. how that works is in
 [`docs/mobile-guide.md`](docs/mobile-guide.md).
 
-<img src="docs/media/phone.gif" width="24%" alt="on a phone: tap the disk, the launcher comes up, tap music, the player opens full screen, tap back">
-<img src="docs/media/phone-home.png" width="24%" alt="the phone launcher, the drives as a grid of big icons">
-<img src="docs/media/phone-app.png" width="24%" alt="the user profile open full screen on a phone">
-<img src="docs/media/phone-music.png" width="24%" alt="the phone launcher with a track loaded in the now-playing bar at the bottom">
+<img src="docs/media/phone.gif" width="200" alt="on a phone: tap the disk, the launcher comes up, tap music, the player opens full screen, tap back"> <img src="docs/media/phone-home.png" width="200" alt="the phone launcher, the drives as a grid of big icons"> <img src="docs/media/phone-app.png" width="200" alt="the user profile open full screen on a phone"> <img src="docs/media/phone-music.png" width="200" alt="the phone launcher with a track loaded in the now-playing bar at the bottom">
 
 ## ✦ terminal version
 
