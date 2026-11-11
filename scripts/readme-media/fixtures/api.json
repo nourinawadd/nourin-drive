@@ -1,0 +1,23 @@
+{
+  "_note": "canned api answers for the capture. shapes follow server/src/controllers.",
+  "health": { "status": "ok", "env": "production" },
+  "uptime": {
+    "bootedAt": "2026-03-09T06:00:00.000Z",
+    "uptime": { "ms": 707520000, "human": "8d 4h 32m", "processSeconds": 707520 },
+    "runtime": { "node": "v22.11.0", "platform": "linux", "arch": "arm64" },
+    "memoryMB": { "rss": 71.4, "heapUsed": 24.9, "heapTotal": 31.2 }
+  },
+  "whoami": {
+    "ip": "203.0.113.7",
+    "method": "GET",
+    "protocol": "https",
+    "host": "nourin.is-a.dev",
+    "userAgent": "Mozilla/5.0",
+    "language": "en-GB,en;q=0.9",
+    "referer": null,
+    "query": {},
+    "seenAt": "2026-03-17T10:42:00.000Z"
+  },
+  "postStats": { "views": 214, "comments": 3 },
+  "postComments": []
+}

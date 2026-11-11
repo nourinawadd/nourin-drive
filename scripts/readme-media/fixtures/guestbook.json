@@ -1,0 +1,52 @@
+{
+  "_note": "entries for the screenshots, newest first like the api. mira, tomasz and ada are placeholders. 'someone in the same galaxy' and 'some dude' are real entries from the live guestbook (#18 and #16, aug 2026), words unchanged, renumbered and redated to fit before the frozen capture date.",
+  "stats": { "visits": 1342, "signatures": 27 },
+  "entries": [
+    {
+      "_id": "fixture-27",
+      "seq": 27,
+      "name": "mira",
+      "emoji": "✿",
+      "message": "found this through the blog. spent way too long rearranging the windows.",
+      "createdAt": "2026-03-16T19:04:00.000Z",
+      "updatedAt": "2026-03-16T19:04:00.000Z"
+    },
+    {
+      "_id": "fixture-26",
+      "seq": 26,
+      "name": "tomasz",
+      "emoji": "♪",
+      "message": "the music player has better taste than mine",
+      "reply": "it's mostly the same six songs on repeat",
+      "repliedAt": "2026-03-15T09:12:00.000Z",
+      "createdAt": "2026-03-14T22:31:00.000Z",
+      "updatedAt": "2026-03-15T09:12:00.000Z"
+    },
+    {
+      "_id": "fixture-25",
+      "seq": 25,
+      "name": "Someone in the same galaxy",
+      "emoji": "★",
+      "message": "I'm amazed by what you did.\nadd vim editor in shell🧐.\nI will listen to music from here not Spotify.",
+      "createdAt": "2026-03-09T16:32:00.000Z",
+      "updatedAt": "2026-03-09T16:32:00.000Z"
+    },
+    {
+      "_id": "fixture-24",
+      "seq": 24,
+      "name": "ada",
+      "emoji": "☻",
+      "message": "hi from the library. the shell has an ls, of course it does.",
+      "createdAt": "2026-03-04T10:05:00.000Z",
+      "updatedAt": "2026-03-04T10:05:00.000Z"
+    },
+    {
+      "_id": "fixture-23",
+      "seq": 23,
+      "name": "some dude",
+      "message": "The items in the recycle bin are hilarious 😂",
+      "createdAt": "2026-02-27T14:26:00.000Z",
+      "updatedAt": "2026-02-27T14:26:00.000Z"
+    }
+  ]
+}
