@@ -17,7 +17,7 @@ Set Padding 24
 Set Framerate 12
 Set TypingSpeed 70ms
 
-Type "ssh nourin.is-a.dev"
+Type "ssh nourin.is-a.dev -p 2323"
 Sleep 500ms
 Enter
 Sleep 4s

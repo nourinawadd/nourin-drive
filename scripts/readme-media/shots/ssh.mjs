@@ -1,6 +1,8 @@
-// docs/media/ssh.gif: `ssh nourin.is-a.dev`, the terminal version, recorded
-// from scripts/readme-media/ssh.tape with VHS. Optional: without `vhs` on
-// PATH the shot is skipped with a note, and everything else still runs.
+// docs/media/ssh.gif: `ssh nourin.is-a.dev -p 2323`, the terminal version,
+// recorded from scripts/readme-media/ssh.tape with VHS. Optional: without
+// `vhs` on PATH the shot is skipped with a note, and everything else still
+// runs. The README links the recording in the ssh-portfolio repo instead;
+// this is for making a new one.
 //
 // It's the only shot that touches the live server, so it's marked `live`:
 // it can't be repeatable, and `--check` doesn't compare it. VHS needs ffmpeg

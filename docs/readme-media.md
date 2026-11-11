@@ -70,7 +70,7 @@ the live server, so `--check` doesn't run it twice and says "not compared".
 | `pet.gif` | the cat walks in and climbs onto a window, a 640×400 crop of the desktop |
 | `phone.gif` | the phone: tap the disk, tap Music, tap Back, on an iPhone 15 at 2x |
 | `signal.gif` | the easter egg's start: the keys go in (not shown), the screen fades, cut before anything is typed |
-| `ssh.gif` | `ssh nourin.is-a.dev`, optional, only made when VHS is installed |
+| `ssh.gif` | `ssh nourin.is-a.dev -p 2323`, optional, only made when VHS is installed (the README links the ssh-portfolio repo's recording instead) |
 
 `smoke` and `gif-smoke` are also in `--list`. They're quick "does any of this
 work" shots (a booted desktop, a few frames of the saver fading in) that save
@@ -209,7 +209,12 @@ keys were pressed.
 
 ### ssh.gif (optional)
 
-This one is a terminal session, recorded by
+The README doesn't use this one today: its terminal section shows the
+recording that lives in the
+[ssh-portfolio](https://github.com/nourinawadd/ssh-portfolio) repo
+(`assets/demo.gif`), linked from there. This shot is for making a new one.
+
+It's a terminal session, recorded by
 [VHS](https://github.com/charmbracelet/vhs) from `scripts/readme-media/ssh.tape`
 against the live server. Without `vhs` on PATH it's skipped with a note and
 everything else runs as normal. To make it:
@@ -217,7 +222,7 @@ everything else runs as normal. To make it:
 1. Install VHS (`winget install charmbracelet.vhs` or `scoop install vhs`).
    It also needs `ttyd` on PATH; see VHS's readme. It gets ffmpeg from this
    command, so you don't need another.
-2. Run `ssh nourin.is-a.dev` once in a normal terminal and accept the host
+2. Run `ssh nourin.is-a.dev -p 2323` once in a normal terminal and accept the host
    key, or the GIF will show that prompt.
 3. `npm run media -- --only ssh`, then watch it. The keys in the tape are a
    first guess at looking around; change the moves and the `Sleep`s until it
