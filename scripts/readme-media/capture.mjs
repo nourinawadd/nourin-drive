@@ -11,9 +11,12 @@
 //   npm run media -- --check           run each shot twice and compare bytes
 //
 // Shots live in shots/*.mjs. Each file exports one shot or an array of them:
-// `{ name, scratch?, run(ctx) }`. `ctx.save(rel)` hands back the path to
-// write to, inside docs/media/ (or the scratch folder for `scratch` shots),
-// and records the file for the size summary.
+// `{ name, scratch?, gif?, live?, run(ctx) }`. `ctx.save(rel)` hands back the
+// path to write to, inside docs/media/ (or the scratch folder for `scratch`
+// shots), and records the file for the size summary. `ctx.film(page, opts)`
+// starts a frame-by-frame recording (lib/film.mjs); its `save(rel)` writes
+// the GIF. A `live` shot talks to the real world and can't be repeatable, so
+// `--check` leaves it out. `run` may return `{ skipped: "why" }`.
 
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -21,6 +24,8 @@ import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 import { ensureBuild, paths } from "./lib/build.mjs";
+import { findFfmpeg } from "./lib/ffmpeg.mjs";
+import { film } from "./lib/film.mjs";
 import { serve } from "./lib/serve.mjs";
 import { newStage } from "./lib/stage.mjs";
 
@@ -28,6 +33,13 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "..", "..");
 const MEDIA_DIR = join(ROOT, "docs", "media");
 const SCRATCH_DIR = join(tmpdir(), "readme-media");
+// GIF frames are big and short-lived. They go next to the repo, not in the
+// system temp folder (on Windows usually the C: drive, which can be the full
+// one), and node_modules/ is already ignored by git.
+const FRAMES_DIR = join(ROOT, "node_modules", ".cache", "readme-media", "frames");
+
+const PNG_LIMIT = 1024 * 1024;
+const GIF_LIMIT = 3 * 1024 * 1024;
 
 function parseArgs(argv) {
   const opts = { list: false, only: null, rebuild: false, headed: false, check: false };
@@ -93,6 +105,13 @@ async function main() {
     return 0;
   }
 
+  // Fail before the build, not after a minute of filming, if GIFs can't be
+  // encoded. Shots that are all stills don't need ffmpeg at all.
+  if (chosen.some((s) => s.gif)) {
+    const ff = findFfmpeg();
+    console.log(`  ffmpeg: ${ff.from}`);
+  }
+
   ensureBuild(ROOT, { rebuild: opts.rebuild });
   const server = await serve(paths(ROOT).clientOut);
   console.log(`  serving client/out at ${server.origin}`);
@@ -109,14 +128,17 @@ async function main() {
 
   const notes = [];
   const tally = { failed: 0, mocked: 0, blocked: 0, unmocked: 0, fontsMissing: new Set() };
+  const gifStats = new Map();
+  let filmCount = 0;
 
   // One pass over the chosen shots. `baseFor(shot)` says where its files go;
   // returns what was written as { shot, rel, abs }.
-  async function pass(baseFor, label = "") {
+  async function pass(baseFor, label = "", list = chosen) {
     const written = [];
-    for (const shot of chosen) {
+    for (const shot of list) {
       const base = baseFor(shot);
       const stages = [];
+      const filmDirs = [];
       const ctx = {
         browser,
         origin: server.origin,
@@ -125,6 +147,8 @@ async function main() {
         /** A staged context + page (lib/stage.mjs); closed after the shot. */
         stage: async (stageOpts = {}) => {
           const s = await newStage(browser, {
+            // GIF shots film frame by frame, which needs React on the clock.
+            reactOnClock: !!shot.gif,
             ...stageOpts,
             origin: server.origin,
             clientOut: paths(ROOT).clientOut,
@@ -139,16 +163,35 @@ async function main() {
           written.push({ shot: shot.name, rel, abs });
           return abs;
         },
+        /** Starts filming a staged page; `save(rel)` on the result writes the GIF. */
+        film: async (page, filmOpts = {}) => {
+          const dir = join(FRAMES_DIR, `${shot.name.replace(/[^\w-]/g, "_")}-${++filmCount}`);
+          rmSync(dir, { recursive: true, force: true });
+          filmDirs.push(dir);
+          const rec = await film(page, { ...filmOpts, dir });
+          rec.save = async (rel) => {
+            const out = ctx.save(rel);
+            const stats = await rec.encode(out);
+            gifStats.set(out, stats);
+            return stats;
+          };
+          return rec;
+        },
       };
       process.stdout.write(`  shot: ${shot.name}${label} ... `);
       try {
-        await shot.run(ctx);
-        console.log("ok");
+        const result = await shot.run(ctx);
+        if (result?.skipped) {
+          console.log("skipped");
+          notes.push(`[${shot.name}] skipped: ${result.skipped}`);
+        } else console.log("ok");
       } catch (err) {
         tally.failed++;
         console.log("FAILED");
         console.error(`    ${err?.stack ?? err}`);
       } finally {
+        // A shot that failed mid-film leaves its frames behind; never keep them.
+        if (!process.env.MEDIA_KEEP_FRAMES) for (const d of filmDirs) rmSync(d, { recursive: true, force: true });
         for (const s of stages) {
           await s.context.close().catch(() => {});
           // A request that reached the fake API with no answer means the shot
@@ -179,8 +222,12 @@ async function main() {
     if (opts.check) {
       const again = join(SCRATCH_DIR, "check");
       rmSync(again, { recursive: true, force: true });
-      const second = await pass(() => again, " (again)");
+      const second = await pass(() => again, " (again)", chosen.filter((s) => !s.live));
       for (const w of written) {
+        if (chosen.find((s) => s.name === w.shot)?.live) {
+          verdicts.push(`    ${w.rel.replaceAll("\\", "/")}  not compared (live)`);
+          continue;
+        }
         const twin = second.find((s) => s.shot === w.shot && s.rel === w.rel);
         const same = twin && existsSync(twin.abs) && readFileSync(w.abs).equals(readFileSync(twin.abs));
         if (!same) tally.failed++;
@@ -205,10 +252,22 @@ async function main() {
     console.log("\n  files:");
     let media = 0;
     for (const { abs } of written) {
+      if (!existsSync(abs)) continue;
       const shown = abs.startsWith(ROOT) ? relative(ROOT, abs) : abs;
       const size = statSync(abs).size;
       if (abs.startsWith(MEDIA_DIR)) media += size;
-      console.log(`    ${shown.replaceAll("\\", "/")}  ${kb(size)}${size > 1024 * 1024 ? "  OVER 1 MB" : ""}`);
+      const gif = gifStats.get(abs);
+      let flag = "";
+      // By extension, so a GIF made outside film() (VHS) is held to it too.
+      const isGif = abs.toLowerCase().endsWith(".gif");
+      if (isGif && size > GIF_LIMIT) {
+        // The README budget is about 3 MB a GIF: fail, so it gets tuned
+        // (fps, length, crop) rather than committed.
+        tally.failed++;
+        flag = "  OVER 3 MB";
+      } else if (!isGif && size > PNG_LIMIT) flag = "  OVER 1 MB";
+      const frames = gif ? `  ${gif.frames} frames` : "";
+      console.log(`    ${shown.replaceAll("\\", "/")}  ${kb(size)}${frames}${flag}`);
     }
     if (existsSync(MEDIA_DIR)) console.log(`  docs/media total: ${kb(dirSize(MEDIA_DIR))} (this run: ${kb(media)})`);
   }

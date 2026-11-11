@@ -146,7 +146,27 @@ function firstFramePng(browser, origin, file) {
   return frozenGifs.get(file);
 }
 
-function initScript({ seed, local, session }) {
+function initScript({ seed, local, session, reactOnClock }) {
+  // React's scheduler runs renders and effects as tasks it posts itself,
+  // preferring setImmediate when the page has one and a MessageChannel
+  // otherwise. Neither is held by Playwright's fake clock, so a render can
+  // happen at any point while the clock is being moved, and a GIF frame can
+  // come out a little different each run. Giving the page a setImmediate made
+  // of a zero-delay setTimeout puts that work on the fake clock: it runs when
+  // the clock moves, in the same order every time. Only the GIF shots ask for
+  // it; the stills settle fully before every screenshot and don't need it.
+  if (reactOnClock) {
+    window.setImmediate = (fn, ...args) => window.setTimeout(fn, 0, ...args);
+    // A running count of DOM changes, so `pump` (lib/boot.mjs) can tell when
+    // a round of that work has stopped changing anything.
+    window.__rmMut = 0;
+    new MutationObserver(() => window.__rmMut++).observe(document, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      characterData: true,
+    });
+  }
   // mulberry32: tiny, fast, and the same sequence for the same seed. Every
   // frame (the blog iframe too) starts from the shot's seed.
   let a = seed >>> 0;
@@ -180,6 +200,7 @@ function initScript({ seed, local, session }) {
  *   viewport     overrides the viewport of DESKTOP or device
  *   time         epoch ms to freeze at (default FROZEN_TIME)
  *   freezeGifs   false to let local GIFs animate (default: first frame only)
+ *   reactOnClock true to run React's scheduled work on the fake clock (GIFs)
  */
 export async function newStage(browser, opts) {
   const { origin, clientOut, blogOut } = opts;
@@ -217,7 +238,12 @@ export async function newStage(browser, opts) {
   }
   // Already counted for this tab, so the stand doesn't POST a visit.
   const sessionStore = { "wb:guestbook-counted": "1" };
-  await context.addInitScript(initScript, { seed: opts.seed ?? 1, local: localStore, session: sessionStore });
+  await context.addInitScript(initScript, {
+    seed: opts.seed ?? 1,
+    local: localStore,
+    session: sessionStore,
+    reactOnClock: !!opts.reactOnClock,
+  });
 
   const fixtures = { time, guestbook: readJson("guestbook.json"), api: readJson("api.json") };
   const fonts = fontCss(clientOut);
@@ -293,6 +319,26 @@ export async function newStage(browser, opts) {
   // here on, time only moves when a shot calls `advance` (lib/boot.mjs).
   await context.clock.install({ time: time - 1000 });
   await context.clock.pauseAt(time);
+
+  // GIF pages also need performance.now() and animation frames on exactly the
+  // same clock as Date. Playwright's fake versions sit a millisecond or two
+  // off Date, by an amount that changes from page to page, and the savers and
+  // the pet time their physics with them, so a ball would land a pixel apart
+  // between runs. Registered after the clock so these replace its versions;
+  // they're built on its (fake) Date and setTimeout.
+  if (opts.reactOnClock) {
+    await context.addInitScript(() => {
+      const base = Date.now();
+      const setT = window.setTimeout.bind(window);
+      const clearT = window.clearTimeout.bind(window);
+      performance.now = () => Date.now() - base;
+      window.requestAnimationFrame = (cb) => {
+        const wait = 16 - ((Date.now() - base) % 16);
+        return setT(() => cb(performance.now()), wait);
+      };
+      window.cancelAnimationFrame = (id) => clearT(id);
+    });
+  }
 
   const page = await context.newPage();
   return { context, page, report, origin, time };

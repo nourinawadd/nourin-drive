@@ -70,13 +70,75 @@ export async function guardSignal(page, root) {
   }
 }
 
+/**
+ * For pages staged with `reactOnClock` (the GIFs): runs everything that's due
+ * at the current page time without moving the clock, round after round,
+ * until a round changes nothing in the DOM and `busy()` (e.g. "requests in
+ * flight") says false. React's renders and effects are zero-delay timers on
+ * those pages, so this is "let React finish", at a fixed moment.
+ *
+ * `busy()` returns false, or something truthy that says what's pending. A
+ * request that never finishes (a stream, say) would otherwise keep this
+ * waiting forever, so after `waitMs` of real time it gives up with an error
+ * naming what it was waiting on.
+ */
+export async function pump(page, { busy = () => false, rounds = 200, waitMs = 15000 } = {}) {
+  for (let i = 0; i < rounds; i++) {
+    const deadline = Date.now() + waitMs;
+    for (let b = busy(); b; b = busy()) {
+      if (Date.now() > deadline) {
+        throw new Error(`still waiting after ${waitMs / 1000} s on: ${b === true ? "something busy" : b}`);
+      }
+      await page.waitForTimeout(10);
+    }
+    const before = await page.evaluate(() => window.__rmMut);
+    await page.clock.runFor(0);
+    // One trip round the real task queue, for anything not on the clock
+    // (promise chains from finished fetches, module evaluation).
+    await page.evaluate(
+      () =>
+        new Promise((r) => {
+          const ch = new MessageChannel();
+          ch.port1.onmessage = () => r();
+          ch.port2.postMessage(0);
+        }),
+    );
+    const after = await page.evaluate(() => window.__rmMut);
+    if (after === before && !busy()) return;
+  }
+  throw new Error("the page never stopped changing at this moment");
+}
+
+/**
+ * For `reactOnClock` pages, just after loading: moves the clock a fixed
+ * 200 ms, one animation frame at a time, letting the page finish after each.
+ * The first render waits on an animation frame, which the fake clock only
+ * fires when time moves, so `pump` alone shows nothing. A fixed amount keeps
+ * every run on the same page time.
+ */
+export async function warm(page, ms = 208) {
+  for (let t = 0; t < ms; t += 16) {
+    await page.clock.runFor(16);
+    await pump(page);
+  }
+}
+
+/** True when the page was staged with `reactOnClock`. */
+export const reactOnClock = (page) => page.evaluate(() => "__rmMut" in window);
+
 /** Loads the desktop and clicks the disk. */
 export async function boot(page, origin, path = "/") {
   await page.goto(origin + path);
+  // With React on the fake clock nothing renders until the clock runs: the
+  // boot screen only appears once the shell mode is decided in the browser,
+  // and a click on a page that hasn't hydrated does nothing.
+  const onClock = await reactOnClock(page);
+  if (onClock) await warm(page);
   const disk = page.locator(BOOT_BUTTON);
   await disk.waitFor();
   await page.evaluate(() => document.fonts.ready);
   await disk.click();
+  if (onClock) await pump(page);
   await page.locator(".wb-drive").first().waitFor();
   await settle(page);
 }
@@ -95,16 +157,43 @@ export function windowByTitle(page, title) {
  * It grabs the bar near its left end, clear of the gadgets on the right, and
  * moves in a few steps so react-rnd sees an ordinary drag.
  */
+/**
+ * A mouse drag from (fromX, fromY) to (toX, toY) in eight steps. On pages with
+ * React on the fake clock (GIFs) each step also moves the clock one animation
+ * frame and lets the page catch up, or the drag is lost; a fixed 16 ms per
+ * step keeps it repeatable. Stills keep the plain stepped move.
+ */
+async function drag(page, fromX, fromY, toX, toY) {
+  const onClock = await reactOnClock(page);
+  await page.mouse.move(fromX, fromY);
+  if (!onClock) {
+    await page.mouse.down();
+    await page.mouse.move(toX, toY, { steps: 8 });
+    await page.mouse.up();
+    return;
+  }
+  const tick = async () => {
+    await page.clock.runFor(16);
+    await pump(page);
+  };
+  await tick();
+  await page.mouse.down();
+  await tick();
+  for (let i = 1; i <= 8; i++) {
+    await page.mouse.move(fromX + ((toX - fromX) * i) / 8, fromY + ((toY - fromY) * i) / 8);
+    await tick();
+  }
+  await page.mouse.up();
+  await tick();
+}
+
 export async function dragWindow(page, title, x, y) {
   const win = windowByTitle(page, title);
   const box = await win.boundingBox();
   const bar = await win.locator(".wb-titlebar").boundingBox();
   if (!box || !bar) throw new Error(`window "${title}" isn't on screen`);
   const grab = { x: bar.x + 40, y: bar.y + bar.height / 2 };
-  await page.mouse.move(grab.x, grab.y);
-  await page.mouse.down();
-  await page.mouse.move(x + (grab.x - box.x), y + (grab.y - box.y), { steps: 8 });
-  await page.mouse.up();
+  await drag(page, grab.x, grab.y, x + (grab.x - box.x), y + (grab.y - box.y));
   await settle(page, { pageMs: 250, realMs: 150 });
 }
 
@@ -117,10 +206,7 @@ export async function resizeWindow(page, title, width, height) {
   const box = await windowByTitle(page, title).boundingBox();
   if (!box) throw new Error(`window "${title}" isn't on screen`);
   const inset = 3;
-  await page.mouse.move(box.x + box.width - inset, box.y + box.height - inset);
-  await page.mouse.down();
-  await page.mouse.move(box.x + width - inset, box.y + height - inset, { steps: 8 });
-  await page.mouse.up();
+  await drag(page, box.x + box.width - inset, box.y + box.height - inset, box.x + width - inset, box.y + height - inset);
   await settle(page, { pageMs: 250, realMs: 150 });
 }
 
